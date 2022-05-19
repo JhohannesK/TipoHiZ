@@ -8,6 +8,12 @@ const TimeSec = 60
 const TextArea = () => {
       const [text, setText] = useState([])
       const [timer, setTimer] = useState(TimeSec)
+      const [a, seta] = useState(false)
+
+      useEffect(() => {
+            document.addEventListener('keypress', startTimeCountDown)
+      }, [])
+
 
       useEffect(() => {
             setText(getText())
@@ -18,6 +24,9 @@ const TextArea = () => {
       }
 
       const startTimeCountDown = () => {
+            setInterval(() => {
+                  setTimer((preCount) => preCount - 1)
+            }, 1000)
 
       }
 
@@ -42,8 +51,7 @@ const TextArea = () => {
                   </div>
 
                   <div className='pt-8 flex items-center justify-center'>
-                        <input type="text" className='w-[50rem] focus:outline-none px-5 py-5 rounded-lg text-lg text-black' onKeyDown='
-                        ' />
+                        <input type="text" className='w-[50rem] focus:outline-none px-5 py-5 rounded-lg text-lg text-black' onKeyPress={(e) => seta(!a)} />
                   </div>
 
             </div>
