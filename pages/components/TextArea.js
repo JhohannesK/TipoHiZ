@@ -8,11 +8,8 @@ const TimeSec = 60
 const TextArea = () => {
       const [text, setText] = useState([])
       const [timer, setTimer] = useState(TimeSec)
-      const [a, seta] = useState(false)
-
-      useEffect(() => {
-            document.addEventListener('keypress', startTimeCountDown)
-      }, [])
+      const [activeWord, setActiveWord] = useState(0)
+      const [userInput, setUserInput] = useState(' ')
 
 
       useEffect(() => {
@@ -27,7 +24,16 @@ const TextArea = () => {
             setInterval(() => {
                   setTimer((preCount) => preCount - 1)
             }, 1000)
+      }
 
+      const processInput = (value) => {
+            if (value.endsWith(' ')) {
+                  setActiveWord((preActiveWord) => preActiveWord + 1)
+                  setUserInput('')
+            }
+            else {
+                  setUserInput(value)
+            }
       }
 
       return (
@@ -40,7 +46,15 @@ const TextArea = () => {
                         <div className='absolute top-[165px] text-2xl font-medium font-poppins'>
                               {timer}
                         </div>
-                        {React.Children.toArray(text.map((char) => {
+                        {(text.map((char, index) => {
+                              if (index === activeWord) {
+                                    return (
+                                          <>
+                                                <span><strong>{char}</strong></span>
+                                                <pre> </pre>
+                                          </>
+                                    )
+                              }
                               return (
                                     <>
                                           <span>{char} </span>
@@ -51,9 +65,8 @@ const TextArea = () => {
                   </div>
 
                   <div className='pt-8 flex items-center justify-center'>
-                        <input type="text" className='w-[50rem] focus:outline-none px-5 py-5 rounded-lg text-lg text-black' onKeyPress={(e) => seta(!a)} />
+                        <input type={userInput} className='w-[50rem] focus:outline-none px-5 py-5 rounded-lg text-lg text-black' onChange={(e) => processInput(e.target.value)} />
                   </div>
-
             </div>
       )
 }
