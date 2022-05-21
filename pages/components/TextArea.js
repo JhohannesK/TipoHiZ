@@ -11,20 +11,23 @@ const TextArea = () => {
       const [activeWord, setActiveWord] = useState(0)
       const [userInput, setUserInput] = useState(' ')
 
-
+      //  Serves the selected paragraph to text of useState
       useEffect(() => {
             setText(getText())
       }, [])
 
+      // Selecting one paragrah from paragraphs array
       const getText = () => {
             return paragraphs[0].split(' ', NUM_OF_WORDS)
       }
 
+      // For Countdown
       const startTimeCountDown = () => {
             setInterval(() => {
                   setTimer((preCount) => preCount - 1)
             }, 1000)
       }
+
 
       const processInput = (value) => {
             if (value.endsWith(' ')) {
@@ -43,9 +46,12 @@ const TextArea = () => {
                         <p className='cursor-pointer'>english</p>
                   </div>
                   <div className='flex flex-wrap p-6 sm:px-36 font-poppins text-2xl tracking-widest selection:bg-yellow-300 selection:text-white'>
+                        {/* Time display */}
                         <div className='absolute top-[165px] text-2xl font-medium font-poppins'>
                               {timer}
                         </div>
+
+                        {/* mapping through the text array */}
                         {(text.map((char, index) => {
                               if (index === activeWord) {
                                     return (
