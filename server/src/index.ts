@@ -1,24 +1,14 @@
-console.log('Try npm run lint/fix!');
+import config from './config';
+import loaders from './loaders';
 
-const longString =
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ut aliquet diam.';
+const startServer = async () => {
+  const {app, server} = await loaders.init();
+  const port = config.serverPort;
+  app.listen({port}, () => {
+    console.log(
+      `🚀 Server ready at http://localhost:${port}${server.graphqlPath}`
+    );
+  });
+};
 
-const trailing = 'Semicolon';
-
-const why = 'am I tabbed?';
-
-export function doSomeStuff(
-  withThis: string,
-  andThat: string,
-  andThose: string[]
-) {
-  //function on one line
-  if (!andThose.length) {
-    return false;
-  }
-  console.log(withThis);
-  console.log(andThat);
-  console.dir(andThose);
-  return;
-}
-// TODO: more examples
+startServer();
