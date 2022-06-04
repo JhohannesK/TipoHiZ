@@ -5,4 +5,5 @@ export default {
   database: process.env.DATABASE as string,
   databaseUser: process.env.DATABASE_USER as string,
   databasePassword: process.env.DATABASE_PASSWORD as string,
+  accessOrigin: process.env.ACCESS_ORIGIN as string,
 };
