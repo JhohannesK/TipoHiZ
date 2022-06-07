@@ -1,6 +1,8 @@
 import sequelize from '../../loaders/sequelize';
 import {CreationOptional, DataTypes, Model} from 'sequelize';
 import {ViewerAttributes, ViewerCreationAttributes} from './types';
+import bcrypt from 'bcryptjs';
+import config from '../../config';
 
 class Viewer extends Model<ViewerAttributes, ViewerCreationAttributes> {
   declare id: CreationOptional<string>;
@@ -16,6 +18,10 @@ class Viewer extends Model<ViewerAttributes, ViewerCreationAttributes> {
     }
 
     return user;
+  }
+
+  async generatePasswordHash(): Promise<string> {
+    return await bcrypt.hash(this.password, Number(config.saltRounds));
   }
 }
 
@@ -36,5 +42,9 @@ Viewer.init(
     tableName: 'viewer',
   }
 );
+
+Viewer.addHook('beforeCreate', async (viewer: Viewer) => {
+  viewer.password = await viewer.generatePasswordHash();
+});
 
 export default Viewer;
