@@ -1,29 +1,11 @@
-import {
-  CreationOptional,
-  InferAttributes,
-  InferCreationAttributes,
-  Model,
-} from 'sequelize/types';
+import {Optional} from 'sequelize/types';
 
-export default interface ViewerModel
-  extends Model<
-    InferAttributes<ViewerModel>,
-    InferCreationAttributes<ViewerModel>
-  > {
-  id: CreationOptional<string>;
+export type ViewerAttributes = {
+  id: string;
   username: string;
   email: string;
+  password: string;
   role: string;
-  password: string;
-}
+};
 
-export interface Register {
-  username: string;
-  email: string;
-  password: string;
-}
-
-export interface Login {
-  login: string;
-  password: string;
-}
+export type ViewerCreationAttributes = Optional<ViewerAttributes, 'id'>;
