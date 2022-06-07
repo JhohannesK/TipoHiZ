@@ -16,6 +16,7 @@ export default gql`
 
   type Auth {
     token: String
+    viewer: Viewer
   }
 
   type Mutation {
