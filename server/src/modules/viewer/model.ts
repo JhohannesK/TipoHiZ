@@ -8,6 +8,15 @@ class Viewer extends Model<ViewerAttributes, ViewerCreationAttributes> {
   declare password: string;
   declare role: string;
   declare email: string;
+
+  static async findByLogin(login: string): Promise<Viewer | null> {
+    let user = await this.findOne({where: {username: login}});
+    if (!user) {
+      user = await this.findOne({where: {email: login}});
+    }
+
+    return user;
+  }
 }
 
 Viewer.init(
