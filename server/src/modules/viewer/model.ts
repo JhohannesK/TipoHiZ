@@ -12,16 +12,20 @@ class Viewer extends Model<ViewerAttributes, ViewerCreationAttributes> {
   declare email: string;
 
   static async findByLogin(login: string): Promise<Viewer | null> {
-    let user = await this.findOne({where: {username: login}});
-    if (!user) {
-      user = await this.findOne({where: {email: login}});
+    let viewer = await this.findOne({where: {username: login}});
+    if (!viewer) {
+      viewer = await this.findOne({where: {email: login}});
     }
 
-    return user;
+    return viewer;
   }
 
   async generatePasswordHash(): Promise<string> {
     return await bcrypt.hash(this.password, Number(config.saltRounds));
+  }
+
+  async validatePassword(password: string): Promise<boolean> {
+    return await bcrypt.compare(password, this.password);
   }
 }
 
