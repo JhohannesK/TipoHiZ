@@ -32,10 +32,28 @@ Viewer.init(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    username: {type: DataTypes.STRING, allowNull: false, unique: true},
-    password: {type: DataTypes.STRING, allowNull: false},
-    email: {type: DataTypes.STRING, allowNull: false, unique: true},
-    role: {type: DataTypes.STRING, allowNull: false, unique: true},
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {notEmpty: true},
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {notEmpty: true},
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {notEmpty: true, isEmail: true},
+    },
+    role: {
+      type: DataTypes.ENUM,
+      allowNull: false,
+      values: ['participant', 'administer'],
+    },
   },
   {
     sequelize,
