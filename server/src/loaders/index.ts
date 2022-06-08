@@ -1,10 +1,10 @@
 import expressLoader from './express';
 import apolloLoader from './apollo';
-import postgresLoader from './postgres';
+import sequelize from './sequelize';
 
 export default {
   init: async () => {
-    postgresLoader();
+    sequelize.sync();
     const app = expressLoader();
     const server = await apolloLoader(app);
 

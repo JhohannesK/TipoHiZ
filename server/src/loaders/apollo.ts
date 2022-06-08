@@ -1,7 +1,8 @@
 import {ApolloServer} from 'apollo-server-express';
 import {Express} from 'express';
 import config from '../config';
-import schema from '../schema';
+import models from '../modules';
+import schema from '../modules/schema';
 
 const corsOptions = {
   origin: config.accessOrigin,
@@ -10,7 +11,7 @@ const corsOptions = {
 };
 
 export default async (app: Express) => {
-  const server = new ApolloServer({schema});
+  const server = new ApolloServer({schema, context: {models}});
 
   await server.start();
   server.applyMiddleware({app, path: '/graphql', cors: corsOptions});
