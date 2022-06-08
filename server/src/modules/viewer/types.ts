@@ -16,3 +16,8 @@ export interface Register {
   role: string;
   email: string;
 }
+
+export interface Login {
+  login: string;
+  password: string;
+}
