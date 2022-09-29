@@ -73,7 +73,7 @@ git merge upstream/main
 
 **8.** Stage your changes:
 
-⚠️ **Make sure** not to commit `package.json` or `package-lock.json` file
+⚠️ **Make sure** not to commit `package.json` or `package-lock.json` file. If there is a need to commit them. You would need to seek permission in the discussions first before commiting them.
 
 ⚠️ **Make sure** not to run the commands `git add .` or `git add *`
 
