@@ -4,7 +4,7 @@
 	"description": "A web app created to help people with their typing just like @monkeytype. It's a work in progress, so expect bugs and missing features. If you find any, please report them in the issues tab.",
 	"main": "index.js",
 	"scripts": {
-		"install-unix": "sh ./bin/install.sh",
+		"install-all": "sh ./bin/install.sh",
 		"install-win": ".\\bin\\install.cmd"
 	},
 	"repository": {
