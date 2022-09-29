@@ -1,0 +1,20 @@
+{
+	"name": "tipohiz",
+	"version": "1.0.0",
+	"description": "A web app created to help people with their typing just like @monkeytype. It's a work in progress, so expect bugs and missing features. If you find any, please report them in the issues tab.",
+	"main": "index.js",
+	"scripts": {
+		"install-unix": "sh ./bin/install.sh",
+		"install-win": ".\\bin\\install.cmd"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/JhohannesK/TipoHiZ.git"
+	},
+	"keywords": [],
+	"license": "GPL-3.0",
+	"bugs": {
+		"url": "https://github.com/JhohannesK/TipoHiZ/issues"
+	},
+	"homepage": "https://github.com/JhohannesK/TipoHiZ#readme"
+}
