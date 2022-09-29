@@ -24,6 +24,7 @@ const TextArea = () => {
    //  Serves the selected paragraph to text of useState
    useEffect(() => {
       setText(getText());
+      // startTimeCountDown();
    }, []);
 
    // Selecting one paragrah from paragraphs array
@@ -55,7 +56,7 @@ const TextArea = () => {
          </div>
          <div className="flex flex-wrap p-6 sm:px-36 font-poppins text-2xl tracking-widest selection:bg-yellow-300 selection:text-white">
             {/* Time display */}
-            <div className="absolute top-[165px] text-2xl font-medium font-poppins">
+            <div className="absolute top-[115px] text-2xl font-medium font-poppins">
                {timer}
             </div>
 
@@ -73,7 +74,7 @@ const TextArea = () => {
                }
                return (
                   <>
-                     <span>{char} </span>
+                     <span key={index}>{char} </span>
                      <pre> </pre>
                   </>
                );
