@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { paragraphs } from './Paragraphs';
 import { MdLanguage } from 'react-icons/md';
 
@@ -20,11 +20,16 @@ const TextArea = () => {
    const [timer, setTimer] = useState(TimeSec);
    const [activeWord, setActiveWord] = useState(0);
    const [userInput, setUserInput] = useState(' ');
+   const inputRef = useRef<HTMLInputElement>();
 
    //  Serves the selected paragraph to text of useState
    useEffect(() => {
       setText(getText());
       // startTimeCountDown();
+
+      if (inputRef.current) {
+         inputRef.current.addEventListener('keydown', startTimeCountDown);
+      }
    }, []);
 
    // Selecting one paragrah from paragraphs array
@@ -33,11 +38,14 @@ const TextArea = () => {
    };
 
    // For Countdown
-   const startTimeCountDown = () => {
+   const startTimeCountDown = useCallback(() => {
+      if (inputRef.current) {
+         inputRef.current.removeEventListener('keydown', startTimeCountDown);
+      }
       setInterval(() => {
          setTimer((preCount) => preCount - 1);
       }, 1000);
-   };
+   }, []);
 
    const processInput = (value) => {
       if (value.endsWith(' ')) {
@@ -84,6 +92,7 @@ const TextArea = () => {
          <div className="pt-8 flex items-center justify-center">
             <input
                type={userInput}
+               ref={inputRef}
                className="w-[50rem] focus:outline-none px-5 py-5 rounded-lg text-lg text-black"
                onChange={(e) => processInput(e.target.value)}
             />
