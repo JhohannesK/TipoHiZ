@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { paragraphs } from './Paragraphs';
 import { MdLanguage } from 'react-icons/md';
+import { BsArrowRepeat, BsArrowUpCircle } from 'react-icons/bs';
 
 /* 
 TODO: 
@@ -12,8 +13,8 @@ FIXME: - Make counter work well
 
 */
 
-const NUM_OF_WORDS = 30;
-const TimeSec = 60;
+const NUM_OF_WORDS: number = 30;
+const TimeSec: number = 60;
 
 const TextArea = () => {
    const [text, setText] = useState([]);
@@ -47,7 +48,7 @@ const TextArea = () => {
       }, 1000);
    }, []);
 
-   const processInput = (value) => {
+   const processInput = (value: string) => {
       if (value.endsWith(' ')) {
          setActiveWord((preActiveWord) => preActiveWord + 1);
          setUserInput('');
@@ -89,12 +90,16 @@ const TextArea = () => {
             })}
          </div>
 
-         <div className="pt-8 flex items-center justify-center">
+         <div className="pt-8 flex items-center justify-center space-x-4">
             <input
                type={userInput}
                ref={inputRef}
                className="w-[50rem] focus:outline-none px-5 py-5 rounded-lg text-lg text-black"
                onChange={(e) => processInput(e.target.value)}
+            />
+            <BsArrowRepeat
+               className="hover:rotate-180 transition-all duration-500 ease-out cursor-pointer active:scale-150 active:text-green-300"
+               size={30}
             />
          </div>
       </div>
