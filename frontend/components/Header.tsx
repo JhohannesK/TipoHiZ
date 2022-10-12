@@ -7,8 +7,7 @@ const Header = () => {
    return (
       <div className="flex items-center justify-between p-7 sm:px-32 ">
          <div className="flex items-center justify-center gap-x-5">
-            <p>Name</p>
-            <p>logo</p>
+            <p className="font-bold text-xl">TipoHiz.__</p>
          </div>
          <div className="flex items-center justify-center gap-x-7">
             <FaUserAlt className="text-gray-400" />

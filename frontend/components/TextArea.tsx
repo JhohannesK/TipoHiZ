@@ -14,7 +14,7 @@ FIXME: - Make counter work well
 */
 
 const NUM_OF_WORDS: number = 30;
-const TimeSec: number = 60;
+const TimeSec: number = 5;
 
 const TextArea = () => {
    const [text, setText] = useState([]);
@@ -26,7 +26,6 @@ const TextArea = () => {
    //  Serves the selected paragraph to text of useState
    useEffect(() => {
       setText(getText());
-      // startTimeCountDown();
 
       if (inputRef.current) {
          inputRef.current.addEventListener('keydown', startTimeCountDown);
@@ -43,8 +42,13 @@ const TextArea = () => {
       if (inputRef.current) {
          inputRef.current.removeEventListener('keydown', startTimeCountDown);
       }
-      setInterval(() => {
-         setTimer((preCount) => preCount - 1);
+      let timeInterval = setInterval(() => {
+         setTimer((preCount) => {
+            if (preCount === 1) {
+               clearInterval(timeInterval);
+            }
+            return preCount - 1;
+         });
       }, 1000);
    }, []);
 
@@ -58,14 +62,14 @@ const TextArea = () => {
    };
 
    return (
-      <div className="pt-20 font-poppins">
+      <div className="pt-32 font-poppins">
          <div className="flex items-center justify-center gap-x-3 lowercase tracking-widest">
             <MdLanguage />
             <p className="cursor-pointer">english</p>
          </div>
          <div className="flex flex-wrap p-6 sm:px-36 font-poppins text-2xl tracking-widest selection:bg-yellow-300 selection:text-white">
             {/* Time display */}
-            <div className="absolute top-[115px] text-2xl font-medium font-poppins">
+            <div className="absolute top-[12.5rem] text-2xl font-medium font-poppins">
                {timer}
             </div>
 
@@ -95,7 +99,10 @@ const TextArea = () => {
                type={userInput}
                ref={inputRef}
                className="w-[50rem] focus:outline-none px-5 py-5 rounded-lg text-lg text-black"
-               onChange={(e) => processInput(e.target.value)}
+               onChange={(e) => {
+                  processInput(e.target.value);
+                  console.log(e);
+               }}
             />
             <BsArrowRepeat
                className="hover:rotate-180 transition-all duration-500 ease-out cursor-pointer active:scale-150 active:text-green-300"
