@@ -4,7 +4,7 @@ import Footer from '../components/Footer';
 
 export default function Home() {
    return (
-      <div className="xl:max-w-7xl mx-auto bg-slate-800 text-gray-400 font-open-sans h-screen">
+      <div className="2xl:max-w-7xl mx-auto bg-slate-800 text-gray-400 font-open-sans h-screen">
          <Header />
          <TextArea />
          <Footer />
