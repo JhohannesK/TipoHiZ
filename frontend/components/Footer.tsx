@@ -3,14 +3,13 @@ import React from 'react';
 
 const Footer = () => {
    return (
-      <div className="pb-[58px] pt-16 flex items-center justify-center">
+      <div className="pb-[58px] pt-16 flex items-center space-x-2 justify-center">
          <div>
-            <pre className="text-emerald-500 text-sm"> {`\<TipoHiZ/\>`} </pre>
+            <p>Contribute on Github</p>
          </div>
          <div>
-            <p>
-               Contribute on{' '}
-               <Link href="https://github.com/TipoHiZ">Github</Link>
+            <p className="text-emerald-500 text-sm">
+               <Link href="https://github.com/TipoHiZ">{`\<TipoHiZ/\>`}</Link>
             </p>
          </div>
       </div>
