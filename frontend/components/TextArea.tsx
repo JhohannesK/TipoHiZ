@@ -7,13 +7,14 @@ import { useRouter } from 'next/router';
 /* 
 TODO: 
 * Hide textbox
+* Focus on the input Field always
 * Make correct words green and wrong words red.
 
 FIXME: - Active word advancing even if user is deleting a character when there is a space and also advances on continous spacebar keydown.
 */
 
 const NUM_OF_WORDS: number = 30;
-const TimeSec: number = 5;
+const TimeSec: number = 60;
 
 const TextArea = () => {
    const [text, setText] = useState<string[]>([]);
@@ -22,7 +23,9 @@ const TextArea = () => {
    const [userInput, setUserInput] = useState('');
    const inputRef = useRef<HTMLInputElement>();
    const [correctWord, setCorrectWord] = useState(false);
+   console.log(correctWord);
    const [totalCountOfCorrectWords, setTotalCountOfCorrectWords] = useState(0);
+   console.log(totalCountOfCorrectWords);
    const [disableTextField, setDisableTextField] = useState(false);
 
    const router = useRouter();
@@ -92,7 +95,7 @@ const TextArea = () => {
          </div>
          <div className="flex flex-wrap p-6 sm:px-36 font-poppins text-2xl tracking-widest selection:bg-yellow-300 selection:text-white">
             {/* Time display */}
-            <div className="absolute top-[12.5rem] text-2xl font-medium font-poppins">
+            <div className="absolute top-[12.5rem] text-2xl font-medium font-poppins text-emerald-400">
                {timer}
             </div>
 
@@ -132,7 +135,7 @@ const TextArea = () => {
             <input
                type={userInput}
                ref={inputRef}
-               // onBlur={this.focus()}
+               // onBlur={focus()}
                autoFocus
                className="w-[50rem] focus:outline-none px-5 py-5 rounded-lg text-lg text-black"
                onChange={(e) => {
