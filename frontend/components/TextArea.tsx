@@ -9,6 +9,7 @@ TODO:
 * Hide textbox
 * Focus on the input Field always
 * Make correct words green and wrong words red.
+* Restart the page without refreshing the whole page
 
 FIXME: - Active word advancing even if user is deleting a character when there is a space and also advances on continous spacebar keydown.
 */
@@ -148,6 +149,9 @@ const TextArea = () => {
             <BsArrowRepeat
                className="hover:rotate-180 transition-all duration-500 ease-out cursor-pointer active:scale-150 active:text-green-300"
                size={30}
+               onClick={() => {
+                  setTimer(TimeSec);
+               }}
             />
          </div>
       </div>
