@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { paragraphs } from './Paragraphs';
 import { MdLanguage } from 'react-icons/md';
 import { BsArrowRepeat } from 'react-icons/bs';
+import { useRouter } from 'next/router';
 
 /* 
 TODO: 
@@ -9,14 +10,13 @@ TODO:
 * Make correct words green and wrong words red.
 
 FIXME: - Active word advancing even if user is deleting a character when there is a space and also advances on continous spacebar keydown.
-
 */
 
 const NUM_OF_WORDS: number = 30;
 const TimeSec: number = 5;
 
 const TextArea = () => {
-   const [text, setText] = useState([]);
+   const [text, setText] = useState<string[]>([]);
    const [timer, setTimer] = useState(TimeSec);
    const [activeWord, setActiveWord] = useState(0);
    const [userInput, setUserInput] = useState('');
@@ -24,6 +24,8 @@ const TextArea = () => {
    const [correctWord, setCorrectWord] = useState(false);
    const [totalCountOfCorrectWords, setTotalCountOfCorrectWords] = useState(0);
    const [disableTextField, setDisableTextField] = useState(false);
+
+   const router = useRouter();
 
    //  Serves the selected paragraph to text of useState
    useEffect(() => {
@@ -57,8 +59,9 @@ const TextArea = () => {
    }, []);
 
    if (timer === 0) {
-      console.log({ totalCountOfCorrectWords });
+      router.push('/results');
    }
+
    const processInput = (value: string) => {
       if (value.endsWith(' ')) {
          checkWordsIfEqual();
