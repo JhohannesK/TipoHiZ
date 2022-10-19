@@ -150,8 +150,7 @@ const TextArea = () => {
                className="hover:rotate-180 transition-all duration-500 ease-out cursor-pointer active:scale-150 active:text-green-300"
                size={30}
                onClick={(e) => {
-                  e.preventDefault();
-                  router.push('/');
+                  router.reload();
                }}
             />
          </div>
