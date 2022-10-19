@@ -132,6 +132,8 @@ const TextArea = () => {
             <input
                type={userInput}
                ref={inputRef}
+               // onBlur={this.focus()}
+               autoFocus
                className="w-[50rem] focus:outline-none px-5 py-5 rounded-lg text-lg text-black"
                onChange={(e) => {
                   processInput(e.target.value);
