@@ -9,7 +9,7 @@ const Footer = () => {
          </div>
          <div>
             <p className="text-emerald-500 text-sm">
-               <Link href="https://github.com/TipoHiZ">{`\<TipoHiZ/\>`}</Link>
+               <Link href="https://github.com/JhohannesK/TipoHiZ">{`\<TipoHiZ/\>`}</Link>
             </p>
          </div>
       </div>
