@@ -24,9 +24,7 @@ const TextArea = () => {
    const [userInput, setUserInput] = useState('');
    const inputRef = useRef<HTMLInputElement>();
    const [correctWord, setCorrectWord] = useState(false);
-   console.log(correctWord);
    const [totalCountOfCorrectWords, setTotalCountOfCorrectWords] = useState(0);
-   console.log(totalCountOfCorrectWords);
    const [disableTextField, setDisableTextField] = useState(false);
 
    const router = useRouter();
@@ -79,7 +77,6 @@ const TextArea = () => {
    const checkWordsIfEqual = () => {
       const currWord: string = text[activeWord];
       const isMatch: boolean = currWord === userInput.trim();
-      console.log({ isMatch });
       if (isMatch) {
          setTotalCountOfCorrectWords((prevCount) => prevCount + 1);
          setCorrectWord(true);
