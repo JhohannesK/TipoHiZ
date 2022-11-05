@@ -7,7 +7,6 @@ import { useRouter } from 'next/router';
 /* 
 TODO: 
 * Hide textbox
-* Focus on the input Field always
 * Make correct words green and wrong words red.
 * Restart the page without refreshing the whole page
 
