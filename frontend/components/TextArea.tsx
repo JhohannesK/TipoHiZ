@@ -3,6 +3,8 @@ import { paragraphs } from './Paragraphs';
 import { MdLanguage } from 'react-icons/md';
 import { BsArrowRepeat } from 'react-icons/bs';
 import { useRouter } from 'next/router';
+import { startTimeCountDown } from './modules/Timer';
+import useStore from '../store/index';
 
 /* 
 TODO: 
@@ -14,17 +16,14 @@ FIXME: - Active word advancing even if user is deleting a character when there i
 */
 
 const NUM_OF_WORDS: number = 30;
-const TimeSec: number = 60;
 
 const TextArea = () => {
    const [text, setText] = useState<string[]>([]);
-   const [timer, setTimer] = useState(TimeSec);
    const [activeWord, setActiveWord] = useState(0);
    const [userInput, setUserInput] = useState('');
    const inputRef = useRef<HTMLInputElement>();
    const [correctWord, setCorrectWord] = useState(false);
    const [totalCountOfCorrectWords, setTotalCountOfCorrectWords] = useState(0);
-   const [disableTextField, setDisableTextField] = useState(false);
 
    const router = useRouter();
 
@@ -41,27 +40,6 @@ const TextArea = () => {
    const getText = () => {
       return paragraphs[0].split(' ', NUM_OF_WORDS);
    };
-
-   // For Countdown
-   const startTimeCountDown = useCallback(() => {
-      if (inputRef.current) {
-         inputRef.current.removeEventListener('keydown', startTimeCountDown);
-      }
-      let timeInterval = setInterval(() => {
-         setTimer((preCount) => {
-            // Timer stops when it gets to zero
-            if (preCount === 1) {
-               clearInterval(timeInterval);
-               setDisableTextField(true);
-            }
-            return preCount - 1;
-         });
-      }, 1000);
-   }, []);
-
-   if (timer === 0) {
-      router.push('/results');
-   }
 
    const processInput = (value: string) => {
       if (value.endsWith(' ')) {
@@ -83,6 +61,10 @@ const TextArea = () => {
          setCorrectWord(false);
       }
    };
+
+   const disabledInput = useStore((state) => state.disabled);
+   const timer = useStore((state) => state.time);
+   console.log('this is from the store', timer);
 
    return (
       <div className="xl:max-w-7xl mx-auto pt-32 font-poppins">
@@ -140,7 +122,7 @@ const TextArea = () => {
                }}
                // onKeyDown={(e) => console.log(e.key)}
                value={userInput}
-               disabled={disableTextField}
+               disabled={disabledInput}
             />
             <BsArrowRepeat
                className="hover:rotate-180 transition-all duration-500 ease-out cursor-pointer active:scale-150 active:text-green-300"
