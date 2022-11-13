@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { memo, useCallback, useEffect, useRef } from 'react';
 import useStore, { State } from '../../store';
+
 export const startTimeCountDown = (
    exit: VoidFunction,
    update: (time: number) => void,
@@ -12,9 +13,8 @@ export const startTimeCountDown = (
    interval = setInterval(() => {
       const now = Date.now();
       const delta = Math.floor((now - start) / 1000);
-      console.log(delta);
 
-      if (delta > threshold) {
+      if (delta >= threshold) {
          exit();
          clearInterval(interval.current);
       } else {
@@ -31,17 +31,17 @@ const selector = ({ disabled, time, setTime }: State) => {
    };
 };
 
-const threshold = 60;
 const Timer = memo(({ input }: { input: any }) => {
    const router = useRouter();
 
    const { time, setTimer } = useStore(selector);
+   const threshold = time;
 
    const exit = () => {
-      router.push('/result');
+      router.push('/results');
    };
 
-   const update = (delta) => {
+   const update = (delta: number) => {
       setTimer(threshold - delta);
    };
    const intRef = useRef();

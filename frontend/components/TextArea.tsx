@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { paragraphs } from './Paragraphs';
 import { MdLanguage } from 'react-icons/md';
 import { BsArrowRepeat } from 'react-icons/bs';
 import { useRouter } from 'next/router';
-import Timer, { startTimeCountDown } from './modules/Timer';
+import Timer from './modules/Timer';
 import useStore, { State } from '../store';
 
 // cache selectors to prevent unnecessary computations
@@ -36,7 +36,7 @@ const TextArea = () => {
 
    const router = useRouter();
 
-   const { disabledInput, time } = useStore(selector);
+   const { disabledInput } = useStore(selector);
 
    //  Serves the selected paragraph to text of useState
    useEffect(() => {
@@ -74,12 +74,11 @@ const TextArea = () => {
          <div className="flex items-center justify-center gap-x-3 lowercase tracking-widest">
             <MdLanguage />
             <p className="cursor-pointer">english</p>
-            <Timer input={inputRef} />
          </div>
          <div className="flex flex-wrap p-6 sm:px-36 font-poppins text-2xl tracking-widest selection:bg-yellow-300 selection:text-white">
             {/* Time display */}
             <div className="absolute top-[12.5rem] text-2xl font-medium font-poppins text-emerald-400">
-               {time}
+               <Timer input={inputRef} />
             </div>
 
             {/* mapping through the text array */}

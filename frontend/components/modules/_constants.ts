@@ -1,5 +1,5 @@
 const Constants = {
-   TimeSec: 60,
+   TimeSec: 3,
 };
 
 export default Constants;
