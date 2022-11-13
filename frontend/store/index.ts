@@ -1,7 +1,7 @@
 import create from 'zustand';
 import Constants from '../components/modules/_constants';
 
-interface State {
+export interface State {
    disabled: boolean;
    time: number;
    setDisabled: (disabled: boolean) => void;
