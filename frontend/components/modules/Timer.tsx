@@ -1,32 +1,66 @@
 import { useRouter } from 'next/router';
-import { useCallback, useRef, useState } from 'react';
-import useStore from '../../store';
+import { memo, useCallback, useEffect, useRef } from 'react';
+import useStore, { State } from '../../store';
+export const startTimeCountDown = (
+   exit: VoidFunction,
+   update: (time: number) => void,
+   interval: any,
+   threshold: number
+) => {
+   const start = Date.now();
 
-export const startTimeCountDown = useCallback(() => {
+   interval = setInterval(() => {
+      const now = Date.now();
+      const delta = Math.floor((now - start) / 1000);
+      console.log(delta);
+
+      if (delta > threshold) {
+         exit();
+         clearInterval(interval.current);
+      } else {
+         update(delta);
+      }
+   }, 1000);
+};
+
+const selector = ({ disabled, time, setTime }: State) => {
+   return {
+      disabledInput: disabled,
+      time,
+      setTimer: setTime,
+   };
+};
+
+const threshold = 60;
+const Timer = memo(({ input }: { input: any }) => {
    const router = useRouter();
 
-   const disabledInput = useStore((state) => state.setDisabled);
-   const timer = useStore((state) => state.time);
-   const setTimer = useStore((state) => state.setTime);
-   // For Countdown
+   const { time, setTimer } = useStore(selector);
 
-   if (timer === 0) {
-      router.push('/results');
-   }
+   const exit = () => {
+      router.push('/result');
+   };
 
-   const inputRef = useRef<HTMLInputElement>();
+   const update = (delta) => {
+      setTimer(threshold - delta);
+   };
+   const intRef = useRef();
 
-   if (inputRef.current) {
-      inputRef.current.removeEventListener('keydown', startTimeCountDown);
-   }
-   let timeInterval = setInterval(() => {
-      setTimer((preCount: number) => {
-         // Timer stops when it gets to zero
-         if (preCount === 1) {
-            clearInterval(timeInterval);
-            disabledInput(true);
-         }
-         return preCount - 1;
-      });
-   }, 1000);
-}, []);
+   const startCountDown = useCallback(() => {
+      startTimeCountDown(exit, update, intRef, threshold);
+      if (input.current) {
+         input.current.removeEventListener('keydown', startCountDown);
+      }
+   }, []);
+
+   //  Serves the selected paragraph to text of useState
+   useEffect(() => {
+      if (input.current) {
+         input.current.addEventListener('keydown', startCountDown);
+      }
+   }, []);
+
+   return <div>{time}</div>;
+});
+
+export default Timer;
