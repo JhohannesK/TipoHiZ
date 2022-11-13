@@ -3,8 +3,17 @@ import { paragraphs } from './Paragraphs';
 import { MdLanguage } from 'react-icons/md';
 import { BsArrowRepeat } from 'react-icons/bs';
 import { useRouter } from 'next/router';
-import { startTimeCountDown } from './modules/Timer';
-import useStore from '../store/index';
+import Timer, { startTimeCountDown } from './modules/Timer';
+import useStore, { State } from '../store';
+
+// cache selectors to prevent unnecessary computations
+const selector = ({ disabled, time, setTime }: State) => {
+   return {
+      disabledInput: disabled,
+      time,
+      setTimer: setTime,
+   };
+};
 
 /* 
 TODO: 
@@ -16,7 +25,7 @@ FIXME: - Active word advancing even if user is deleting a character when there i
 */
 
 const NUM_OF_WORDS: number = 30;
-
+const threshold = 60;
 const TextArea = () => {
    const [text, setText] = useState<string[]>([]);
    const [activeWord, setActiveWord] = useState(0);
@@ -27,13 +36,11 @@ const TextArea = () => {
 
    const router = useRouter();
 
+   const { disabledInput, time } = useStore(selector);
+
    //  Serves the selected paragraph to text of useState
    useEffect(() => {
       setText(getText());
-
-      if (inputRef.current) {
-         inputRef.current.addEventListener('keydown', startTimeCountDown);
-      }
    }, []);
 
    // Selecting one paragrah from paragraphs array
@@ -62,20 +69,17 @@ const TextArea = () => {
       }
    };
 
-   const disabledInput = useStore((state) => state.disabled);
-   const timer = useStore((state) => state.time);
-   console.log('this is from the store', timer);
-
    return (
       <div className="xl:max-w-7xl mx-auto pt-32 font-poppins">
          <div className="flex items-center justify-center gap-x-3 lowercase tracking-widest">
             <MdLanguage />
             <p className="cursor-pointer">english</p>
+            <Timer input={inputRef} />
          </div>
          <div className="flex flex-wrap p-6 sm:px-36 font-poppins text-2xl tracking-widest selection:bg-yellow-300 selection:text-white">
             {/* Time display */}
             <div className="absolute top-[12.5rem] text-2xl font-medium font-poppins text-emerald-400">
-               {timer}
+               {time}
             </div>
 
             {/* mapping through the text array */}
