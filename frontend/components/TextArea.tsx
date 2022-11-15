@@ -84,7 +84,7 @@ const TextArea = () => {
             </div>
 
             {/* mapping through the text array */}
-            {text.map((word, index) => {
+            {text?.map((word, index) => {
                if (index === activeWord) {
                   return (
                      <>

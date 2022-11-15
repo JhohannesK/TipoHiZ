@@ -1,6 +1,9 @@
-import { paragraphs } from '../Paragraphs';
+import { paragraphs } from '../modules/Paragraphs';
 
 const NUM_OF_WORDS: number = 30;
 export const getText = () => {
-   return paragraphs[0].split(' ', NUM_OF_WORDS);
+   return paragraphs[Math.floor(Math.random() * paragraphs?.length)]?.split(
+      ' ',
+      NUM_OF_WORDS
+   );
 };
