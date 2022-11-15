@@ -1,8 +1,19 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { paragraphs } from './Paragraphs';
 import { MdLanguage } from 'react-icons/md';
 import { BsArrowRepeat } from 'react-icons/bs';
 import { useRouter } from 'next/router';
+import Timer from './modules/Timer';
+import useStore, { State } from '../store';
+
+// cache selectors to prevent unnecessary computations
+const selector = ({ disabled, time, setTime }: State) => {
+   return {
+      disabledInput: disabled,
+      time,
+      setTimer: setTime,
+   };
+};
 
 /* 
 TODO: 
@@ -14,54 +25,28 @@ FIXME: - Active word advancing even if user is deleting a character when there i
 */
 
 const NUM_OF_WORDS: number = 30;
-const TimeSec: number = 60;
-
+const threshold = 60;
 const TextArea = () => {
    const [text, setText] = useState<string[]>([]);
-   const [timer, setTimer] = useState(TimeSec);
    const [activeWord, setActiveWord] = useState(0);
    const [userInput, setUserInput] = useState('');
    const inputRef = useRef<HTMLInputElement>();
    const [correctWord, setCorrectWord] = useState(false);
    const [totalCountOfCorrectWords, setTotalCountOfCorrectWords] = useState(0);
-   const [disableTextField, setDisableTextField] = useState(false);
 
    const router = useRouter();
+
+   const { disabledInput } = useStore(selector);
 
    //  Serves the selected paragraph to text of useState
    useEffect(() => {
       setText(getText());
-
-      if (inputRef.current) {
-         inputRef.current.addEventListener('keydown', startTimeCountDown);
-      }
    }, []);
 
    // Selecting one paragrah from paragraphs array
    const getText = () => {
       return paragraphs[0].split(' ', NUM_OF_WORDS);
    };
-
-   // For Countdown
-   const startTimeCountDown = useCallback(() => {
-      if (inputRef.current) {
-         inputRef.current.removeEventListener('keydown', startTimeCountDown);
-      }
-      let timeInterval = setInterval(() => {
-         setTimer((preCount) => {
-            // Timer stops when it gets to zero
-            if (preCount === 1) {
-               clearInterval(timeInterval);
-               setDisableTextField(true);
-            }
-            return preCount - 1;
-         });
-      }, 1000);
-   }, []);
-
-   if (timer === 0) {
-      router.push('/results');
-   }
 
    const processInput = (value: string) => {
       if (value.endsWith(' ')) {
@@ -93,7 +78,7 @@ const TextArea = () => {
          <div className="flex flex-wrap p-6 sm:px-36 font-poppins text-2xl tracking-widest selection:bg-yellow-300 selection:text-white">
             {/* Time display */}
             <div className="absolute top-[12.5rem] text-2xl font-medium font-poppins text-emerald-400">
-               {timer}
+               <Timer input={inputRef} />
             </div>
 
             {/* mapping through the text array */}
@@ -140,7 +125,7 @@ const TextArea = () => {
                }}
                // onKeyDown={(e) => console.log(e.key)}
                value={userInput}
-               disabled={disableTextField}
+               disabled={disabledInput}
             />
             <BsArrowRepeat
                className="hover:rotate-180 transition-all duration-500 ease-out cursor-pointer active:scale-150 active:text-green-300"
