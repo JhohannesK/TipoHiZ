@@ -10,7 +10,7 @@ export const startTimeCountDown = (
 ) => {
    const start = Date.now();
 
-   interval = setInterval(() => {
+   interval.current = setInterval(() => {
       const now = Date.now();
       const delta = Math.floor((now - start) / 1000);
 
@@ -58,6 +58,9 @@ const Timer = memo(({ input }: { input: any }) => {
       if (input.current) {
          input.current.addEventListener('keydown', startCountDown);
       }
+      return () => {
+         setTimer(threshold);
+      };
    }, []);
 
    return <div>{time}</div>;
