@@ -23,21 +23,31 @@ export const startTimeCountDown = (
    }, 1000);
 };
 
-const selector = ({ disabled, time, setTime }: State) => {
+const selector = ({
+   disabled,
+   time,
+   setTime,
+   setActiveWord,
+   setUserInput,
+}: State) => {
    return {
       disabledInput: disabled,
       time,
       setTimer: setTime,
+      setActiveWord,
+      setUserInput,
    };
 };
 
 const Timer = memo(({ input }: { input: any }) => {
    const router = useRouter();
 
-   const { time, setTimer } = useStore(selector);
+   const { time, setTimer, setActiveWord, setUserInput } = useStore(selector);
    const threshold = time;
 
    const exit = () => {
+      setActiveWord(0);
+      setUserInput('');
       router.push('/results');
    };
 

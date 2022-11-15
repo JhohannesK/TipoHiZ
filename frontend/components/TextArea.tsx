@@ -1,17 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { paragraphs } from './Paragraphs';
 import { MdLanguage } from 'react-icons/md';
 import { BsArrowRepeat } from 'react-icons/bs';
 import { useRouter } from 'next/router';
 import Timer from './modules/Timer';
 import useStore, { State } from '../store';
+import { getText } from './helpers/GetTextParagraph';
 
 // cache selectors to prevent unnecessary computations
-const selector = ({ disabled, time, setTime }: State) => {
+const selector = ({
+   disabled,
+   activeWord,
+   userInput,
+   setUserInput,
+   setActiveWord,
+}: State) => {
    return {
       disabledInput: disabled,
-      time,
-      setTimer: setTime,
+      activeWord,
+      setUserInput,
+      setActiveWord,
+      userInput,
    };
 };
 
@@ -24,35 +32,29 @@ TODO:
 FIXME: - Active word advancing even if user is deleting a character when there is a space and also advances on continous spacebar keydown.
 */
 
-const NUM_OF_WORDS: number = 30;
-const threshold = 60;
 const TextArea = () => {
    const [text, setText] = useState<string[]>([]);
-   const [activeWord, setActiveWord] = useState(0);
-   const [userInput, setUserInput] = useState('');
+   // const [activeWord, setActiveWord] = useState(0);
+   // const [userInput, setUserInput] = useState('');
    const inputRef = useRef<HTMLInputElement>();
    const [correctWord, setCorrectWord] = useState(false);
    const [totalCountOfCorrectWords, setTotalCountOfCorrectWords] = useState(0);
 
    const router = useRouter();
 
-   const { disabledInput } = useStore(selector);
+   const { disabledInput, activeWord, userInput, setActiveWord, setUserInput } =
+      useStore(selector);
 
    //  Serves the selected paragraph to text of useState
    useEffect(() => {
       setText(getText());
    }, []);
 
-   // Selecting one paragrah from paragraphs array
-   const getText = () => {
-      return paragraphs[0].split(' ', NUM_OF_WORDS);
-   };
-
    const processInput = (value: string) => {
       if (value.endsWith(' ')) {
          checkWordsIfEqual();
          setUserInput('');
-         setActiveWord((preActiveWord) => preActiveWord + 1);
+         setActiveWord(activeWord + 1);
       } else {
          setUserInput(value);
       }
