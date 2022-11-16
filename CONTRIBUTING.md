@@ -43,7 +43,7 @@ cd TipoHiZ
 **4.** Set upstream command:
 
 ```bash
-git remote add upstream https://github.com/Jhohannes/TipoHiZ.git
+git remote add upstream https://github.com/JhohannesK/TipoHiZ.git
 ```
 
 **5.** Create a new branch:
