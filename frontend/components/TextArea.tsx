@@ -117,7 +117,7 @@ const TextArea = () => {
             })}
          </div>
 
-         <div className="pt-8 invisible flex items-center justify-center space-x-4">
+         <div className="pt-8 flex items-center justify-center space-x-4">
             <input
                type={userInput}
                ref={inputRef}
