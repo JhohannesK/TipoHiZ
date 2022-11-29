@@ -1,5 +1,6 @@
 import Head from 'next/head';
-import TextArea from '../components/TextArea';
+import HomePage from '../components/HomePage';
+import TextArea from '../components/HomePage';
 
 export default function Home() {
    return (
@@ -10,7 +11,7 @@ export default function Home() {
             </Head>
          </div>
 
-         <TextArea />
+         <HomePage />
       </div>
    );
 }
