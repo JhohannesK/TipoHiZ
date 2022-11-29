@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import Timer from './modules/Timer';
 import useStore, { State } from '../store';
 import { getText } from './helpers/GetTextParagraph';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 // cache selectors to prevent unnecessary computations
 const selector = ({
@@ -41,6 +42,7 @@ const TextArea = () => {
    const [totalCountOfCorrectWords, setTotalCountOfCorrectWords] = useState(0);
 
    const router = useRouter();
+   useHotkeys('tab', () => router.reload());
 
    const { disabledInput, activeWord, userInput, setActiveWord, setUserInput } =
       useStore(selector);
