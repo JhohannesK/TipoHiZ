@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { memo, useCallback, useEffect, useRef } from 'react';
-import useStore, { State } from '../../store';
+import { State, useStore, useStoreActions } from '../store';
 
 export const startTimeCountDown = (
    exit: VoidFunction,
@@ -26,23 +26,18 @@ export const startTimeCountDown = (
 const selector = ({
    disabled,
    time,
-   setTime,
-   setActiveWord,
-   setUserInput,
 }: State) => {
    return {
       disabledInput: disabled,
       time,
-      setTimer: setTime,
-      setActiveWord,
-      setUserInput,
    };
 };
 
 const Timer = memo(({ input }: { input: any }) => {
    const router = useRouter();
 
-   const { time, setTimer, setActiveWord, setUserInput } = useStore(selector);
+   const { time } = useStore(selector);
+   const {setTime, setActiveWord, setUserInput} = useStoreActions()
    const threshold = time;
 
    const exit = () => {
@@ -52,7 +47,7 @@ const Timer = memo(({ input }: { input: any }) => {
    };
 
    const update = (delta: number) => {
-      setTimer(threshold - delta);
+      setTime(threshold - delta);
    };
    const intRef = useRef();
 
@@ -69,7 +64,7 @@ const Timer = memo(({ input }: { input: any }) => {
          input.current.addEventListener('keydown', startCountDown);
       }
       return () => {
-         setTimer(threshold);
+         setTime(threshold);
       };
    }, []);
 

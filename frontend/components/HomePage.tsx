@@ -1,51 +1,35 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, MutableRefObject } from 'react';
 import { MdLanguage } from 'react-icons/md';
 import { BsArrowRepeat } from 'react-icons/bs';
 import { useRouter } from 'next/router';
-import useStore, { State } from '../store';
-import { getText } from './helpers/GetTextParagraph';
+import { State, useStore, useStoreActions } from '../store';
+import { getText } from '../helpers/GetTextParagraph';
 import TextArea from './TextArea';
 import { useHotkeys } from 'react-hotkeys-hook';
+import UserSelectPallete from './UserSelectPallete';
+import Timer from '../modules/Timer';
 
 // cache selectors to prevent unnecessary computations
-const selector = ({
-   disabled,
-   activeWord,
-   userInput,
-   setUserInput,
-   setActiveWord,
-}: State) => {
+const selector = ({ disabled, activeWord, userInput }: State) => {
    return {
       disabledInput: disabled,
       activeWord,
-      setUserInput,
-      setActiveWord,
       userInput,
    };
 };
 
-/* 
-TODO: 
-* Hide textbox
-* Make correct words green and wrong words red.
-* Restart the page without refreshing the whole page
-
-FIXME: - Active word advancing even if user is deleting a character when there is a space and also advances on continous spacebar keydown.
-*/
-
 const HomePage = () => {
    const [text, setText] = useState<string[]>([]);
-   // const [activeWord, setActiveWord] = useState(0);
-   // const [userInput, setUserInput] = useState('');
-   const inputRef = useRef<HTMLInputElement>();
+
+   const inputRef = useRef<HTMLInputElement>(null);
    const [correctWord, setCorrectWord] = useState(false);
    const [totalCountOfCorrectWords, setTotalCountOfCorrectWords] = useState(0);
 
    const router = useRouter();
    useHotkeys('tab', () => router.reload());
 
-   const { disabledInput, activeWord, userInput, setActiveWord, setUserInput } =
-      useStore(selector);
+   const { disabledInput, activeWord, userInput } = useStore(selector);
+   const { setUserInput, setActiveWord } = useStoreActions();
 
    //  Serves the selected paragraph to text of useState
    useEffect(() => {
@@ -74,12 +58,20 @@ const HomePage = () => {
    };
 
    return (
-      <div className="xl:max-w-7xl mx-auto pt-32 font-poppins">
-         <div className="flex items-center justify-center gap-x-3 lowercase tracking-widest">
-            <MdLanguage />
-            <p className="cursor-pointer">english</p>
+      <div className="xl:max-w-6xl mx-auto font-poppins">
+         <UserSelectPallete />
+         <div className="flex items-center justify-between sm:px-10">
+            {/* Time display */}
+            <div className="text-2xl font-medium font-poppins text-emerald-400">
+               <Timer input={inputRef} />
+            </div>
+            <div className="flex items-center justify-center gap-x-3 lowercase tracking-widest">
+               <MdLanguage />
+               <p className="cursor-pointer">english</p>
+            </div>
          </div>
-         <TextArea text={text} activeWord={activeWord} inputRef={inputRef} />
+
+         <TextArea text={text} activeWord={activeWord} />
 
          <div className="pt-8 flex items-center justify-center space-x-4">
             <input

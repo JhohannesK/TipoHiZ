@@ -1,20 +1,13 @@
 import React from 'react';
-import Timer from './modules/Timer';
 
 interface ITextAreaProps {
    text: string[];
    activeWord: number;
-   inputRef: React.RefObject<HTMLInputElement>;
 }
 
-const TextArea = ({ inputRef, text, activeWord }: ITextAreaProps) => {
+const TextArea = ({ text, activeWord }: ITextAreaProps) => {
    return (
-      <div className="flex flex-wrap p-6 sm:px-36 font-poppins text-2xl tracking-widest selection:bg-yellow-300 selection:text-white">
-         {/* Time display */}
-         <div className="absolute top-[12.5rem] text-2xl font-medium font-poppins text-emerald-400">
-            <Timer input={inputRef} />
-         </div>
-
+      <div className="flex flex-wrap p-6 sm:px-10 font-poppins text-2xl tracking-widest selection:bg-yellow-300 selection:text-white">
          {/* mapping through the text array */}
          {text?.map((word, index) => {
             if (index === activeWord) {

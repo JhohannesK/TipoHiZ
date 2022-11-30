@@ -1,26 +1,44 @@
 import create from 'zustand';
-import Constants from '../components/modules/_constants';
+import Constants from '../modules/_constants';
 
 export interface State {
    disabled: boolean;
    time: number;
-   setDisabled: (disabled: boolean) => void;
-   setTime: (time: any) => void;
    activeWord: number;
-   setActiveWord: (activeWord: number) => void;
    userInput: string;
-   setUserInput: (userInput: string) => void;
+   actions: {
+      setDisabled: (disabled: boolean) => void;
+      setTime: (time: any) => void;
+      setActiveWord: (activeWord: number) => void;
+      setUserInput: (userInput: string) => void;
+   };
 }
 
-const useStore = create<State>((set) => ({
+export const useStore = create<State>((set) => ({
    disabled: false,
-   setDisabled: (disabled: boolean) => set({ disabled }),
-   time: Constants.TimeSec,
-   setTime: (time: any) => set({ time }),
    activeWord: 0,
-   setActiveWord: (activeWord: number) => set({ activeWord }),
+   time: Constants.TimeSec,
    userInput: '',
-   setUserInput: (userInput: string) => set({ userInput }),
+
+   // Actions
+   actions: {
+      setDisabled: (disabled: boolean) => set({ disabled }),
+      setTime: (time: any) => set({ time }),
+      setActiveWord: (activeWord: number) => set({ activeWord }),
+      setUserInput: (userInput: string) => set({ userInput }),
+   },
 }));
 
-export default useStore;
+export const useStoreActions = () => useStore((state) => state.actions);
+
+// const config = create<Config>((set) => ({
+//    // Persist the state in localStorage
+//    persist: (name, config) => {
+//       const json = localStorage.getItem(name);
+//       if (json) set(JSON.parse(json));
+//       return config(
+//          (state) => localStorage.setItem(name, JSON.stringify(state)),
+//          false
+//       );
+//    },
+// }));
