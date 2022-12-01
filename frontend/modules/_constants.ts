@@ -1,9 +1,9 @@
 import { IConstants } from './_types';
 
 const Constants: IConstants = {
-   TimeSec: 30,
+   TimeSec: 15,
    options: {
-      type: ['Punctuation', 'Numbers'],
+      type: ['punctuation', 'numbers'],
       category: ['time', 'words', 'quotes'],
       time: [15, 30, 60, 120],
    },
