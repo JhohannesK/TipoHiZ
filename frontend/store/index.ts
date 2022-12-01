@@ -26,6 +26,7 @@ export const useStore = create<State>((set) => ({
       setTime: (time: any) => set({ time }),
       setActiveWord: (activeWord: number) => set({ activeWord }),
       setUserInput: (userInput: string) => set({ userInput }),
+      decreaseTime: () => set((state) => ({ time: state.time - 1 })),
    },
 }));
 
