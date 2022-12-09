@@ -8,7 +8,7 @@ import TextArea from './TextArea';
 import { useHotkeys } from 'react-hotkeys-hook';
 import UserSelectPallete from './UserSelectPallete';
 import { State } from '../store/@types.';
-import { userConfigStore, useStore } from '../store';
+import { userConfigStore, wordStore } from '../store';
 import useGetStatefromStorage from '../utils/useZustandHook';
 // import Timer, { startTimeCountDown } from '../modules/Timer';
 
@@ -27,9 +27,9 @@ const HomePage = () => {
    const router = useRouter();
    useHotkeys('tab', () => router.reload());
 
-   const { disabledInput, activeWord, userInput } = useStore(selector);
+   const { disabledInput, activeWord, userInput } = wordStore(selector);
 
-   // const { time } = useStore(({ time }) => ({ time }));
+   // const { time } = wordStore(({ time }) => ({ time }));
 
    const time = useGetStatefromStorage(
       userConfigStore,
@@ -65,22 +65,9 @@ const HomePage = () => {
             </div>
          </div>
 
-         <TextArea text={text} activeWord={activeWord} />
+         <TextArea />
 
          <div className="pt-8 flex items-center justify-center space-x-4">
-            {/* <input
-               type={userInput}
-               // ref={inputRef}
-               // onBlur={focus()}
-               autoFocus
-               className="w-[50rem] focus:outline-none px-5 py-5 rounded-lg text-lg text-black"
-               onChange={(e) => {
-                  processInput(e.target.value);
-               }}
-               // onKeyDown={(e) => console.log(e.key)}
-               value={userInput}
-               disabled={disabledInput}
-            /> */}
             <BsArrowRepeat
                className="hover:rotate-180 transition-all duration-500 ease-out cursor-pointer active:scale-150 active:text-green-300"
                size={30}

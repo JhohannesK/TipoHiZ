@@ -7,6 +7,8 @@ export interface State {
    activeWord: number;
    userInput: string;
    timerId: NodeJS.Timer | null | number;
+   wordList: string[];
+   caretRef: React.RefObject<HTMLSpanElement> | null;
 }
 
 export interface IuserConfig {

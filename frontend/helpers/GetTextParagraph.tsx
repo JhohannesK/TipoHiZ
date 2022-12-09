@@ -1,4 +1,4 @@
-import { paragraphs } from '../modules/Paragraphs';
+import { paragraphs } from '../modules/TextFiles/Paragraphs';
 
 const NUM_OF_WORDS: number = 30;
 export const getText = () => {

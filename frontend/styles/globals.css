@@ -8,5 +8,9 @@ body {
 }
 
 .selected {
-   color:rgb(236, 233, 34)
+   color: rgb(236, 233, 34);
+}
+
+.word {
+   @apply relative mt-0 mr-[6px] mb-1;
 }
