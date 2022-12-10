@@ -3,13 +3,13 @@ import { MdLanguage } from 'react-icons/md';
 import { BsArrowRepeat } from 'react-icons/bs';
 import { useRouter } from 'next/router';
 import { setActiveWord, setTime, setUserInput } from '../store/Actions';
-import { getText } from '../helpers/GetTextParagraph';
 import TextArea from './TextArea';
 import { useHotkeys } from 'react-hotkeys-hook';
 import UserSelectPallete from './UserSelectPallete';
 import { State } from '../store/@types.';
 import { userConfigStore, wordStore } from '../store';
-import useGetStatefromStorage from '../utils/useZustandHook';
+import useGetStatefromStorage from '../helpers/utils/useZustandHook';
+import { ResetTest } from '../helpers/reset';
 // import Timer, { startTimeCountDown } from '../modules/Timer';
 
 // cache selectors to prevent unnecessary computations
@@ -22,12 +22,12 @@ const selector = ({ disabled, activeWord, userInput }: State) => {
 };
 
 const HomePage = () => {
-   const [text, setText] = useState<string[]>([]);
-
-   const router = useRouter();
-   useHotkeys('tab', () => router.reload());
-
-   const { disabledInput, activeWord, userInput } = wordStore(selector);
+   const timerid = wordStore((state) => state.timerId);
+   const { type } = userConfigStore((state) => state);
+   useHotkeys('tab', () => {
+      ResetTest(timerid, type);
+      document.getElementsByClassName('word')[0].scrollIntoView();
+   });
 
    // const { time } = wordStore(({ time }) => ({ time }));
 
@@ -35,21 +35,6 @@ const HomePage = () => {
       userConfigStore,
       (state: any) => state.time
    );
-
-   //  Serves the selected paragraph to text of useState
-   // useEffect(() => {
-   //    setText(getText());
-   // }, []);
-
-   // const processInput = (value: string) => {
-   //    if (value.endsWith(' ')) {
-   //       checkWordsIfEqual();
-   //       setUserInput('');
-   //       setActiveWord(activeWord + 1);
-   //    } else {
-   //       setUserInput(value);
-   //    }
-   // };
 
    return (
       <div className="xl:max-w-6xl mx-auto font-poppins">
@@ -72,7 +57,10 @@ const HomePage = () => {
                className="hover:rotate-180 transition-all duration-500 ease-out cursor-pointer active:scale-150 active:text-green-300"
                size={30}
                onClick={(e) => {
-                  router.reload();
+                  e.preventDefault();
+                  // setTime(time);
+                  ResetTest(timerid, type);
+                  setUserInput('');
                }}
             />
          </div>

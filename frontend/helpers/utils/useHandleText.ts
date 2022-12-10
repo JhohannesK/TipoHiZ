@@ -1,6 +1,6 @@
 import React from 'react';
-import { wordStore } from '../store';
-import { setChar } from '../store/Actions';
+import { wordStore } from '../../store';
+import { setChar } from '../../store/Actions';
 
 export const useHandleText = (
    key: string,

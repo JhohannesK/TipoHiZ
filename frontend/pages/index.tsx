@@ -2,7 +2,7 @@ import Head from 'next/head';
 import React from 'react';
 import HomePage from '../components/HomePage';
 import { wordStore } from '../store';
-import { useHandleText } from '../utils/useHandleText';
+import { useHandleText } from '../helpers/utils/useHandleText';
 
 export default function Home() {
    const { activeWordRef } = wordStore((state) => state);
