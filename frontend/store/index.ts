@@ -19,11 +19,11 @@ export const userConfigStore = create<IuserConfig>()(
 
 export const wordStore = create<State>(() => ({
    disabled: false,
-   activeWord: 0,
+   activeWord: '',
    userInput: '',
    timerId: 2,
    wordList: [],
-   currWord: '',
    typedHistory: [],
    caretRef: null,
+   activeWordRef: null,
 }));

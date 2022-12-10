@@ -4,11 +4,12 @@ import { PersistOptions } from 'zustand/middleware';
 
 export interface State {
    disabled: boolean;
-   activeWord: number;
+   activeWord: string;
    userInput: string;
    timerId: NodeJS.Timer | null | number;
    wordList: string[];
    caretRef: React.RefObject<HTMLSpanElement> | null;
+   activeWordRef: React.RefObject<HTMLDivElement> | null;
 }
 
 export interface IuserConfig {
