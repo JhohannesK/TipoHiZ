@@ -12,15 +12,6 @@ import useGetStatefromStorage from '../helpers/utils/useZustandHook';
 import { ResetTest } from '../helpers/reset';
 // import Timer, { startTimeCountDown } from '../modules/Timer';
 
-// cache selectors to prevent unnecessary computations
-const selector = ({ disabled, activeWord, userInput }: State) => {
-   return {
-      disabledInput: disabled,
-      activeWord,
-      userInput,
-   };
-};
-
 const HomePage = () => {
    const timerid = wordStore((state) => state.timerId);
    const { type } = userConfigStore((state) => state);

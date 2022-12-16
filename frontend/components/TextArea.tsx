@@ -10,12 +10,12 @@ const TextArea = () => {
    const { activeWord } = wordStore(({ activeWord }) => {
       return { activeWord };
    });
+   const { userInput } = wordStore(({ userInput }) => {
+      return { userInput };
+   });
+
    const caretRef = React.useRef<HTMLSpanElement>(null);
    const activeWordRef = React.useRef<HTMLDivElement>(null);
-   console.log(
-      '🚀 ~ file: TextArea.tsx:12 ~ TextArea ~ activeWordRef',
-      activeWordRef
-   );
 
    React.useEffect(() => {
       setRef(activeWordRef);
@@ -28,7 +28,7 @@ const TextArea = () => {
       });
    }, [type]);
    return (
-      <div className="flex flex-wrap p-6 sm:px-10 font-poppins text-2xl tracking-wider selection:bg-yellow-300 selection:text-white">
+      <div className="flex flex-wrap p-6 sm:px-10 font-poppins text-2xl tracking-wider selection:bg-yellow-300 selection:text-white select-none">
          {/* mapping through the text array */}
          {wordList?.map((word, index) => {
             const isActive = activeWord === word;
@@ -42,9 +42,9 @@ const TextArea = () => {
                      <span
                         ref={caretRef}
                         id="caret"
-                        className="animate-blink text-green-400 ml-[-7px] absolute"
+                        className="animate-blink text-green-400 ml-[-4px] absolute"
                         style={{
-                           left: 0 * 14.5833,
+                           left: userInput.length * 14.5833,
                         }}
                      >
                         |

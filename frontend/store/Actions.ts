@@ -14,6 +14,7 @@ export const setWordList = (wordList: string[]) => {
    wordStore.setState((state) => ({
       wordList: shuffledList,
       activeWord: shuffledList[0],
+      userInput: '',
    }));
 };
 export const setCaretRef = (
