@@ -32,6 +32,14 @@ export const setChar = (key: string) => {
       userInput: state.userInput + key,
    }));
 };
+export const afterPressingSpace = () => {
+   wordStore.setState((state) => ({
+      nextIndex: state.wordList.indexOf(state.activeWord) + 1,
+      userInput: '',
+      typedHistory: [...state.typedHistory, state.userInput],
+      activeWord: state.wordList[state.nextIndex],
+   }));
+};
 
 export const setTime = (time: number) => userConfigStore.setState({ time });
 export const setTheme = (theme: string) => userConfigStore.setState({ theme });

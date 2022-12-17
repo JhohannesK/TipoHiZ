@@ -1,6 +1,6 @@
 import React from 'react';
 import { wordStore } from '../../store';
-import { setChar } from '../../store/Actions';
+import { afterPressingSpace, setChar } from '../../store/Actions';
 
 export const useHandleText = (
    key: string,
@@ -8,11 +8,13 @@ export const useHandleText = (
    caretRef: React.RefObject<HTMLSpanElement> | null,
    activeWordRef: React.RefObject<HTMLDivElement> | null
 ) => {
+   const { userInput } = wordStore.getState();
    const currWordEl = activeWordRef?.current!;
    currWordEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
    const caret = caretRef?.current;
    caret?.classList.remove('animate-blink');
    setTimeout(() => caret?.classList.add('animate-blink'), 500);
+
    switch (key) {
       case 'Backspace':
          if (CtrlKey) {
@@ -23,10 +25,9 @@ export const useHandleText = (
          }
          break;
       case ' ':
-         wordStore.setState((state) => ({
-            userInput: '',
-            // typedHistory: [...state.typedHistory, state.userInput],
-         }));
+         if (userInput === '') return;
+         afterPressingSpace();
+         break;
       default:
          setChar(key);
          break;

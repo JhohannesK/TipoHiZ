@@ -10,6 +10,8 @@ export interface State {
    wordList: string[];
    caretRef: React.RefObject<HTMLSpanElement> | null;
    activeWordRef: React.RefObject<HTMLDivElement> | null;
+   typedHistory: string[];
+   nextIndex: number;
 }
 
 export interface IuserConfig {

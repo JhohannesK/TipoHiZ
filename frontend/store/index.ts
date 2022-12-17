@@ -26,4 +26,5 @@ export const wordStore = create<State>(() => ({
    typedHistory: [],
    caretRef: null,
    activeWordRef: null,
+   nextIndex: 0,
 }));
