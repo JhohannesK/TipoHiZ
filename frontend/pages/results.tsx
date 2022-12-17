@@ -6,20 +6,20 @@ import { IuserConfig } from '../store/@types.';
 import { setTime } from '../store/Actions';
 
 const results = () => {
-   const router = useRouter();
-   return (
-      <div className="">
-         This is where the results would be displayed
-         <button
-            onClick={() => {
-               router.push('/');
-               setTime(Constants.TimeSec);
-            }}
-         >
-            Go back
-         </button>
-      </div>
-   );
+  const router = useRouter();
+  return (
+    <div className="">
+      This is where the results would be displayed
+      <button
+        onClick={() => {
+          router.push('/');
+          setTime(Constants.TimeSec);
+        }}
+      >
+        Go back
+      </button>
+    </div>
+  );
 };
 
 export default results;

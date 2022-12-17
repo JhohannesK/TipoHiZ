@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+cd frontend
+yarn ts-check
+npx prettier -w --config .prettierrc components pages
+git add .
