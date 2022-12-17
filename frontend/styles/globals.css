@@ -6,3 +6,11 @@ body {
    background-color: rgb(30 41 59 / 1);
    color: white;
 }
+
+.selected {
+   color: rgb(236, 233, 34);
+}
+
+.word {
+   @apply relative mt-0 mr-[6px] mb-1;
+}
