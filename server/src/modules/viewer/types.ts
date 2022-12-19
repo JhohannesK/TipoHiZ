@@ -13,7 +13,7 @@ export type ViewerCreationAttributes = Optional<ViewerAttributes, 'id'>;
 export interface Register {
   username: string;
   password: string;
-  role: string;
+  role?: string;
   email: string;
 }
 
