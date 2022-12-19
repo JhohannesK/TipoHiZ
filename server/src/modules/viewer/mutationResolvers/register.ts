@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import config from '../../../config';
+import {Context} from '../../../shared/types';
 import {Register} from '../types';
 
 // TODO: handle unhappy cases(errors-cases)
