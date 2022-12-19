@@ -56,7 +56,7 @@ Viewer.init(
     role: {
       type: DataTypes.ENUM,
       allowNull: false,
-      values: ['participant', 'administer'],
+      values: ['participant', 'administrator'],
     },
   },
   {
