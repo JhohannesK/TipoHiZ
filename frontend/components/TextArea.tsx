@@ -10,6 +10,7 @@ const TextArea = () => {
    const { activeWord } = wordStore(({ activeWord }) => {
       return { activeWord };
    });
+
    const { userInput } = wordStore(({ userInput }) => {
       return { userInput };
    });
@@ -17,10 +18,6 @@ const TextArea = () => {
    const { typedHistory } = wordStore(({ typedHistory }) => {
       return { typedHistory };
    });
-   console.log(
-      '🚀 ~ file: TextArea.tsx:18 ~ const{typedHistory}=wordStore ~ typedHistory',
-      typedHistory
-   );
 
    const caretRef = React.useRef<HTMLSpanElement>(null);
    const activeWordRef = React.useRef<HTMLDivElement>(null);
@@ -36,8 +33,6 @@ const TextArea = () => {
       });
    }, [type]);
 
-   // TODO: prevent caret from disppearing when user presses spacebar.
-
    return (
       <div className="flex flex-wrap p-6 sm:px-10 font-poppins text-2xl tracking-wider selection:bg-yellow-300 selection:text-white select-none">
          {/* mapping through the text array */}
@@ -48,9 +43,9 @@ const TextArea = () => {
                <div
                   key={word + index}
                   className="word relative"
-                  ref={activeWordRef}
+                  ref={isActive ? activeWordRef : null}
                >
-                  {isActive && (
+                  {isActive ? (
                      <span
                         ref={caretRef}
                         id="caret"
@@ -61,7 +56,7 @@ const TextArea = () => {
                      >
                         |
                      </span>
-                  )}
+                  ) : null}
                   {word.split('').map((char: string, charIndex: number) => (
                      <span key={char + charIndex}>{char}</span>
                   ))}

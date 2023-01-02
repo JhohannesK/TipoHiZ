@@ -35,6 +35,8 @@ export const setChar = (key: string) => {
 export const afterPressingSpace = () => {
    wordStore.setState((state) => ({
       nextIndex: state.wordList.indexOf(state.activeWord) + 1,
+   }));
+   wordStore.setState((state) => ({
       userInput: '',
       typedHistory: [...state.typedHistory, state.userInput],
       activeWord: state.wordList[state.nextIndex],
