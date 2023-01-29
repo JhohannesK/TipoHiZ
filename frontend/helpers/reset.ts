@@ -1,5 +1,5 @@
 import { userConfigStore, wordStore } from '../store';
-import { setWordList } from '../store/Actions';
+import { resetTest, setWordList } from '../store/Actions';
 
 export const ResetTest = async (
    timerid: number | NodeJS.Timer | null,
@@ -9,5 +9,6 @@ export const ResetTest = async (
       import(`../modules/TextFiles/${type}.json`).then((word) =>
          setWordList(word.default)
       );
+      resetTest();
    }
 };

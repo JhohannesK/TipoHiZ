@@ -43,6 +43,20 @@ export const afterPressingSpace = () => {
    }));
 };
 
+export const resetTest = () => {
+   wordStore.setState({
+      disabled: false,
+      activeWord: '',
+      userInput: '',
+      timerId: 2,
+      wordList: [],
+      typedHistory: [],
+      caretRef: null,
+      activeWordRef: null,
+      nextIndex: 0,
+   });
+};
+
 export const setTime = (time: number) => userConfigStore.setState({ time });
 export const setTheme = (theme: string) => userConfigStore.setState({ theme });
 export const setType = (type: string) => userConfigStore.setState({ type });
