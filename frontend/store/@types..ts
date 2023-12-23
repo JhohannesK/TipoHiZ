@@ -1,4 +1,3 @@
-import { type } from 'os';
 import { StateCreator } from 'zustand';
 import { PersistOptions } from 'zustand/middleware';
 
