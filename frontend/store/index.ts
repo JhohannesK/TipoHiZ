@@ -4,7 +4,7 @@ import { IuserConfig, MyPersist, State } from './@types.';
 import create from 'zustand';
 
 export const userConfigStore = create<IuserConfig>()(
-   (persist as any as MyPersist)(
+   (persist as unknown as MyPersist)(
       () => ({
          time: Constants.TimeSec,
          theme: '',

@@ -10,8 +10,9 @@ export const useHandleText = (
 ) => {
    const { userInput, activeWord } = wordStore.getState();
 
+   // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
    const currWordEl = activeWordRef?.current!;
-   console.log("🚀 ~ file: useHandleText.ts:14 ~ currWordEl:", currWordEl)
+   console.log('🚀 ~ file: useHandleText.ts:14 ~ currWordEl:', currWordEl);
 
    currWordEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
@@ -24,7 +25,7 @@ export const useHandleText = (
    switch (key) {
       case 'Backspace':
          if (CtrlKey) {
-            wordStore.setState((state) => ({
+            wordStore.setState(() => ({
                userInput: '',
                typedHistory: [],
             }));
@@ -32,9 +33,7 @@ export const useHandleText = (
          break;
       case ' ':
          if (userInput === '') return;
-         currWordEl.classList.add(
-            userInput !== activeWord ? "wrong" : "right"
-         );
+         currWordEl.classList.add(userInput !== activeWord ? 'wrong' : 'right');
          afterPressingSpace();
          break;
       default:

@@ -1,7 +1,8 @@
 import React from 'react';
 import Constants from '../modules/_constants';
 import { userConfigStore } from '../store';
-import { setCategory, setTime, setType } from '../store/actions/ConfigActions';
+import { setCategory, setType } from '../store/actions/ConfigActions';
+import { setTime } from '../store/actions/TimeActions';
 
 const UserSelectPallete = () => {
    const { options } = Constants;

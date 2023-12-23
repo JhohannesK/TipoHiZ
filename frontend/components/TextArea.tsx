@@ -58,7 +58,7 @@ const TextArea = () => {
                         |
                      </span>
                   ) : null}
-                  {word.split('').map((char: string, charIndex: number) => (
+                  {word.split('').map((char, charIndex) => (
                      <span className="" key={char + charIndex}>
                         {char}
                      </span>

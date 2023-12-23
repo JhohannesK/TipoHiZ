@@ -5,7 +5,8 @@
 	"main": "index.js",
 	"scripts": {
 		"install-all": "sh ./bin/install.sh",
-		"install-win": ".\\bin\\install.cmd"
+		"install-win": ".\\bin\\install.cmd",
+		"prepare": "husky install"
 	},
 	"repository": {
 		"type": "git",
@@ -17,8 +18,7 @@
 		"url": "https://github.com/JhohannesK/TipoHiZ/issues"
 	},
 	"homepage": "https://github.com/JhohannesK/TipoHiZ#readme",
-	"dependencies": {
-		"react-hotkeys-hook": "^4.0.4",
-		"zustand": "^4.4.7"
+	"devDependencies": {
+		"husky": "^8.0.0"
 	}
 }

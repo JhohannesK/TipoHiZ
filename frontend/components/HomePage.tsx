@@ -4,9 +4,7 @@ import { BsArrowRepeat } from 'react-icons/bs';
 import TextArea from './TextArea';
 import { useHotkeys } from 'react-hotkeys-hook';
 import UserSelectPallete from './UserSelectPallete';
-import { State } from '../store/@types.';
 import { userConfigStore, wordStore } from '../store';
-import useGetStatefromStorage from '../helpers/utils/useZustandHook';
 import { ResetTest } from '../helpers/reset';
 import { setUserInput } from '../store/actions/WordActions';
 // import Timer, { startTimeCountDown } from '../modules/Timer';
@@ -15,7 +13,7 @@ const HomePage = () => {
    const timerid = wordStore((state) => state.timerId);
    const { type } = userConfigStore((state) => state);
    useHotkeys('tab', () => {
-      wordStore.setState((state) => {
+      wordStore.setState(() => {
          return {
             typedHistory: [],
          };
@@ -26,11 +24,6 @@ const HomePage = () => {
    });
 
    // const { time } = wordStore(({ time }) => ({ time }));
-
-   const time = useGetStatefromStorage(
-      userConfigStore,
-      (state: any) => state.time
-   );
 
    return (
       <div className="xl:max-w-6xl mx-auto font-poppins">

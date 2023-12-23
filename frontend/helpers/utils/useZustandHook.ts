@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 
 export const useGetStatefromStorage = (store: any, callback: any) => {

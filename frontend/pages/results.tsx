@@ -1,9 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { userConfigStore } from '../store';
 import Constants from '../modules/_constants';
-import { IuserConfig } from '../store/@types.';
-import { setTime } from '../store/actions/ConfigActions';
+import { setTime } from '../store/actions/TimeActions';
 
 const results = () => {
    const router = useRouter();
