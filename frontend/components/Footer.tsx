@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import React from 'react';
 
-const Footer = () => {
+function Footer() {
    return (
       <div className="pb-[58px] pt-16 flex items-center space-x-2 justify-center">
          <div>
@@ -14,7 +14,7 @@ const Footer = () => {
          </div>
       </div>
    );
-};
+}
 
 export default Footer;
 

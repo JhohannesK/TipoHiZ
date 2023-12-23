@@ -1,4 +1,4 @@
-import { userConfigStore, wordStore } from "..";
+import { userConfigStore, wordStore } from '..';
 
 export const resetTest = () => {
    wordStore.setState({

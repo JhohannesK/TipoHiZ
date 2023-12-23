@@ -3,7 +3,7 @@ import { FaUserAlt } from 'react-icons/fa';
 
 // REVIEW: Change font-style and add some few things to it.
 
-const Header = () => {
+function Header() {
    return (
       <div className="flex items-center justify-between p-7 sm:px-32 ">
          <div className="flex items-center justify-center gap-x-5">
@@ -17,6 +17,6 @@ const Header = () => {
          </div>
       </div>
    );
-};
+}
 
 export default Header;

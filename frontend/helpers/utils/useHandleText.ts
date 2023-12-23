@@ -11,7 +11,7 @@ export const useHandleText = (
    const { userInput, activeWord } = wordStore.getState();
 
    const currWordEl = activeWordRef?.current!;
-   console.log("🚀 ~ file: useHandleText.ts:14 ~ currWordEl:", currWordEl)
+   console.log('🚀 ~ file: useHandleText.ts:14 ~ currWordEl:', currWordEl);
 
    currWordEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
@@ -32,9 +32,7 @@ export const useHandleText = (
          break;
       case ' ':
          if (userInput === '') return;
-         currWordEl.classList.add(
-            userInput !== activeWord ? "wrong" : "right"
-         );
+         currWordEl.classList.add(userInput !== activeWord ? 'wrong' : 'right');
          afterPressingSpace();
          break;
       default:

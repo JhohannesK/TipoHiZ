@@ -27,11 +27,6 @@ const HomePage = () => {
 
    // const { time } = wordStore(({ time }) => ({ time }));
 
-   const time = useGetStatefromStorage(
-      userConfigStore,
-      (state: any) => state.time
-   );
-
    return (
       <div className="xl:max-w-6xl mx-auto font-poppins">
          <UserSelectPallete />

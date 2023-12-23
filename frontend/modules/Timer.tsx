@@ -1,7 +1,7 @@
 import React from 'react';
 
-const Timer = () => {
-   return <div></div>;
-};
+function Timer() {
+   return <div />;
+}
 
 export default Timer;

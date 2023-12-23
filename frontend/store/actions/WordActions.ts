@@ -1,4 +1,4 @@
-import { wordStore } from "..";
+import { wordStore } from '..';
 
 export const setActiveWord = (activeWord: string) =>
    wordStore.setState({ activeWord });
@@ -17,7 +17,7 @@ export const setWordList = (wordList: string[]) => {
       wordList: shuffledList,
       activeWord: shuffledList[0],
       userInput: '',
-      typedHistory: []
+      typedHistory: [],
    }));
 };
 
