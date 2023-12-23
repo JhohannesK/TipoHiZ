@@ -7,6 +7,7 @@ const TextArea = () => {
    const { wordList } = wordStore(({ wordList }) => {
       return { wordList };
    });
+
    const { activeWord } = wordStore(({ activeWord }) => {
       return { activeWord };
    });
@@ -34,7 +35,7 @@ const TextArea = () => {
    }, [type]);
 
    return (
-      <div className="flex flex-wrap p-6 sm:px-10 font-poppins text-xl md:text-2xl tracking-wider selection:bg-yellow-300 selection:text-white select-none">
+      <div className="flex flex-wrap p-6 sm:px-10 font-poppins text-xl md:text-2xl h-32 text-[20pt] selection:bg-yellow-300 selection:text-white select-none">
          {/* mapping through the text array */}
          {wordList?.map((word, index) => {
             const isActive =
@@ -42,7 +43,7 @@ const TextArea = () => {
             return (
                <div
                   key={word + index}
-                  className="relative mt-0 mr-[6px] mb-1"
+                  className="relative mt-0 mr-[4px] mb-1"
                   ref={isActive ? activeWordRef : null}
                >
                   {isActive ? (
@@ -58,7 +59,9 @@ const TextArea = () => {
                      </span>
                   ) : null}
                   {word.split('').map((char: string, charIndex: number) => (
-                     <span key={char + charIndex}>{char}</span>
+                     <span className="" key={char + charIndex}>
+                        {char}
+                     </span>
                   ))}
                </div>
             );

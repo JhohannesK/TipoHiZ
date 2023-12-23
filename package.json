@@ -18,6 +18,7 @@
 	},
 	"homepage": "https://github.com/JhohannesK/TipoHiZ#readme",
 	"dependencies": {
-		"react-hotkeys-hook": "^4.0.4"
+		"react-hotkeys-hook": "^4.0.4",
+		"zustand": "^4.4.7"
 	}
 }

@@ -1,7 +1,7 @@
-import create from 'zustand';
 import { persist } from 'zustand/middleware';
 import Constants from '../modules/_constants';
 import { IuserConfig, MyPersist, State } from './@types.';
+import create from 'zustand';
 
 export const userConfigStore = create<IuserConfig>()(
    (persist as any as MyPersist)(

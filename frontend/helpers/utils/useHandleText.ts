@@ -1,6 +1,6 @@
 import React from 'react';
 import { wordStore } from '../../store';
-import { afterPressingSpace, setChar } from '../../store/actions/ConfigActions';
+import { afterPressingSpace, setChar } from '../../store/actions/WordActions';
 
 export const useHandleText = (
    key: string,
@@ -8,11 +8,16 @@ export const useHandleText = (
    caretRef: React.RefObject<HTMLSpanElement> | null,
    activeWordRef: React.RefObject<HTMLDivElement> | null
 ) => {
-   const { userInput } = wordStore.getState();
+   const { userInput, activeWord } = wordStore.getState();
+
    const currWordEl = activeWordRef?.current!;
+
    currWordEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
    const caret = caretRef?.current;
+
    caret?.classList.remove('animate-blink');
+
    setTimeout(() => caret?.classList.add('animate-blink'), 500);
 
    switch (key) {
@@ -26,6 +31,9 @@ export const useHandleText = (
          break;
       case ' ':
          if (userInput === '') return;
+         currWordEl.classList.add(
+            userInput !== activeWord ? "wrong" : "right"
+         );
          afterPressingSpace();
          break;
       default:

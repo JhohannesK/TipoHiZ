@@ -22,7 +22,7 @@ const HomePage = () => {
       });
       // BUG: TAB appears in the typeHistory and the tab is pressed to reset.
       ResetTest(timerid, type);
-      document.getElementsByClassName('word')[0].scrollIntoView();
+      // document.getElementsByClassName('word')[0].scrollIntoView();
    });
 
    // const { time } = wordStore(({ time }) => ({ time }));

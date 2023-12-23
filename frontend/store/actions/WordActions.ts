@@ -7,11 +7,17 @@ export const setUserInput = (userInput: string) =>
    wordStore.setState({ userInput });
 
 export const setWordList = (wordList: string[]) => {
-   const shuffledList = wordList.sort(() => Math.random() - 0.5);
+   const areNotWords = wordList.some((word) => word.includes(' '));
+   let shuffledList = wordList.sort(() => Math.random() - 0.5);
+   if (areNotWords) {
+      shuffledList = wordList.flatMap((word) => word.split(' '));
+   }
    wordStore.setState((state) => ({
+      ...state,
       wordList: shuffledList,
       activeWord: shuffledList[0],
       userInput: '',
+      typedHistory: []
    }));
 };
 
