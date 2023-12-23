@@ -1,5 +1,5 @@
-import { userConfigStore, wordStore } from '../store';
-import { resetTest, setWordList } from '../store/actions/ConfigActions';
+import { resetTest } from "../store/actions/TimeActions";
+import { setWordList } from "../store/actions/WordActions";
 
 export const ResetTest = async (
    timerid: number | NodeJS.Timer | null,

@@ -5,7 +5,8 @@
 	"main": "index.js",
 	"scripts": {
 		"install-all": "sh ./bin/install.sh",
-		"install-win": ".\\bin\\install.cmd"
+		"install-win": ".\\bin\\install.cmd",
+		"prepare": "husky install"
 	},
 	"repository": {
 		"type": "git",
@@ -16,5 +17,8 @@
 	"bugs": {
 		"url": "https://github.com/JhohannesK/TipoHiZ/issues"
 	},
-	"homepage": "https://github.com/JhohannesK/TipoHiZ#readme"
+	"homepage": "https://github.com/JhohannesK/TipoHiZ#readme",
+	"devDependencies": {
+		"husky": "^8.0.0"
+	}
 }

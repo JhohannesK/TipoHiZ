@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-npm ts-check
-npx prettier -w --config .prettierrc components pages
-git add .
+cd frontend
+npm run ts-check
+
