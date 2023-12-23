@@ -16,9 +16,5 @@
 	"bugs": {
 		"url": "https://github.com/JhohannesK/TipoHiZ/issues"
 	},
-	"homepage": "https://github.com/JhohannesK/TipoHiZ#readme",
-	"dependencies": {
-		"react-hotkeys-hook": "^4.0.4",
-		"zustand": "^4.4.7"
-	}
+	"homepage": "https://github.com/JhohannesK/TipoHiZ#readme"
 }
