@@ -3,11 +3,11 @@ import { AppProps } from 'next/app';
 import '../styles/globals.css';
 import { Inconsolata } from 'next/font/google';
 
-const inter = Inconsolata({ weight: '400', subsets: ['latin'] });
+const font = Inconsolata({ subsets: ['latin'] });
 
 function MyApp({ Component, pageProps }: AppProps) {
    return (
-      <main className={inter.className}>
+      <main className={font.className}>
          <Component {...pageProps} />;
       </main>
    );

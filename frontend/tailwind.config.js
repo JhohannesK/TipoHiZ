@@ -6,6 +6,10 @@ module.exports = {
    ],
    theme: {
       extend: {
+         fontFamily: {
+            sans: ['var(--font-inconsolata)'],
+            mono: ['var(--font-roboto-mono)'],
+         },
          keyframes: {
             blink: {
                '0%, 100%': { opacity: 0 },

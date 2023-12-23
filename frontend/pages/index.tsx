@@ -7,6 +7,10 @@ import Layout from './Layout';
 
 export default function Home() {
    const { activeWordRef } = wordStore((state) => state);
+   console.log(
+      '🚀 ~ file: index.tsx:10 ~ Home ~ activeWordRef:',
+      activeWordRef
+   );
    const { caretRef } = wordStore((state) => state);
 
    React.useEffect(() => {
@@ -19,7 +23,7 @@ export default function Home() {
       return () => {
          document.onkeydown = null;
       };
-   }, []);
+   }, [activeWordRef]);
    return (
       <div className="">
          <div>

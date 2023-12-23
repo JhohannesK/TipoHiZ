@@ -11,6 +11,7 @@ export const useHandleText = (
    const { userInput, activeWord } = wordStore.getState();
 
    const currWordEl = activeWordRef?.current!;
+   console.log("🚀 ~ file: useHandleText.ts:14 ~ currWordEl:", currWordEl)
 
    currWordEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 

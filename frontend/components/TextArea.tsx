@@ -35,7 +35,7 @@ const TextArea = () => {
    }, [type]);
 
    return (
-      <div className="flex flex-wrap p-6 sm:px-10 font-poppins text-xl md:text-2xl h-32 text-[20pt] selection:bg-yellow-300 selection:text-white select-none">
+      <div className="flex flex-wrap p-6 sm:px-10 font-poppins text-xl md:text-2xl h-32 selection:bg-yellow-300 selection:text-white select-none">
          {/* mapping through the text array */}
          {wordList?.map((word, index) => {
             const isActive =
@@ -52,7 +52,7 @@ const TextArea = () => {
                         id="caret"
                         className="animate-blink text-green-400 ml-[-7.29165px] absolute"
                         style={{
-                           left: userInput.length * 14.5833,
+                           left: userInput.length * 12.5833,
                         }}
                      >
                         |
