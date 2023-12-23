@@ -42,7 +42,7 @@
     "graphql": "^16.5.0",
     "graphql-iso-date": "^3.6.1",
     "graphql-resolvers": "^0.4.2",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "pg": "^8.7.3",
     "sequelize": "^6.19.2",
     "uuid": "^8.3.2"
