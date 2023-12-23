@@ -1,6 +1,6 @@
 import React from 'react';
 import { wordStore } from '../../store';
-import { afterPressingSpace, setChar } from '../../store/Actions';
+import { afterPressingSpace, setChar } from '../../store/actions/ConfigActions';
 
 export const useHandleText = (
    key: string,

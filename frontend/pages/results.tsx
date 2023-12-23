@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { userConfigStore } from '../store';
 import Constants from '../modules/_constants';
 import { IuserConfig } from '../store/@types.';
-import { setTime } from '../store/Actions';
+import { setTime } from '../store/actions/ConfigActions';
 
 const results = () => {
    const router = useRouter();

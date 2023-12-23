@@ -1,6 +1,6 @@
 import React from 'react';
 import { userConfigStore, wordStore } from '../store';
-import { setCaretRef, setRef, setWordList } from '../store/Actions';
+import { setCaretRef, setRef, setWordList } from '../store/actions/WordActions';
 
 const TextArea = () => {
    const { type } = userConfigStore((state) => state);
@@ -34,7 +34,7 @@ const TextArea = () => {
    }, [type]);
 
    return (
-      <div className="flex flex-wrap p-6 sm:px-10 font-poppins text-2xl tracking-wider selection:bg-yellow-300 selection:text-white select-none">
+      <div className="flex flex-wrap p-6 sm:px-10 font-poppins text-xl md:text-2xl tracking-wider selection:bg-yellow-300 selection:text-white select-none">
          {/* mapping through the text array */}
          {wordList?.map((word, index) => {
             const isActive =
@@ -42,14 +42,14 @@ const TextArea = () => {
             return (
                <div
                   key={word + index}
-                  className="word relative"
+                  className="relative mt-0 mr-[6px] mb-1"
                   ref={isActive ? activeWordRef : null}
                >
                   {isActive ? (
                      <span
                         ref={caretRef}
                         id="caret"
-                        className="animate-blink text-green-400 ml-[-4px] absolute"
+                        className="animate-blink text-green-400 ml-[-7.29165px] absolute"
                         style={{
                            left: userInput.length * 14.5833,
                         }}

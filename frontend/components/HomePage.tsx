@@ -1,8 +1,6 @@
-import React, { useState, useEffect, useRef, MutableRefObject } from 'react';
+import React from 'react';
 import { MdLanguage } from 'react-icons/md';
 import { BsArrowRepeat } from 'react-icons/bs';
-import { useRouter } from 'next/router';
-import { setActiveWord, setTime, setUserInput } from '../store/Actions';
 import TextArea from './TextArea';
 import { useHotkeys } from 'react-hotkeys-hook';
 import UserSelectPallete from './UserSelectPallete';
@@ -10,6 +8,7 @@ import { State } from '../store/@types.';
 import { userConfigStore, wordStore } from '../store';
 import useGetStatefromStorage from '../helpers/utils/useZustandHook';
 import { ResetTest } from '../helpers/reset';
+import { setUserInput } from '../store/actions/WordActions';
 // import Timer, { startTimeCountDown } from '../modules/Timer';
 
 const HomePage = () => {

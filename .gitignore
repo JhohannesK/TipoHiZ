@@ -1,0 +1,31 @@
+# Ignore build artifacts
+build/
+dist/
+out/
+
+# Ignore dependencies
+node_modules/
+vendor/
+
+# Ignore IDE and editor files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Ignore logs and temporary files
+*.log
+*.tmp
+
+# Ignore compiled binaries
+*.exe
+*.dll
+*.so
+
+# Ignore package files
+*.tar.gz
+*.zip
+
+# Ignore sensitive or private information
+config.ini
+secrets.txt

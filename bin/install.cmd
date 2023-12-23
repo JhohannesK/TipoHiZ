@@ -1,7 +1,8 @@
-call npm ci
+call npm i
+@REM call npm ci
 cd .\frontend
-call npm ci
-cd ..\backend
-call npm ci
+call npm i
+cd ..\server
+call npm i
 cd ..\
 PAUSE
