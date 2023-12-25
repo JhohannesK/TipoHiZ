@@ -39,6 +39,9 @@ export const setChar = (key: string) => {
    }));
 };
 
+export const setCurrChar = (currChar: string) =>
+   wordStore.setState({ currChar });
+
 export const setDisabled = (disabled: boolean) =>
    wordStore.setState({ disabled });
 

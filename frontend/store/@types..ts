@@ -5,6 +5,7 @@ export interface State {
    disabled: boolean;
    activeWord: string;
    userInput: string;
+   currChar: string;
    timerId: NodeJS.Timer | null | number;
    wordList: string[];
    caretRef: React.RefObject<HTMLSpanElement> | null;
