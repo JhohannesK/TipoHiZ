@@ -16,12 +16,17 @@ const TextArea = () => {
       return { userInput };
    });
 
+   // const { currChar } = wordStore(({ currChar }) => {
+   //    return { currChar };
+   // });
+
    const { typedHistory } = wordStore(({ typedHistory }) => {
       return { typedHistory };
    });
 
    const caretRef = React.useRef<HTMLSpanElement>(null);
    const activeWordRef = React.useRef<HTMLDivElement>(null);
+   const extraLetters = userInput.slice(activeWord.length).split('');
 
    React.useEffect(() => {
       setRef(activeWordRef);
@@ -43,7 +48,7 @@ const TextArea = () => {
             return (
                <div
                   key={word + index}
-                  className="relative mt-0 mr-[4px] mb-1"
+                  className="relative mt-0 mr-[14px] mb-1"
                   ref={isActive ? activeWordRef : null}
                >
                   {isActive ? (
@@ -58,11 +63,36 @@ const TextArea = () => {
                         |
                      </span>
                   ) : null}
-                  {word.split('').map((char, charIndex) => (
-                     <span className="" key={char + charIndex}>
-                        {char}
-                     </span>
-                  ))}
+                  {word.split('').map((char, charIndex) => {
+                     return (
+                        <span className={``} key={char + charIndex}>
+                           {char}
+                        </span>
+                     );
+                  })}
+                  {isActive
+                     ? extraLetters.map((char, charId) => {
+                          return (
+                             <span key={char + charId} className="wrong extra">
+                                {char}
+                             </span>
+                          );
+                       })
+                     : typedHistory[index]
+                     ? typedHistory[index]
+                          .slice(wordList[index].length)
+                          .split('')
+                          .map((char, charId) => {
+                             return (
+                                <span
+                                   key={char + charId}
+                                   className="wrong extra"
+                                >
+                                   {char}
+                                </span>
+                             );
+                          })
+                     : null}
                </div>
             );
          })}

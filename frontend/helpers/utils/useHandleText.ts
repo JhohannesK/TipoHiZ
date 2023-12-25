@@ -1,6 +1,10 @@
 import React from 'react';
 import { wordStore } from '../../store';
-import { afterPressingSpace, setChar } from '../../store/actions/WordActions';
+import {
+   afterPressingSpace,
+   setChar,
+   setCurrChar,
+} from '../../store/actions/WordActions';
 
 export const useHandleText = (
    key: string,
@@ -12,7 +16,6 @@ export const useHandleText = (
 
    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
    const currWordEl = activeWordRef?.current!;
-   console.log('🚀 ~ file: useHandleText.ts:14 ~ currWordEl:', currWordEl);
 
    currWordEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
@@ -37,6 +40,7 @@ export const useHandleText = (
          afterPressingSpace();
          break;
       default:
+         setCurrChar(key);
          setChar(key);
          break;
    }

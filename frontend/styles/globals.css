@@ -14,3 +14,11 @@ body {
 .word {
    @apply relative mt-0 mr-[6px] mb-1;
 }
+
+.wrong {
+   @apply text-red-500 underline;
+}
+
+.right {
+   @apply text-green-500;
+}
