@@ -40,7 +40,7 @@ const TextArea = () => {
    }, [type]);
 
    return (
-      <div className="flex flex-wrap p-6 sm:px-10 font-poppins text-xl md:text-2xl h-32 selection:bg-yellow-300 selection:text-white select-none">
+      <div className="flex flex-wrap p-6 sm:px-10 font-poppins text-xl md:text-2xl h-32 selection:bg-yellow-300 selection:text-white select-none overflow-hidden">
          {/* mapping through the text array */}
          {wordList?.map((word, index) => {
             const isActive =
@@ -51,18 +51,20 @@ const TextArea = () => {
                   className="relative mt-0 mr-[14px] mb-1"
                   ref={isActive ? activeWordRef : null}
                >
-                  {isActive ? (
-                     <span
-                        ref={caretRef}
-                        id="caret"
-                        className="animate-blink text-green-400 ml-[-7.29165px] absolute"
-                        style={{
-                           left: userInput.length * 12.5833,
-                        }}
-                     >
-                        |
-                     </span>
-                  ) : null}
+                  <div className="startView">
+                     {isActive ? (
+                        <span
+                           ref={caretRef}
+                           id="caret"
+                           className="animate-blink text-green-400 ml-[-7.29165px] absolute"
+                           style={{
+                              left: userInput.length * 12.5833,
+                           }}
+                        >
+                           |
+                        </span>
+                     ) : null}
+                  </div>
                   {word.split('').map((char, charIndex) => {
                      return (
                         <span className={``} key={char + charIndex}>

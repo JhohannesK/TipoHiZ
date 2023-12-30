@@ -36,7 +36,9 @@ export const useHandleText = (
          break;
       case ' ':
          if (userInput === '') return;
-         currWordEl.classList.add(userInput !== activeWord ? 'wrong' : 'right');
+         currWordEl?.classList.add(
+            userInput !== activeWord ? 'wrong' : 'right'
+         );
          afterPressingSpace();
          break;
       default:

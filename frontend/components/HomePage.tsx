@@ -20,7 +20,7 @@ const HomePage = () => {
       });
       // BUG: TAB appears in the typeHistory and the tab is pressed to reset.
       ResetTest(timerid, type);
-      // document.getElementsByClassName('word')[0].scrollIntoView();
+      // document.getElementsByClassName('startView')[0].scrollIntoView();
    });
 
    // const { time } = wordStore(({ time }) => ({ time }));
@@ -46,10 +46,10 @@ const HomePage = () => {
                className="hover:rotate-180 transition-all duration-500 ease-out cursor-pointer active:scale-150 active:text-green-300"
                size={30}
                onClick={(e) => {
-                  e.preventDefault();
                   // setTime(time);
                   ResetTest(timerid, type);
                   setUserInput('');
+                  e.preventDefault();
                }}
             />
          </div>
