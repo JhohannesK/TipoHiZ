@@ -1,5 +1,5 @@
 'use client';
-
+import React from 'react';
 import { ResetTest } from '@/helpers/reset';
 import { wordStore, userConfigStore } from '@/store';
 import { setUserInput } from '@/store/actions/WordActions';

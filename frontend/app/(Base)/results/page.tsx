@@ -1,5 +1,4 @@
-import Constants from '@/modules/_constants';
-import { setTime } from '@/store/actions/TimeActions';
+import React from 'react';
 import Link from 'next/link';
 
 export default function ResultsPage() {
