@@ -1,28 +1,19 @@
+'use client';
+
 import React from 'react';
 import { userConfigStore, wordStore } from '../store';
 import { setCaretRef, setRef, setWordList } from '../store/actions/WordActions';
+import useRecordInput from '@/helpers/utils/useRecordInput';
 
 const TextArea = () => {
    const { type } = userConfigStore((state) => state);
-   const { wordList } = wordStore(({ wordList }) => {
-      return { wordList };
-   });
-
-   const { activeWord } = wordStore(({ activeWord }) => {
-      return { activeWord };
-   });
-
-   const { userInput } = wordStore(({ userInput }) => {
-      return { userInput };
-   });
+   const { wordList, activeWord, userInput, typedHistory } = wordStore(
+      (state) => state
+   );
 
    // const { currChar } = wordStore(({ currChar }) => {
    //    return { currChar };
    // });
-
-   const { typedHistory } = wordStore(({ typedHistory }) => {
-      return { typedHistory };
-   });
 
    const caretRef = React.useRef<HTMLSpanElement>(null);
    const activeWordRef = React.useRef<HTMLDivElement>(null);
@@ -38,6 +29,8 @@ const TextArea = () => {
          setWordList(word.default);
       });
    }, [type]);
+
+   useRecordInput();
 
    return (
       <div className="flex flex-wrap p-6 sm:px-10 font-poppins text-xl md:text-2xl h-32 selection:bg-yellow-300 selection:text-white select-none overflow-hidden">

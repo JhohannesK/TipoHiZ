@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import Constants from '../modules/_constants';
 import { userConfigStore } from '../store';
