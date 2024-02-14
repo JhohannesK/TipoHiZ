@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import '@/styles/globals.css';
 
 import { Inconsolata } from 'next/font/google';
+import { ThemeProvider } from '@/components/theme-provider';
 
 const font = Inconsolata({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -20,7 +21,22 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
          <body
             className={`min-h-screen bg-background font-sans antialiased ${font.variable}`}
          >
-            {children}
+            <ThemeProvider
+               attribute="class"
+               defaultTheme="system"
+               enableSystem
+               disableTransitionOnChange
+               themes={[
+                  'light',
+                  'dark',
+                  'light-orange',
+                  'dark-orange',
+                  'light-green',
+                  'dark-green',
+               ]}
+            >
+               {children}
+            </ThemeProvider>
          </body>
       </html>
    );
