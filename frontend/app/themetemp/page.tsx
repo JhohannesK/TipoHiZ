@@ -1,6 +1,6 @@
 // TODO: Delete after theme integration
 // ** This is just to show how it works
-
+import React from 'react';
 import ThemeChoose from '@/components/expo/theme-choose';
 
 export default function Page() {

@@ -1,6 +1,6 @@
 // TODO: Delete after theme integration
 'use client';
-
+import React from 'react';
 import { useTheme } from 'next-themes';
 
 export default function ThemeChoose() {
