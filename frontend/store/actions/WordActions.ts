@@ -47,7 +47,7 @@ export const setDisabled = (disabled: boolean) =>
 
 export const afterPressingSpace = () => {
    wordStore.setState((state) => ({
-      nextIndex: state.wordList.indexOf(state.activeWord) + 1,
+      nextIndex: state.nextIndex + 1,
    }));
    wordStore.setState((state) => ({
       userInput: '',

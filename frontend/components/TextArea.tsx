@@ -11,10 +11,6 @@ const TextArea = () => {
       (state) => state
    );
 
-   // const { currChar } = wordStore(({ currChar }) => {
-   //    return { currChar };
-   // });
-
    const caretRef = React.useRef<HTMLSpanElement>(null);
    const activeWordRef = React.useRef<HTMLDivElement>(null);
    const extraLetters = userInput.slice(activeWord.length).split('');
@@ -33,8 +29,7 @@ const TextArea = () => {
    useRecordInput();
 
    return (
-      <div className="flex flex-wrap p-6 sm:px-10 font-poppins text-xl md:text-2xl h-32 selection:bg-yellow-300 selection:text-white select-none overflow-hidden">
-         {/* mapping through the text array */}
+      <div className="flex flex-wrap h-32 p-6 overflow-hidden text-xl select-none sm:px-10 font-poppins md:text-2xl selection:bg-yellow-300 selection:text-white">
          {wordList?.map((word, index) => {
             const isActive =
                activeWord === word && typedHistory.length === index;
