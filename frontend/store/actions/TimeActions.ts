@@ -8,8 +8,8 @@ export const resetTest = () => {
       timerId: 2,
       wordList: [],
       typedHistory: [],
-      caretRef: null,
-      activeWordRef: null,
+      // caretRef: null,
+      // activeWordRef: null,
       nextIndex: 0,
    });
 };

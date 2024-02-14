@@ -10,19 +10,19 @@ export default function ResetTestButton() {
    const timerid = wordStore((state) => state.timerId);
    const { type } = userConfigStore((state) => state);
    useHotkeys('tab', () => {
+      console.log('tab pressed');
       wordStore.setState(() => {
          return {
             typedHistory: [],
+            userInput: '',
          };
       });
-      // BUG: TAB appears in the typeHistory and the tab is pressed to reset.
       ResetTest(timerid, type);
-      // document.getElementsByClassName('startView')[0].scrollIntoView();
    });
 
    // const { time } = wordStore(({ time }) => ({ time }));
    return (
-      <div className="flex items-center justify-center pt-8 space-x-4">
+      <div className="flex items-center justify-center gap-4 pt-8">
          <BsArrowRepeat
             className="transition-all duration-500 ease-out cursor-pointer hover:rotate-180 active:scale-150 active:text-green-300"
             size={30}

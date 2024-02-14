@@ -13,5 +13,6 @@ export const ResetTest = async (
    import(`../modules/TextFiles/${type}.json`).then((word) =>
       setWordList(word.default)
    );
+   document.getElementsByClassName('startView')[0].scrollIntoView();
    resetTest();
 };

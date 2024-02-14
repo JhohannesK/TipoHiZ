@@ -20,5 +20,8 @@
 	"homepage": "https://github.com/JhohannesK/TipoHiZ#readme",
 	"devDependencies": {
 		"husky": "^8.0.0"
+	},
+	"dependencies": {
+		"is-mobile": "^4.0.0"
 	}
 }
