@@ -2,7 +2,7 @@
 import React from 'react';
 import { ResetTest } from '@/helpers/reset';
 import { wordStore, userConfigStore } from '@/store';
-import { setUserInput } from '@/store/actions/WordActions';
+import { setCaretRef, setUserInput } from '@/store/actions/WordActions';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { BsArrowRepeat } from 'react-icons/bs';
 
@@ -22,14 +22,15 @@ export default function ResetTestButton() {
 
    // const { time } = wordStore(({ time }) => ({ time }));
    return (
-      <div className="pt-8 flex items-center justify-center space-x-4">
+      <div className="flex items-center justify-center pt-8 space-x-4">
          <BsArrowRepeat
-            className="hover:rotate-180 transition-all duration-500 ease-out cursor-pointer active:scale-150 active:text-green-300"
+            className="transition-all duration-500 ease-out cursor-pointer hover:rotate-180 active:scale-150 active:text-green-300"
             size={30}
             onClick={(e) => {
                // setTime(time);
                ResetTest(timerid, type);
                setUserInput('');
+               setCaretRef(null);
                e.preventDefault();
             }}
          />

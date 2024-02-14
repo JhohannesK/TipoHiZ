@@ -19,11 +19,11 @@ export const useHandleText = (
 
    currWordEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-   const caret = caretRef?.current;
+   // const caret = caretRef?.current;
 
-   caret?.classList.remove('animate-blink');
+   // caret?.classList.remove('animate-blink');
 
-   setTimeout(() => caret?.classList.add('animate-blink'), 500);
+   // setTimeout(() => caret?.classList.add('animate-blink'), 500);
 
    switch (key) {
       case 'Backspace':
