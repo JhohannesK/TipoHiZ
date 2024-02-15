@@ -29,7 +29,16 @@ const TextArea = () => {
    useRecordInput();
 
    return (
-      <div className="flex flex-wrap h-32 overflow-hidden text-xl select-none sm:px-10 font-poppins md:text-2xl selection:bg-yellow-300 selection:text-white">
+      <div className="flex flex-wrap overflow-hidden text-xl select-none h-28 sm:px-10 font-poppins md:text-2xl selection:bg-yellow-300 selection:text-white">
+         <input
+            type="text"
+            className="absolute bg-transparent cursor-default pointer-events-none -z-10 "
+            autoCapitalize="off"
+            aria-autocomplete="none"
+            autoCorrect="off"
+            spellCheck="false"
+            data-enable-grammarly="false"
+         />
          {wordList?.map((word, index) => {
             const isActive =
                activeWord === word && typedHistory.length === index;
