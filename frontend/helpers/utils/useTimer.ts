@@ -1,29 +1,43 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-// https://stackoverflow.com/questions/63984376/how-can-i-implement-this-countdown-timer-in-react-with-hooks
+// ref: https://stackoverflow.com/questions/63984376/how-can-i-implement-this-countdown-timer-in-react-with-hooks
 const useTimer = (
-   //  exitCallback: Function | VoidFunction,
+   exitCallback: Function | null,
    lowerBound: number,
    upperBound: number,
-   runOnStart: boolean = false,
-   countDown: boolean = true
+   countDown: boolean = true,
+   runOnStart: boolean = false
 ) => {
-   // a bit of house-keeping here
-
    const initialTimer = countDown ? upperBound : lowerBound;
    const millisecond = useRef(initialTimer * 1000);
-   const previous = useRef(millisecond);
+   const previous = useRef(millisecond.current);
    const [timer, setTimer] = useState(initialTimer);
    const [isRunning, setIsRunning] = useState(runOnStart);
+   const [isExited, setIsExited] = useState(false);
+
+   const run = () => {
+      setIsRunning(true);
+   };
+
+   const pause = () => {
+      setIsRunning(false);
+   };
+
+   const reset = () => {
+      millisecond.current = initialTimer * 1000;
+      previous.current = millisecond.current;
+      setTimer(initialTimer);
+      setIsRunning(runOnStart);
+      setIsExited(false);
+   };
 
    useEffect(() => {
       if (
          !isRunning ||
          (countDown && millisecond.current <= lowerBound * 1000) ||
          (!countDown && millisecond.current >= upperBound * 1000)
-      ) {
+      )
          return;
-      }
 
       let currentMillisecond = millisecond.current;
       let currentTimeStamp: number, handle: number;
@@ -38,9 +52,17 @@ const useTimer = (
             : currentMillisecond + elapsedTime;
 
          if (countDown && millisecond.current <= lowerBound * 1000) {
+            if (exitCallback !== null) {
+               setIsExited(true);
+               exitCallback();
+            }
             setTimer(lowerBound);
             cancelAnimationFrame(handle);
          } else if (!countDown && millisecond.current >= upperBound * 1000) {
+            if (exitCallback !== null) {
+               setIsExited(true);
+               exitCallback();
+            }
             setTimer(upperBound);
             cancelAnimationFrame(handle);
          } else {
@@ -63,7 +85,7 @@ const useTimer = (
       };
    }, [isRunning]);
 
-   return { timer, isRunning, setIsRunning };
+   return { timer, isRunning, run, pause, reset, isExited };
 };
 
 export default useTimer;
