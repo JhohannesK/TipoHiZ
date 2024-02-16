@@ -24,10 +24,10 @@ export default function ThemeChoose() {
          <div className="flex justify-center space-x-5">
             {themes.map((currtheme) => (
                <button
-                  className={`rounded w-28 h-14 font-bold text-foreground bg-card hover:bg-accent ${
+                  className={`rounded w-28 h-14 font-bold text-input bg-background hover:bg-accent ${
                      theme === currtheme
-                        ? 'border-primary border-2'
-                        : 'border-border border'
+                        ? 'border-foreground border-2'
+                        : 'border-destructive border'
                   }`}
                   key={currtheme}
                   onClick={() => setTheme(currtheme)}
@@ -37,16 +37,12 @@ export default function ThemeChoose() {
             ))}
          </div>
 
-         <div className="flex items-center justify-center mt-10 flex-col">
-            <div className="font-extrabold text-9xl text-foreground">
-               {timer}
-            </div>
+         <div className="flex flex-col items-center justify-center mt-10">
+            <div className="font-extrabold text-9xl text-input">{timer}</div>
             <div className="flex flex-col">
                <button
-                  className={`flex font-bold items-center justify-center rounded py-2 mt-5 text-background w-48 ${
-                     isRunning || isExited
-                        ? 'bg-muted-foreground'
-                        : 'bg-primary'
+                  className={`flex font-bold items-center justify-center rounded py-2 mt-5 text-input w-48 ${
+                     isRunning || isExited ? 'bg-background' : 'bg-foreground'
                   }`}
                   onClick={run}
                   disabled={isRunning || isExited}
@@ -55,9 +51,7 @@ export default function ThemeChoose() {
                </button>
                <button
                   className={`flex font-bold items-center justify-center rounded py-2 mt-5 text-background w-48 ${
-                     !isRunning || isExited
-                        ? 'bg-muted-foreground'
-                        : 'bg-primary'
+                     isRunning || isExited ? 'bg-background' : 'bg-foreground'
                   }`}
                   onClick={pause}
                   disabled={!isRunning || isExited}
@@ -65,7 +59,7 @@ export default function ThemeChoose() {
                   pause
                </button>
                <button
-                  className="flex font-bold items-center justify-center bg-primary rounded py-2 mt-5 text-background w-48"
+                  className="flex items-center justify-center w-48 py-2 mt-5 font-bold rounded bg-destructive text-background"
                   onClick={reset}
                >
                   reset

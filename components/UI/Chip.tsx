@@ -14,11 +14,7 @@ const Chip = ({
    return (
       <div
          onClick={onClick}
-         className={
-            className +
-            ' ' +
-            'px-[4px] font-medium bg-purple-400 rounded-lg w-fit'
-         }
+         className={className + ' ' + 'px-[4px] font-medium rounded-lg w-fit'}
       >
          <div className="flex items-center justify-center gap-3">
             {icon}

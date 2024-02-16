@@ -7,17 +7,17 @@ export default function Page() {
    return (
       <>
          <div className="flex items-center justify-center">
-            <h1 className="font-bold text-4xl text-foreground">Theme Expo</h1>
+            <h1 className="text-4xl font-bold text-input">Theme Expo</h1>
          </div>
-         <div className="flex items-center justify-center text-foreground">
-            <div className="w-80 rounded m-11 p-4 border-2 border-border bg-card">
-               <h2 className="font-bold text-xl">Payment Method</h2>
+         <div className="flex items-center justify-center text-input">
+            <div className="p-4 border-2 rounded w-80 m-11 border-foreground bg-card">
+               <h2 className="text-xl font-bold">Payment Method</h2>
                <p className="text-sm">
                   Add a new payment method to your account
                </p>
                <button
                   type="submit"
-                  className="flex font-bold items-center justify-center bg-primary w-full rounded py-2 mt-5 text-background"
+                  className="flex items-center justify-center w-full py-2 mt-5 font-bold rounded bg-cursor text-background"
                >
                   <span>submit</span>
                </button>

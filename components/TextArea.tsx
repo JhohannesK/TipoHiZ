@@ -25,7 +25,7 @@ const TextArea = () => {
    }, [type]);
 
    return (
-      <div className="flex flex-wrap overflow-hidden text-xl select-none h-28 sm:px-10 font-poppins md:text-2xl selection:bg-yellow-300 selection:text-white">
+      <div className="flex flex-wrap overflow-hidden text-xl select-none h-28 sm:px-10 font-poppins md:text-2xl selection:bg-yellow-300 selection:text-white text-input">
          <input
             type="text"
             className="absolute bg-transparent cursor-default pointer-events-none -z-10 "
@@ -49,7 +49,7 @@ const TextArea = () => {
                         <span
                            ref={caretRef}
                            id="caret"
-                           className="animate-blink text-green-400 ml-[-7.29165px] absolute"
+                           className="animate-blink text-cursor ml-[-7.29165px] absolute"
                            style={{
                               left: userInput.length * 12.5833,
                            }}
