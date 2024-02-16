@@ -9,7 +9,7 @@ import { BsArrowRepeat } from 'react-icons/bs';
 export default function ResetTestButton() {
    const timerid = wordStore((state) => state.timerId);
    const { type } = userConfigStore((state) => state);
-   useHotkeys('tab', () => {
+   useHotkeys('tab+enter', () => {
       console.log('tab pressed');
       wordStore.setState(() => {
          return {

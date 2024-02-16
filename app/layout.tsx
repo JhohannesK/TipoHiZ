@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import '@/styles/globals.css';
 
 import { Inconsolata } from 'next/font/google';
-import { ThemeProvider } from '@/components/theme-provider';
+import { ThemeProvider } from '@/helpers/lib/theme-provider';
 
 const font = Inconsolata({ subsets: ['latin'], variable: '--font-sans' });
 
