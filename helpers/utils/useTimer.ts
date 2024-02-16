@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 // ref: https://stackoverflow.com/questions/63984376/how-can-i-implement-this-countdown-timer-in-react-with-hooks
 const useTimer = (
-   exitCallback: Function | null,
+   exitCallback: (() => void) | null,
    lowerBound: number,
    upperBound: number,
    countDown: boolean = true,
@@ -39,7 +39,7 @@ const useTimer = (
       )
          return;
 
-      let currentMillisecond = millisecond.current;
+      const currentMillisecond = millisecond.current;
       let currentTimeStamp: number, handle: number;
 
       const step = (timeStampInMillesconds: number) => {

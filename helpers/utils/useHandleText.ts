@@ -9,7 +9,6 @@ import {
 export const useHandleText = (
    key: string,
    CtrlKey: boolean,
-   caretRef: React.RefObject<HTMLSpanElement> | null,
    activeWordRef: React.RefObject<HTMLDivElement> | null
 ) => {
    const { userInput, activeWord } = wordStore.getState();
@@ -18,12 +17,6 @@ export const useHandleText = (
    const currWordEl = activeWordRef?.current!;
 
    currWordEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-   // const caret = caretRef?.current;
-
-   // caret?.classList.remove('animate-blink');
-
-   // setTimeout(() => caret?.classList.add('animate-blink'), 500);
 
    switch (key) {
       case 'Backspace':
@@ -34,6 +27,8 @@ export const useHandleText = (
             }));
          }
          break;
+      case 'Tab':
+         return;
       case ' ':
          if (userInput === '') return;
          currWordEl?.classList.add(

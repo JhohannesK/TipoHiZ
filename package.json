@@ -7,7 +7,7 @@
       "build": "next build",
       "start": "next start",
       "lint": "eslint --ext .js,.jsx,.ts,.tsx --fix .",
-      "prepare": "cd .. && husky install frontend/.husky",
+      "prepare": "husky install",
       "ts-check": "tsc --noEmit"
    },
    "dependencies": {
@@ -16,7 +16,7 @@
       "prettier": "^2.6.2",
       "react": "^18.2.0",
       "react-dom": "^18.2.0",
-      "react-hotkeys-hook": "^4.0.4",
+      "react-hotkeys-hook": "^4.5.0",
       "react-icons": "^4.4.0",
       "zustand": "^4.5.0"
    },

@@ -1,9 +1,7 @@
 'use client';
-
 import React from 'react';
 import { userConfigStore, wordStore } from '../store';
 import { setCaretRef, setRef, setWordList } from '../store/actions/WordActions';
-import useRecordInput from '@/helpers/utils/useRecordInput';
 
 const TextArea = () => {
    const { type } = userConfigStore((state) => state);
@@ -25,8 +23,6 @@ const TextArea = () => {
          setWordList(word.default);
       });
    }, [type]);
-
-   useRecordInput();
 
    return (
       <div className="flex flex-wrap overflow-hidden text-xl select-none h-28 sm:px-10 font-poppins md:text-2xl selection:bg-yellow-300 selection:text-white">

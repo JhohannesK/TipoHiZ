@@ -3,7 +3,8 @@ import { Metadata } from 'next';
 import '@/styles/globals.css';
 
 import { Inconsolata } from 'next/font/google';
-import { ThemeProvider } from '@/components/theme-provider';
+import { ThemeProvider } from '@/helpers/lib/theme-provider';
+import KeydownGetter from '@/helpers/lib/KeydownGetter';
 
 const font = Inconsolata({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -35,7 +36,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
                   'dark-green',
                ]}
             >
-               {children}
+               <KeydownGetter>{children}</KeydownGetter>
             </ThemeProvider>
          </body>
       </html>
