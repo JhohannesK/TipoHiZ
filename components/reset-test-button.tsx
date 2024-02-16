@@ -11,9 +11,9 @@ export default function ResetTestButton() {
 
    // const { time } = wordStore(({ time }) => ({ time }));
    return (
-      <div className="flex items-center justify-center gap-4 pt-8">
+      <div className="flex items-center justify-center gap-4 pt-8 text-input">
          <BsArrowRepeat
-            className="transition-all duration-500 ease-out cursor-pointer hover:rotate-180 active:scale-150 active:text-green-300"
+            className="transition-all duration-500 ease-out cursor-pointer hover:rotate-180 active:scale-150 active:text-accent"
             size={30}
             onClick={(e) => {
                // setTime(time);

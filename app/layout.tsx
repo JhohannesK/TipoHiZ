@@ -20,7 +20,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
       <html lang="en" suppressHydrationWarning>
          <head />
          <body
-            className={`min-h-screen bg-background font-sans antialiased ${font.variable}`}
+            className={`min-h-screen bg-background text-foreground font-sans antialiased ${font.variable}`}
          >
             <ThemeProvider
                attribute="class"
