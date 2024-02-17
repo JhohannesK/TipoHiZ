@@ -16,12 +16,12 @@ module.exports = {
       },
       extend: {
          colors: {
-            input: 'var(--input)',
-            destructive: 'var(--destructive)',
-            accent: 'var(--accent)',
-            background: 'var(--background)',
-            foreground: 'var(--foreground)',
-            cursor: 'var(--cursor)',
+            input: 'hsl(var(--input))',
+            destructive: 'hsl(var(--destructive))',
+            accent: 'hsl(var(--accent))',
+            background: 'hsl(var(--background))',
+            foreground: 'hsl(var(--foreground))',
+            cursor: 'hsl(var(--cursor))',
 
             // secondary: {
             //    DEFAULT: 'var(--secondary)',
