@@ -1,5 +1,4 @@
 'use client';
-
 import { userConfigStore, wordStore } from '@/store';
 import React, { useEffect } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
@@ -7,7 +6,7 @@ import { ResetTest } from '../reset';
 import { useHandleText } from '../utils/useHandleText';
 
 const KeydownGetter = ({ children }: { children: React.ReactNode }) => {
-   const timerid = wordStore((state) => state.timerId);
+   const { timerId } = wordStore((state) => state);
    const { type } = userConfigStore((state) => state);
 
    const { activeWordRef } = wordStore((state) => state);
@@ -32,7 +31,7 @@ const KeydownGetter = ({ children }: { children: React.ReactNode }) => {
             userInput: '',
          };
       });
-      ResetTest(timerid, type);
+      ResetTest(timerId, type);
    });
    return <>{children}</>;
 };

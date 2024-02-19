@@ -6,7 +6,7 @@ import create from 'zustand';
 export const userConfigStore = create<IuserConfig>()(
    (persist as unknown as MyPersist)(
       () => ({
-         time: Constants.TimeSec,
+         time: Constants.TimeSec, // default: 60
          theme: '',
          type: 'default', // 'punctuation', 'numbers', 'code'
          category: 'time', // 'time', 'words'
@@ -28,4 +28,5 @@ export const wordStore = create<State>(() => ({
    caretRef: null,
    activeWordRef: null,
    nextIndex: 0,
+   caretPos: 0,
 }));

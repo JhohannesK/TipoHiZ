@@ -1,7 +1,8 @@
+'use client';
 import React from 'react';
 
 function Timer() {
-   return <div />;
+   return <div>{'timer'}</div>;
 }
 
 export default Timer;

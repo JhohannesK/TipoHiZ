@@ -59,7 +59,7 @@ const UserSelectPallete = () => {
    };
 
    return (
-      <div className="flex items-center justify-center w-full pt-3">
+      <div className="flex items-center justify-center text-xl w-full pt-3">
          <div className="items-center justify-center hidden px-3 py-2 space-x-2 rounded-md sm:flex bg-foreground text-input ">
             {Object.entries(options).map(([option, choices]) => (
                <div
@@ -85,13 +85,13 @@ const UserSelectPallete = () => {
             <Chip
                onClick={() => setOpen(!open)}
                name="Test settings"
-               className="relative px-5 bg-secondary-foreground"
+               className="relative px-5 bg-foreground text-input"
                icon={<AiTwotoneSetting />}
             />
             <div
                className={
                   open
-                     ? `flex absolute top-8 w-[11rem]   bg-foreground text-primary opacity-80 px-5 py-4 rounded-xl z-10 flex-col gap-4`
+                     ? `flex absolute top-8 w-[11rem] bg-foreground text-input opacity-80 px-5 py-4 rounded-xl z-10 flex-col gap-4`
                      : 'hidden'
                }
             >

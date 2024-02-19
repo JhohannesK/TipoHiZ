@@ -3,15 +3,15 @@ import TextArea from '@/components/TextArea';
 import UserSelectPallete from '@/components/UserSelectPallete';
 import ResetTestButton from '@/components/reset-test-button';
 import { MdLanguage } from 'react-icons/md';
+import Timer from '@/components/Timer';
 
 export default function HomePage() {
    return (
       <div>
          <UserSelectPallete />
          <div className="flex items-center justify-between mt-16 sm:px-10">
-            {/* Time display */}
             <div className="text-2xl font-medium font-poppins text-accent">
-               {/* <Timer /> */}
+               <Timer />
             </div>
             <div className="flex items-center justify-center mb-4 tracking-widest lowercase text-input gap-x-3">
                <MdLanguage />
