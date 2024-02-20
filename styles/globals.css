@@ -4,67 +4,65 @@
 
 @layer base {
    :root {
-      --background: hsl(0 0% 100%);
-      --cursor: hsl(240 5.9% 10%);
-      --foreground: hsl(240 4.8% 95.9%);
-      --destructive: hsl(0 84.2% 60.2%);
-      --accent: hsl(96, 94%, 21%);
-      --input: hsl(240 5.9% 10%);
+      --background: 0 0% 100%;
+      --cursor: 240 5.9% 10%;
+      --foreground: 240 4.8% 95.9%;
+      --destructive: 0 84.2% 60.2%;
+      --accent: 96, 94%, 21%;
+      --input: 240 5.9% 10%;
       --radius: 0.5rem;
    }
 
    .dark {
-      --background: hsl(240 10% 3.9%);
-      --foreground: hsla(0, 2%, 22%, 0.295);
-      --destructive: hsl(0 62.8% 30.6%);
-      --input: hsl(240, 39%, 88%);
-      --accent: hsl(240, 54%, 65%);
-      --cursor: hsl(240, 74%, 77%);
+      --background: 240 10% 3.9%;
+      --foreground: 0, 2%, 22%, 0.295;
+      --destructive: 0 62.8% 30.6%;
+      --input: 240, 39%, 88%;
+      --accent: 240, 54%, 65%;
+      --cursor: 240, 74%, 77%;
       --radius: 0.5rem;
    }
 
    .light-green {
-      --background: hsl(0 0% 100%);
-      --foreground: hsl(240, 23%, 91%);
-      --input: hsl(142.1 76.2% 36.3%);
-      --destructive: hsl(0 84.2% 60.2%);
-      --accent: hsl(303, 15%, 50%);
-      --cursor: hsl(240, 74%, 77%);
+      --background: 0 0% 100%;
+      --foreground: 240, 23%, 91%;
+      --input: 142.1 76.2% 36.3%;
+      --destructive: 0 84.2% 60.2%;
+      --accent: 303, 15%, 50%;
+      --cursor: 240, 74%, 77%;
       --radius: 0.5rem;
    }
 
    .dark-orange {
-      --background: hsl(20 14.3% 4.1%);
-      --foreground: hsla(41, 66%, 61%, 0.116);
-      --input: hsl(20.5 90.2% 48.2%);
-      --destructive: hsl(0 72.2% 50.6%);
-      --accent: hsl(11, 64%, 87%);
-      --cursor: hsl(325, 73%, 37%);
+      --background: 20 14.3% 4.1%;
+      --foreground: 41, 66%, 61%, 0.116;
+      --input: 20.5 90.2% 48.2%;
+      --destructive: 0 72.2% 50.6%;
+      --accent: 11, 64%, 87%;
+      --cursor: 325, 73%, 37%;
       --radius: 0.5rem;
    }
 
    .dark-green {
-      --background: hsl(20 14.3% 4.1%);
-      --foreground: hsl(158, 3%, 50%);
-      --input: hsl(142.1 70.6% 45.3%);
-      --destructive: hsl(0 62.8% 30.6%);
-      --accent: hsl(144.9 80.4% 10%);
-      --cursor: hsl(152, 89%, 32%);
+      --background: 20 14.3% 4.1%;
+      --foreground: 158, 3%, 50%;
+      --input: 142.1 70.6% 45.3%;
+      --destructive: 0 62.8% 30.6%;
+      --accent: 144.9 80.4% 10%;
+      --cursor: 152, 89%, 32%;
       --radius: 0.5rem;
    }
 
    .light-orange {
-      --background: hsl(0 0% 100%);
-      --foreground: hsla(20, 14%, 4%, 0.068);
-      --input: hsl(24.6 95% 53.1%);
-      --accent: hsl(24, 56%, 52%);
-      --destructive: hsl(0 84.2% 60.2%);
-      --cursor: hsl(24 9.8% 10%);
+      --background: 0 0% 100%;
+      --foreground: 20, 14%, 4%, 0.068;
+      --input: 24.6 95% 53.1%;
+      --accent: 24, 56%, 52%;
+      --destructive: 0 84.2% 60.2%;
+      --cursor: 24 9.8% 10%;
       --radius: 0.5rem;
    }
-}
 
-@layer base {
    body {
       font-feature-settings: 'rlig' 1, 'calt' 1;
       transition: cubic-bezier(1, 0, 0, 1);
