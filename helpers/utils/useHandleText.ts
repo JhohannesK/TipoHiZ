@@ -8,8 +8,8 @@ import {
 
 export const useHandleText = (
    key: string,
-   CtrlKey: boolean,
-   activeWordRef: React.RefObject<HTMLDivElement> | null
+   activeWordRef: React.RefObject<HTMLDivElement> | null,
+   run: () => void
 ) => {
    const { userInput, activeWord } = wordStore.getState();
 
@@ -20,12 +20,10 @@ export const useHandleText = (
 
    switch (key) {
       case 'Backspace':
-         if (CtrlKey) {
-            wordStore.setState(() => ({
-               userInput: '',
-               typedHistory: [],
-            }));
-         }
+         wordStore.setState(() => ({
+            userInput: '',
+            typedHistory: [],
+         }));
          break;
       case 'Tab':
          return;
@@ -39,6 +37,7 @@ export const useHandleText = (
       default:
          setCurrChar(key);
          setChar(key);
+         run();
          break;
    }
 };

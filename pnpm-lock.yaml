@@ -70,6 +70,9 @@ devDependencies:
    postcss:
       specifier: ^8.4.31
       version: 8.4.31
+   simple-zustand-devtools:
+      specifier: ^1.1.0
+      version: 1.1.0(@types/react-dom@18.2.19)(@types/react@18.0.21)(react-dom@18.2.0)(react@18.2.0)(zustand@4.5.0)
    tailwindcss:
       specifier: ^3.1.1
       version: 3.1.1(postcss@8.4.31)
@@ -343,6 +346,15 @@ packages:
          {
             integrity: sha512-ga8y9v9uyeiLdpKddhxYQkxNDrfvuPrlFb0N1qnZZByvcElJaXthF1UhvCh9TLWJBEHeNtdnbysW7Y6Uq8CVng==,
          }
+
+   /@types/react-dom@18.2.19:
+      resolution:
+         {
+            integrity: sha512-aZvQL6uUbIJpjZk4U8JZGbau9KDeAwMfmhyWorxgBkqDIEf6ROjRozcmPIicqsUwPUjbkDfHKgGee1Lq65APcA==,
+         }
+      dependencies:
+         '@types/react': 18.0.21
+      dev: true
 
    /@types/react@18.0.21:
       resolution:
@@ -3381,6 +3393,25 @@ packages:
          object-inspect: 1.13.1
       dev: true
 
+   /simple-zustand-devtools@1.1.0(@types/react-dom@18.2.19)(@types/react@18.0.21)(react-dom@18.2.0)(react@18.2.0)(zustand@4.5.0):
+      resolution:
+         {
+            integrity: sha512-Axfcfr9L3YL3kto7aschCQLY2VUlXXMnIVtaTe9Y0qWbNmPsX/y7KsNprmxBZoB0pww5ZGs1u/ohcrvQ3tE6jA==,
+         }
+      peerDependencies:
+         '@types/react': '>=18.0.0'
+         '@types/react-dom': '>=18.0.0'
+         react: '>=18.0.0'
+         react-dom: '>=18.0.0'
+         zustand: '>=1.0.2'
+      dependencies:
+         '@types/react': 18.0.21
+         '@types/react-dom': 18.2.19
+         react: 18.2.0
+         react-dom: 18.2.0(react@18.2.0)
+         zustand: 4.5.0(@types/react@18.0.21)(react@18.2.0)
+      dev: true
+
    /slash@3.0.0:
       resolution:
          {
@@ -3741,7 +3772,6 @@ packages:
          react: ^16.8.0 || ^17.0.0 || ^18.0.0
       dependencies:
          react: 18.2.0
-      dev: false
 
    /util-deprecate@1.0.2:
       resolution:
@@ -3889,4 +3919,3 @@ packages:
          '@types/react': 18.0.21
          react: 18.2.0
          use-sync-external-store: 1.2.0(react@18.2.0)
-      dev: false

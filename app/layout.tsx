@@ -4,7 +4,6 @@ import '@/styles/globals.css';
 
 import { Inconsolata } from 'next/font/google';
 import { ThemeProvider } from '@/helpers/lib/theme-provider';
-import KeydownGetter from '@/helpers/lib/KeydownGetter';
 
 const font = Inconsolata({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -36,7 +35,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
                   'dark-green',
                ]}
             >
-               <KeydownGetter>{children}</KeydownGetter>
+               {children}
             </ThemeProvider>
          </body>
       </html>
