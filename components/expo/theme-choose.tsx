@@ -7,7 +7,7 @@ import useTimer from '@/helpers/utils/useTimer';
 export default function ThemeChoose() {
    const { setTheme, theme } = useTheme();
    const { timer, run, reset, pause, isRunning, isExited } = useTimer(
-      () => alert('Count Down/UP finished'),
+      // () => alert('Count Down/UP finished'),
       0,
       10
    );

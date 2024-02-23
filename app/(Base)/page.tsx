@@ -10,11 +10,7 @@ import useKeydownGetter from '@/helpers/utils/useKeydownGetter';
 
 export default function HomePage() {
    const { time } = userConfigStore((state) => state);
-   const { timer, run, reset } = useTimer(
-      () => alert('Count Down/UP finished'),
-      0,
-      time
-   );
+   const { timer, run, reset } = useTimer(1, time);
    useKeydownGetter({ run, reset });
    return (
       <div>
