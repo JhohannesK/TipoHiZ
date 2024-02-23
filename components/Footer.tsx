@@ -16,6 +16,8 @@ function Footer() {
                   Contribute on Github{' '}
                   <span className="text-sm text-primary">
                      <Link
+                        tabIndex={-1}
+                        aria-label="Link to TipoHiZ on GitHub"
                         className="font-bold"
                         href="https://github.com/JhohannesK/TipoHiZ"
                      >{`\<TipoHiZ/\>`}</Link>

@@ -53,5 +53,6 @@ export const afterPressingSpace = () => {
       userInput: '',
       typedHistory: [...state.typedHistory, state.userInput],
       activeWord: state.wordList[state.nextIndex],
+      caretPos: 0,
    }));
 };

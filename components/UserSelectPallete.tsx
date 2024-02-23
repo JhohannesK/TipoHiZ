@@ -4,11 +4,12 @@ import React, { useState } from 'react';
 import Constants from '../modules/_constants';
 import { userConfigStore } from '../store';
 import { setCategory, setType } from '../store/actions/ConfigActions';
-import { setTime } from '../store/actions/TimeActions';
+import { setDefaultTime } from '../store/actions/TimeActions';
 import { AiTwotoneSetting } from 'react-icons/ai';
 import Chip from './UI/Chip';
+import { resetTest } from '@/helpers/reset';
 
-const UserSelectPallete = () => {
+const UserSelectPallete = ({ reset }: { reset: () => void }) => {
    const [open, setOpen] = useState(false);
    const { options } = Constants;
    const time = userConfigStore((state) => state.time);
@@ -22,6 +23,7 @@ const UserSelectPallete = () => {
       document
          .querySelector(`button[value="${time}"]`)
          ?.classList.add('selected');
+      reset();
    }, [time]);
 
    React.useEffect(() => {
@@ -46,7 +48,8 @@ const UserSelectPallete = () => {
       if (target instanceof HTMLButtonElement && target.dataset.option) {
          switch (target.dataset.option) {
             case 'time':
-               setTime(+target.value);
+               setDefaultTime(+target.value);
+               resetTest(type, reset);
                break;
             case 'type':
                setType(target.value);
@@ -59,7 +62,7 @@ const UserSelectPallete = () => {
    };
 
    return (
-      <div className="flex items-center justify-center w-full pt-3">
+      <div className="flex items-center justify-center text-xl w-full pt-3">
          <div className="items-center justify-center hidden px-3 py-2 space-x-2 rounded-md sm:flex bg-foreground text-input ">
             {Object.entries(options).map(([option, choices]) => (
                <div
@@ -69,6 +72,7 @@ const UserSelectPallete = () => {
                   {choices.map((choice, index) => {
                      return (
                         <button
+                           tabIndex={-1}
                            value={choice}
                            key={index}
                            data-option={option}
@@ -91,7 +95,7 @@ const UserSelectPallete = () => {
             <div
                className={
                   open
-                     ? `flex absolute top-8 w-[11rem]   bg-foreground text-input opacity-80 px-5 py-4 rounded-xl z-10 flex-col gap-4`
+                     ? `flex absolute top-8 w-[11rem] bg-foreground text-input opacity-80 px-5 py-4 rounded-xl z-10 flex-col gap-4`
                      : 'hidden'
                }
             >

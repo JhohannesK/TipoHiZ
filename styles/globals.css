@@ -65,6 +65,8 @@
 
    body {
       font-feature-settings: 'rlig' 1, 'calt' 1;
+      transition: cubic-bezier(1, 0, 0, 1);
+      animation-duration: 300ms;
    }
 }
 
