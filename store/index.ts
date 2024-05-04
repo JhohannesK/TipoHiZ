@@ -22,13 +22,15 @@ export const wordStore = create<WordState>(() => ({
    disabled: false,
    activeWord: '',
    userInput: '',
-   currChar: '',
+   nextChar: '',
    wordList: [],
    typedHistory: [],
    caretRef: null,
    activeWordRef: null,
    nextIndex: 0,
    caretPos: 0,
+   nextCharIdx: 0,
+   typedEntries: 0,
 }));
 
 // export const timeStore = create<TimeState>(() => ({

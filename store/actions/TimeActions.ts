@@ -10,6 +10,7 @@ export const resetStates = () => {
       // caretRef: null,
       // activeWordRef: null,
       nextIndex: 0,
+      typedEntries: 0,
    });
 };
 

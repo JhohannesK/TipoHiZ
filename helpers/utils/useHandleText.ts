@@ -1,9 +1,10 @@
 import React from 'react';
 import { wordStore } from '../../store';
 import {
+   IncreaseTypedEntries,
    afterPressingSpace,
    setChar,
-   setCurrChar,
+   setNextChar,
 } from '../../store/actions/WordActions';
 
 export const useHandleText = (
@@ -20,6 +21,7 @@ export const useHandleText = (
 
    switch (key) {
       case 'Backspace':
+         return;
          wordStore.setState(() => ({
             userInput: '',
             typedHistory: [],
@@ -35,7 +37,8 @@ export const useHandleText = (
          afterPressingSpace();
          break;
       default:
-         setCurrChar(key);
+         setNextChar();
+         IncreaseTypedEntries();
          setChar(key);
          run();
          break;

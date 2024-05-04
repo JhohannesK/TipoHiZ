@@ -24,3 +24,7 @@ export const loadFromLocalStorage = ({ key }: { key: string }) => {
       return undefined;
    }
 };
+
+export const grossWPM = (typedEntries: number, time: number) => {
+   return ((typedEntries / 5) * 60) / time;
+};
