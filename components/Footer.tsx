@@ -1,16 +1,29 @@
 import Link from 'next/link';
 import React from 'react';
+import Chip from './UI/Chip';
 
 function Footer() {
    return (
-      <div className="pb-[58px] pt-16 flex items-center space-x-2 justify-center">
-         <div>
-            <p>Contribute on Github</p>
+      <div className="flex flex-col items-center justify-center w-full gap-8 text-input">
+         <div className="flex items-center justify-center gap-3">
+            <Chip className="bg-foreground text-input" name="tab" /> +{' '}
+            <Chip className="bg-foreground text-input" name="enter" /> to reset
+            test
          </div>
-         <div>
-            <p className="text-emerald-500 text-sm">
-               <Link href="https://github.com/JhohannesK/TipoHiZ">{`\<TipoHiZ/\>`}</Link>
-            </p>
+         <div className="pb-[58px] flex items-center gap-2 justify-center">
+            <div>
+               <p className="flex items-center justify-center gap-2">
+                  Contribute on Github{' '}
+                  <span className="text-sm text-primary">
+                     <Link
+                        tabIndex={-1}
+                        aria-label="Link to TipoHiZ on GitHub"
+                        className="font-bold"
+                        href="https://github.com/JhohannesK/TipoHiZ"
+                     >{`\<TipoHiZ/\>`}</Link>
+                  </span>
+               </p>
+            </div>
          </div>
       </div>
    );

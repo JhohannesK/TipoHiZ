@@ -1,16 +1,16 @@
 import React from 'react';
 import { wordStore } from '../../store';
 import {
+   IncreaseTypedEntries,
    afterPressingSpace,
    setChar,
-   setCurrChar,
+   setNextChar,
 } from '../../store/actions/WordActions';
 
 export const useHandleText = (
    key: string,
-   CtrlKey: boolean,
-   caretRef: React.RefObject<HTMLSpanElement> | null,
-   activeWordRef: React.RefObject<HTMLDivElement> | null
+   activeWordRef: React.RefObject<HTMLDivElement> | null,
+   run: () => void
 ) => {
    const { userInput, activeWord } = wordStore.getState();
 
@@ -19,21 +19,16 @@ export const useHandleText = (
 
    currWordEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-   // const caret = caretRef?.current;
-
-   // caret?.classList.remove('animate-blink');
-
-   // setTimeout(() => caret?.classList.add('animate-blink'), 500);
-
    switch (key) {
       case 'Backspace':
-         if (CtrlKey) {
-            wordStore.setState(() => ({
-               userInput: '',
-               typedHistory: [],
-            }));
-         }
+         return;
+         wordStore.setState(() => ({
+            userInput: '',
+            typedHistory: [],
+         }));
          break;
+      case 'Tab':
+         return;
       case ' ':
          if (userInput === '') return;
          currWordEl?.classList.add(
@@ -42,8 +37,10 @@ export const useHandleText = (
          afterPressingSpace();
          break;
       default:
-         setCurrChar(key);
+         setNextChar();
+         IncreaseTypedEntries();
          setChar(key);
+         run();
          break;
    }
 };

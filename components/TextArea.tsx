@@ -1,9 +1,7 @@
 'use client';
-
 import React from 'react';
 import { userConfigStore, wordStore } from '../store';
 import { setCaretRef, setRef, setWordList } from '../store/actions/WordActions';
-import useRecordInput from '@/helpers/utils/useRecordInput';
 
 const TextArea = () => {
    const { type } = userConfigStore((state) => state);
@@ -26,11 +24,9 @@ const TextArea = () => {
       });
    }, [type]);
 
-   useRecordInput();
-
    return (
-      <div className="flex flex-wrap overflow-hidden text-xl select-none h-28 sm:px-10 font-poppins md:text-2xl selection:bg-yellow-300 selection:text-white">
-         <input
+      <div className="flex flex-wrap overflow-hidden text-xl select-none h-28 sm:px-10 font-poppins md:text-2xl selection:bg-yellow-300 selection:text-white text-input">
+         {/* <input
             type="text"
             className="absolute bg-transparent cursor-default pointer-events-none -z-10 "
             autoCapitalize="off"
@@ -38,14 +34,14 @@ const TextArea = () => {
             autoCorrect="off"
             spellCheck="false"
             data-enable-grammarly="false"
-         />
+         /> */}
          {wordList?.map((word, index) => {
             const isActive =
                activeWord === word && typedHistory.length === index;
             return (
                <div
                   key={word + index}
-                  className="relative mt-0 mr-[14px] mb-1"
+                  className="relative mt-0 mx-[7px] mb-1"
                   ref={isActive ? activeWordRef : null}
                >
                   <div className="startView">
@@ -53,13 +49,11 @@ const TextArea = () => {
                         <span
                            ref={caretRef}
                            id="caret"
-                           className="animate-blink text-green-400 ml-[-7.29165px] absolute"
+                           className="animate-blink rounded-sm flex items-start w-[.08em] h-7 top-1 bg-cursor justify-start text-cursor  absolute"
                            style={{
-                              left: userInput.length * 12.5833,
+                              left: userInput.length * 12.3833,
                            }}
-                        >
-                           |
-                        </span>
+                        />
                      ) : null}
                   </div>
                   {word.split('').map((char, charIndex) => {

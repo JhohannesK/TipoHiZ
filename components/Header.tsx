@@ -7,13 +7,13 @@ function Header() {
    return (
       <div className="flex items-center justify-between p-7">
          <div className="flex items-center justify-center gap-x-5">
-            <p className="font-bold text-xl text-emerald-400 select-none hover:animate-shake">
+            <p className="text-xl font-bold select-none text-input hover:animate-shake">
                TipoHiz.__
             </p>
          </div>
          <div className="flex items-center justify-center gap-x-7">
-            <FaUserAlt className="text-gray-400" />
-            <p className=" text-sm tracking-wide">username</p>
+            <FaUserAlt className="text-input" />
+            <p className="text-sm tracking-wide text-input">username</p>
          </div>
       </div>
    );

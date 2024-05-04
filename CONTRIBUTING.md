@@ -75,14 +75,14 @@ git merge upstream/main
 
 ⚠️ **Make sure** not to commit `package.json` or `package-lock.json` file. If there is a need to commit them. You would need to seek permission in the discussions first before commiting them.
 
-⚠️ **Make sure** not to run the commands `git add .` or `git add *`
+<!-- ⚠️ **Make sure** not to run the commands `git add .` or `git add *` -->
 
-> Instead, stage your changes for each file/folder
+<!-- > Instead, stage your changes for each file/folder
 >
-> By using public path it means it will add all files and folders under that folder, it is better to be specific
+> By using public path it means it will add all files and folders under that folder, it is better to be specific -->
 
 ```bash
-git add public
+git add .
 ```
 
 _or_
@@ -103,7 +103,7 @@ git commit -m "<your_commit_message>"
 git push origin YourBranchName
 ```
 
-**11.** Create a [Pull Request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request)!
+**11.** Create a [Pull Request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request)! to the `preview` branch.
 
 **12.** **Congratulations!** You've made your first contribution to [**TipoHiZ**](https://github.com/JhohannesK/TipoHiZ/graphs/contributors)! 🎉🙌🏼
 

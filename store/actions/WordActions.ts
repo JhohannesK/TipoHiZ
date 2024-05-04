@@ -36,11 +36,14 @@ export const setRef = (
 export const setChar = (key: string) => {
    wordStore.setState((state) => ({
       userInput: state.userInput + key,
+      nextCharIdx: state.nextCharIdx + 1,
    }));
 };
 
-export const setCurrChar = (currChar: string) =>
-   wordStore.setState({ currChar });
+export const setNextChar = () =>
+   wordStore.setState((state) => ({
+      nextChar: state.activeWord[state.nextCharIdx],
+   }));
 
 export const setDisabled = (disabled: boolean) =>
    wordStore.setState({ disabled });
@@ -48,10 +51,18 @@ export const setDisabled = (disabled: boolean) =>
 export const afterPressingSpace = () => {
    wordStore.setState((state) => ({
       nextIndex: state.nextIndex + 1,
+      nextCharIdx: 0,
    }));
    wordStore.setState((state) => ({
       userInput: '',
       typedHistory: [...state.typedHistory, state.userInput],
       activeWord: state.wordList[state.nextIndex],
+      caretPos: 0,
    }));
+   IncreaseTypedEntries();
 };
+
+export const IncreaseTypedEntries = () =>
+   wordStore.setState((state) => ({
+      typedEntries: state.typedEntries + 1,
+   }));

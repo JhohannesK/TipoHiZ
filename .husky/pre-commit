@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-pnpm run ts-check
+pnpm ts-check
 pnpm run lint
 npx prettier --write .
 git add .

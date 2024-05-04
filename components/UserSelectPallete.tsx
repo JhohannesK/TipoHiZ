@@ -1,12 +1,16 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Constants from '../modules/_constants';
 import { userConfigStore } from '../store';
 import { setCategory, setType } from '../store/actions/ConfigActions';
-import { setTime } from '../store/actions/TimeActions';
+import { setDefaultTime } from '../store/actions/TimeActions';
+import { AiTwotoneSetting } from 'react-icons/ai';
+import Chip from './UI/Chip';
+import { resetTest } from '@/helpers/reset';
 
-const UserSelectPallete = () => {
+const UserSelectPallete = ({ reset }: { reset: () => void }) => {
+   const [open, setOpen] = useState(false);
    const { options } = Constants;
    const time = userConfigStore((state) => state.time);
    const type = userConfigStore((state) => state.type);
@@ -19,6 +23,7 @@ const UserSelectPallete = () => {
       document
          .querySelector(`button[value="${time}"]`)
          ?.classList.add('selected');
+      reset();
    }, [time]);
 
    React.useEffect(() => {
@@ -43,7 +48,8 @@ const UserSelectPallete = () => {
       if (target instanceof HTMLButtonElement && target.dataset.option) {
          switch (target.dataset.option) {
             case 'time':
-               setTime(+target.value);
+               setDefaultTime(+target.value);
+               resetTest(type, reset);
                break;
             case 'type':
                setType(target.value);
@@ -56,26 +62,66 @@ const UserSelectPallete = () => {
    };
 
    return (
-      <div className="w-full pt-3 flex items-center justify-center">
-         <div className="flex items-center justify-center space-x-2 bg-slate-900 px-3 py-2 rounded-md">
+      <div className="flex items-center justify-center text-xl w-full pt-3">
+         <div className="items-center justify-center hidden px-3 py-2 space-x-2 rounded-md sm:flex bg-foreground text-input ">
             {Object.entries(options).map(([option, choices]) => (
                <div
                   key={option}
                   className={`${option} flex items-center justify-center space-x-2`}
                >
-                  {choices.map((choice, index) => (
-                     <button
-                        value={choice}
-                        key={index}
-                        className={``}
-                        data-option={option}
-                        onClick={(e) => handleOption(e)}
-                     >
-                        {choice}
-                     </button>
-                  ))}
+                  {choices.map((choice, index) => {
+                     return (
+                        <button
+                           tabIndex={-1}
+                           value={choice}
+                           key={index}
+                           data-option={option}
+                           onClick={(e) => handleOption(e)}
+                        >
+                           {choice}
+                        </button>
+                     );
+                  })}
                </div>
             ))}
+         </div>
+         <div className="relative flex sm:hidden">
+            <Chip
+               onClick={() => setOpen(!open)}
+               name="Test settings"
+               className="relative px-5 bg-foreground text-input"
+               icon={<AiTwotoneSetting />}
+            />
+            <div
+               className={
+                  open
+                     ? `flex absolute top-8 w-[11rem] bg-foreground text-input opacity-80 px-5 py-4 rounded-xl z-10 flex-col gap-4`
+                     : 'hidden'
+               }
+            >
+               {Object.entries(options).map(([option, choices]) => (
+                  <div
+                     key={option}
+                     className={`${option} flex flex-col items-center justify-center gap-2`}
+                  >
+                     {choices.map((choice, index) => {
+                        return (
+                           <button
+                              value={choice}
+                              key={index}
+                              data-option={option}
+                              onClick={(e) => {
+                                 handleOption(e);
+                                 setOpen(false);
+                              }}
+                           >
+                              {choice}
+                           </button>
+                        );
+                     })}
+                  </div>
+               ))}
+            </div>
          </div>
       </div>
    );
