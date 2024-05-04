@@ -5,12 +5,14 @@ export interface WordState {
    disabled: boolean;
    activeWord: string;
    userInput: string;
-   currChar: string;
+   nextChar: string;
    wordList: string[];
    caretRef: React.RefObject<HTMLSpanElement> | null;
    activeWordRef: React.RefObject<HTMLDivElement> | null;
    typedHistory: string[];
    nextIndex: number;
+   nextCharIdx: number;
+   typedEntries: number;
 }
 
 export interface TimeState {
