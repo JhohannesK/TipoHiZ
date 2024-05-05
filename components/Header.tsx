@@ -1,8 +1,6 @@
 import React from 'react';
 import { FaUserAlt } from 'react-icons/fa';
 
-// REVIEW: Change font-style and add some few things to it.
-
 function Header() {
    return (
       <div className="flex items-center justify-between p-7">
@@ -11,9 +9,9 @@ function Header() {
                TipoHiz.__
             </p>
          </div>
-         <div className="flex items-center justify-center gap-x-7">
+         <div className="flex items-center justify-center p-2 px-2 rounded-full gap-x-5 bg-foreground">
             <FaUserAlt className="text-input" />
-            <p className="text-sm tracking-wide text-input">username</p>
+            <p className="text-sm tracking-wide text-input">Login</p>
          </div>
       </div>
    );
