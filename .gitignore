@@ -5,6 +5,11 @@
 /.pnp
 .pnp.js
 
+pnpm lock file
+pnpm-lock.yaml
+
+tsconfig.tsbuildinfo
+
 # testing
 /coverage
 

@@ -7,6 +7,8 @@ import { MdLanguage } from 'react-icons/md';
 import useTimer from '@/helpers/utils/useTimer';
 import { userConfigStore } from '@/store';
 import useKeydownGetter from '@/helpers/utils/useKeydownGetter';
+import { IoIosColorPalette } from 'react-icons/io';
+import ThemeChoose from '@/components/expo/theme-choose';
 
 export default function HomePage() {
    const { time } = userConfigStore((state) => state);
@@ -31,6 +33,12 @@ export default function HomePage() {
             <div className="flex items-center justify-center mb-4 tracking-widest lowercase text-input gap-x-3">
                <MdLanguage />
                <p className="cursor-pointer">english</p>
+            </div>
+            <div>
+               <div className="flex items-center gap-1 cursor-pointer text-input">
+                  <IoIosColorPalette />
+                  <ThemeChoose />
+               </div>
             </div>
          </div>
          <TextArea />

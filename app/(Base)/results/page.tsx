@@ -5,8 +5,6 @@ import { userConfigStore, wordStore } from '@/store';
 import { grossWPM } from '@/helpers/utils/util';
 
 export default function ResultsPage() {
-   // TODO: Call this function after click -> cannot be done here -> This is a server component
-   // setDefaultTime(Constants.TimeSec);
    const { typedEntries } = wordStore.getState();
    const { time } = userConfigStore.getState();
    const wpm = grossWPM(typedEntries, time);
