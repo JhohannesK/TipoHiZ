@@ -2,15 +2,23 @@
 'use client';
 import React from 'react';
 import { useTheme } from 'next-themes';
-import useTimer from '@/helpers/utils/useTimer';
+// import useTimer from '@/helpers/utils/useTimer';
+import {
+   Dialog,
+   DialogContent,
+   DialogDescription,
+   DialogHeader,
+   DialogTitle,
+   DialogTrigger,
+} from '../UI/dialog';
 
 export default function ThemeChoose() {
    const { setTheme, theme } = useTheme();
-   const { timer, run, reset, pause, isRunning, isExited } = useTimer(
-      // () => alert('Count Down/UP finished'),
-      0,
-      10
-   );
+   // const { timer, run, reset, pause, isRunning, isExited } = useTimer(
+   //    // () => alert('Count Down/UP finished'),
+   //    0,
+   //    10
+   // );
    const themes = [
       'light',
       'dark',
@@ -21,23 +29,37 @@ export default function ThemeChoose() {
    ];
    return (
       <>
-         <div className="flex justify-center space-x-5">
-            {themes.map((currtheme) => (
-               <button
-                  className={`rounded w-28 h-14 font-bold text-input bg-background hover:bg-accent ${
-                     theme === currtheme
-                        ? 'border-foreground border-2'
-                        : 'border-destructive border'
-                  }`}
-                  key={currtheme}
-                  onClick={() => setTheme(currtheme)}
-               >
-                  {currtheme}
-               </button>
-            ))}
-         </div>
+         <Dialog>
+            <DialogTrigger className="text-input">{theme}</DialogTrigger>
+            <DialogContent>
+               <DialogHeader>
+                  <DialogTitle className="text-input">
+                     Choose a theme
+                  </DialogTitle>
+                  <DialogDescription>
+                     {/* This action cannot be undone. This will permanently delete
+                     your account and remove your data from our servers. */}
+                     <div className="flex flex-col justify-center gap-3">
+                        {themes.map((currtheme) => (
+                           <button
+                              className={`rounded w-full h-14 font-bold text-input bg-background hover:bg-foreground ${
+                                 theme === currtheme
+                                    ? 'border-foreground border-2'
+                                    : 'border-destructive border'
+                              }`}
+                              key={currtheme}
+                              onClick={() => setTheme(currtheme)}
+                           >
+                              {currtheme}
+                           </button>
+                        ))}
+                     </div>
+                  </DialogDescription>
+               </DialogHeader>
+            </DialogContent>
+         </Dialog>
 
-         <div className="flex flex-col items-center justify-center mt-10">
+         {/* <div className="flex flex-col items-center justify-center mt-10">
             <div className="font-extrabold text-9xl text-input">{timer}</div>
             <div className="flex flex-col">
                <button
@@ -65,7 +87,7 @@ export default function ThemeChoose() {
                   reset
                </button>
             </div>
-         </div>
+         </div> */}
       </>
    );
 }
