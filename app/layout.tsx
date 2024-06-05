@@ -1,7 +1,7 @@
 import React from 'react';
 import { Metadata } from 'next';
 import '@/styles/globals.css';
-
+import { Analytics } from '@vercel/analytics/react';
 import { Inconsolata } from 'next/font/google';
 import { ThemeProvider } from '@/helpers/lib/theme-provider';
 
@@ -18,6 +18,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
    return (
       <html lang="en" suppressHydrationWarning>
          <head />
+         <Analytics />
          <body
             className={`min-h-screen bg-background text-foreground font-sans antialiased ${font.variable}`}
          >
