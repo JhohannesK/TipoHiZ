@@ -1,7 +1,5 @@
 # About
 
-https://tipohiz-preview.vercel.app/
-=======
 Tipohiz is a sleek and customizable typing test platform designed to enhance your typing skills. Our user-friendly interface offers a variety of test modes to challenge typists of all levels. Whether you're a beginner looking to boost your typing speed or a seasoned typist aiming to break your personal record, Tipohiz offers the tools and features you need to succeed. Start your typing journey with Tipohiz today and watch your skills soar!
 
 # Features
