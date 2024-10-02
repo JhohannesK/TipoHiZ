@@ -6,10 +6,10 @@ We take the security and integrity of Monkeytype very seriously. If you have fou
 
 For vulnerabilities that impact the confidentiality, integrity, and availability of TipoHiZ, please send your disclosure via [email](jdomeh77@gmail.com). For non-security related platform bugs, follow the bug submission [guidelines](https://github.com/jhohannesk/tipohiz#bug-report-or-feature-request). Include as much detail as possible to ensure reproducibility. At a minimum, vulnerability disclosures should include:
 
-- Vulnerability Description
-- Proof of Concept
-- Impact
-- Screenshots or Proof
+-  Vulnerability Description
+-  Proof of Concept
+-  Impact
+-  Screenshots or Proof
 
 ### Submission Guidelines
 

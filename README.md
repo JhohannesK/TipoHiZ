@@ -8,16 +8,17 @@ Tipohiz is a sleek and customizable typing test platform designed to enhance you
 
 # Features
 
-- minimalistic design
-- live errors, wpm, and accuracy displays
-- punctuation and numbers modes
-- themes
+-  minimalistic design
+-  live errors, wpm, and accuracy displays
+-  punctuation and numbers modes
+-  themes
 
 # Future Features
-- a variety of test lengths and languages
-- quotes
-- Real-time typing challenges with other users.
-- Language support.
+
+-  a variety of test lengths and languages
+-  quotes
+-  Real-time typing challenges with other users.
+-  Language support.
 
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 ![Eslint](https://img.shields.io/badge/eslint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white)
