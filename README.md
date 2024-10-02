@@ -1,3 +1,4 @@
-## PREVIEW LINK
+## DO YOU WANT TO SEE HOW TIPOHIZ LOOKS LIKE?
 
-https://tipohiz-preview.vercel.app/
+Use the link below:
+[https://tipohiz-preview.vercel.app/](https://tipohiz.vercel.app/)
