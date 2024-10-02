@@ -39,12 +39,3 @@ Before contributing to this repository, please read the [code of conduct](CODE_O
 # Security
 
 To report a security vulnerability, please refer to [SECURITY.md](SECURITY.md).
-
-# 🐳 Deploying with Docker
-Deploying with Docker makes for an easy and consistant development experience
-
-- **Ensure Docker is Running**: Install/Start Docker on the host machine
-- **Open a Terminal**: Open a terminal in the root project directory. (Where the compose.yaml file is located)
-- **Run Compose Command**: Run the docker compose command. 'docker compose up -d'
-- **Open a browser**: Navigate to the url http://localhost:3000
-- **Enjoy!**: You should be able to navigate the application in your browser!
