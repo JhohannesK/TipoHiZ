@@ -7,12 +7,18 @@
 
 ### Contribute in framework
 
+
 -  [Nextjs](<[https://graphql.org/](https://nextjs.org/docs)>)
 
 ### Contribute in state-management
 
 -  [Zustand](https://zustand.docs.pmnd.rs/getting-started/introduction)
+=======
+-  [Nextjs]([https://graphql.org/](https://nextjs.org/docs))
 
+
+### Contribute in state-management
+- [Zustand](https://zustand.docs.pmnd.rs/getting-started/introduction)
 ---
 
 ## 💥 How to Contribute
