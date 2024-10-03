@@ -28,7 +28,13 @@ export default function ThemeChoose() {
       'dark-green',
       'dark-gray',
       'midnight-blue',
+      'ocean',
+      'girly',
+      'retro',
+      'sunshine',
+      'hacktoberfest',
    ];
+
    return (
       <>
          <Dialog>
