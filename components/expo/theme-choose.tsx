@@ -32,6 +32,10 @@ export default function ThemeChoose() {
       'sunshine',
       'hacktoberfest',
       'cyberpunk',
+];
+    
+
+   //script.js
 
    return (
       <Dialog>
