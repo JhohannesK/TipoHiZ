@@ -113,13 +113,15 @@
       --radius: 0.5rem;
    }
    
+   
    .cyberpunk {
       --background: 0 0% 10%;
-      --foreground: 180 100% 90%;
-      --input: 0 0% 30%;
+      --foreground: 0 100% 80%;
+      --input: 240, 50%, 30%;
       --destructive: 0 100% 50%;
-      --accent: 320 100% 50%;
-      --cursor: 240 100% 50%;
+      --accent: 200, 100%, 50%;
+      --cursor: 300, 100%, 50%;
+      --border: 200, 100%, 50%;
       --radius: 0.5rem;
    }
 
