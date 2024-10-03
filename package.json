@@ -8,7 +8,8 @@
       "start": "next start",
       "lint": "eslint --ext .js,.jsx,.ts,.tsx --fix .",
       "prepare": "husky install",
-      "ts-check": "tsc --noEmit"
+      "ts-check": "tsc --noEmit",
+      "install-all": "cross-env npm install && cd backend && npm install && cd ../frontend && npm install"
    },
    "dependencies": {
       "@radix-ui/react-dialog": "^1.0.5",
@@ -30,6 +31,7 @@
       "@types/react": "^18.0.21",
       "@typescript-eslint/eslint-plugin": "^6.15.0",
       "autoprefixer": "^10.4.7",
+      "cross-env": "^7.0.3",
       "eslint": "^8.17.0",
       "eslint-config-next": "^12.1.6",
       "eslint-config-prettier": "^8.5.0",
