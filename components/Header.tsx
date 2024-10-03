@@ -4,7 +4,8 @@ import { FaUserAlt } from 'react-icons/fa';
 function Header() {
    return (
       <div className="flex items-center justify-between p-7">
-         <div className="flex items-center justify-center gap-x-5">
+         <div className="flex items-center justify-center gap-x-2">
+            <img src="/favicon.ico" alt="TipoHiz Favicon" className="h-8 w-8" />
             <p className="text-xl font-bold select-none text-input hover:animate-shake">
                TipoHiz.__
             </p>
