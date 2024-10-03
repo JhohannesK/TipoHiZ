@@ -63,6 +63,25 @@
       --radius: 0.5rem;
    }
 
+   .dark-gray {
+      --background: 220 10% 15%;
+      --foreground: 70 5.2% 22.7%;
+      --input: 0 0% 96.1%;
+      --accent: 240 5.9% 50%;
+      --destructive: 0 50% 50%;
+      --cursor: 240 5.9% 75%;
+      --radius: 0.5rem;
+   }
+
+   .midnight-blue {
+      --background: 228 22% 12%;
+      --foreground: 231 27.2% 44.7%;
+      --input: 0 0% 97.3%;
+      --accent: 164 91.8% 52.2%;
+      --destructive: 0 72.8% 52.6%;
+      --cursor: 228 45% 65%;
+   }
+
    body {
       font-feature-settings: 'rlig' 1, 'calt' 1;
       transition: cubic-bezier(1, 0, 0, 1);
