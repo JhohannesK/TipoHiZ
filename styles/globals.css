@@ -112,7 +112,7 @@
       --input: 120 30% 15%;
       --radius: 0.5rem;
    }
-
+   
    .cyberpunk {
     --background: hsl(230, 20%, 15%);   
     --foreground: hsl(0, 100%, 85%);    
