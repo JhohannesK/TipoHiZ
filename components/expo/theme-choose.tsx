@@ -31,8 +31,7 @@ export default function ThemeChoose() {
       'retro',
       'sunshine',
       'hacktoberfest',
-];
-    
+   ];
 
    //script.js
 
