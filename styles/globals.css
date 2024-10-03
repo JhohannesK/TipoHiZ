@@ -44,12 +44,12 @@
    }
 
    .dark-green {
-      --background: 20 14.3% 4.1%;
-      --foreground: 158, 3%, 50%;
+      --background: 127 100% 5%;
+      --foreground: 0, 0%, 20%;
       --input: 142.1 70.6% 45.3%;
       --destructive: 0 62.8% 30.6%;
-      --accent: 144.9 80.4% 10%;
-      --cursor: 152, 89%, 32%;
+      --accent: 127 100% 77%;
+      --cursor: 127 100% 37%;
       --radius: 0.5rem;
    }
 
@@ -80,6 +80,56 @@
       --accent: 164 91.8% 52.2%;
       --destructive: 0 72.8% 52.6%;
       --cursor: 228 45% 65%;
+   }
+
+   .ocean {
+      --background: 193 60% 95%;
+      --cursor: 191 70% 50%;
+      --foreground: 191 49% 76%;
+      --destructive: 0 100% 50%;
+      --accent: 255 100% 30%;
+      --input: 191 80% 30%;
+      --radius: 0.5rem;
+   }
+
+   .girly {
+      --background: 340 100% 95%;
+      --cursor: 340 70% 50%;
+      --foreground: 340 49% 76%;
+      --destructive: 0 100% 50%;
+      --accent: 298 49% 41%;
+      --input: 340 80% 30%;
+      --radius: 0.5rem;
+   }
+
+   .retro {
+      --background: 245 0% 22%;
+      --cursor: 0 0% 80%;
+      --foreground: 0 0% 0%;
+      --destructive: 298 49% 0%;
+      --accent: 0 100% 100%;
+      --input: 0 0% 50%;
+      --radius: 0.5rem;
+   }
+
+   .sunshine {
+      --background: 46 100% 78%;
+      --cursor: 60 70% 40%;
+      --foreground: 31 100% 67%;
+      --destructive: 0 100% 50%;
+      --accent: 20 84% 56%;
+      --input: 46 100% 18%;
+      --radius: 0.5rem;
+   }
+
+   .hacktoberfest {
+      --background: 118, 66%, 58%;
+      --cursor: 240 90% 5%;
+      --foreground: 300 100% 35%;
+      --destructive: 60 33% 90%;
+      --accent: 0 0% 0%;
+      --input: 120 30% 15%;
+      --radius: 0.5rem;
    }
 
    body {

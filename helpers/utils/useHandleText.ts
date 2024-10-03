@@ -5,6 +5,7 @@ import {
    afterPressingSpace,
    setChar,
    setNextChar,
+   setPrevChar,
 } from '../../store/actions/WordActions';
 
 export const useHandleText = (
@@ -12,7 +13,7 @@ export const useHandleText = (
    activeWordRef: React.RefObject<HTMLDivElement> | null,
    run: () => void
 ) => {
-   const { userInput, activeWord } = wordStore.getState();
+   const { userInput, activeWord, typedHistory } = wordStore.getState();
 
    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
    const currWordEl = activeWordRef?.current!;
@@ -21,10 +22,21 @@ export const useHandleText = (
 
    switch (key) {
       case 'Backspace':
-         return;
-         wordStore.setState(() => ({
-            userInput: '',
-            typedHistory: [],
+         let prevWord: string = '';
+         let prevTypedHistory: string[] = typedHistory;
+         if (userInput === '') {
+            prevWord = typedHistory.length
+               ? typedHistory[typedHistory.length - 1]
+               : '';
+            prevTypedHistory =
+               typedHistory.length > 0 ? typedHistory.slice(0, -1) : [];
+            prevWord ? setPrevChar() : null;
+            currWordEl?.classList.remove('wrong', 'right');
+         }
+         wordStore.setState((state) => ({
+            userInput:
+               userInput !== '' ? state.userInput.slice(0, -1) : prevWord,
+            typedHistory: prevTypedHistory,
          }));
          break;
       case 'Tab':
