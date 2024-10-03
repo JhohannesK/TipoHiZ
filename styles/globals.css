@@ -114,13 +114,13 @@
    }
    
    .cyberpunk {
-    --background: hsl(230, 15%, 8%);   
-    --foreground: hsl(60, 100%, 85%);  
-    --input: hsl(240, 50%, 20%);       
-    --destructive: hsl(0, 100%, 60%);  
-    --accent: hsl(170, 100%, 45%);     
-    --cursor: hsl(320, 100%, 70%);     
-    --border: hsl(200, 100%, 35%);     
+    --background: hsl(230, 15%, 2%);   
+    --foreground: hsl(60, 100%, 95%);  
+    --input: hsl(240, 50%, 15%);       
+    --destructive: hsl(0, 100%, 80%);  
+    --accent: hsl(170, 100%, 55%);     
+    --cursor: hsl(320, 100%, 80%);     
+    --border: hsl(200, 100%, 45%);     
     --radius: 0.75rem;
    }
 
