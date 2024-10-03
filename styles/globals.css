@@ -44,12 +44,12 @@
    }
 
    .dark-green {
-      --background: 20 14.3% 4.1%;
-      --foreground: 158, 3%, 50%;
+      --background: 127 100% 5%;
+      --foreground: 0, 0%, 20%;
       --input: 142.1 70.6% 45.3%;
       --destructive: 0 62.8% 30.6%;
-      --accent: 144.9 80.4% 10%;
-      --cursor: 152, 89%, 32%;
+      --accent: 127 100% 77%;
+      --cursor: 127 100% 37%;
       --radius: 0.5rem;
    }
 
