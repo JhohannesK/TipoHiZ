@@ -114,14 +114,12 @@
    }
    
    .cyberpunk {
-      --background: 220 30% 10%;
-      --foreground: 0 0% 100%;
-      --primary: 195 100% 50%;
-      --secondary: 280 100% 70%;
-      --accent: 30 100% 50%;
-      --highlight: 0 100% 70%;
-      --muted: 220 30% 40%;
-      --border: 195 100% 50%;
+      --background: 0 0% 10%;
+      --foreground: 180 100% 90%;
+      --input: 0 0% 30%;
+      --destructive: 0 100% 50%;
+      --accent: 320 100% 50%;
+      --cursor: 240 100% 50%;
       --radius: 0.5rem;
    }
 
