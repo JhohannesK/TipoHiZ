@@ -36,7 +36,7 @@ export default function HomePage() {
             <div className="flex items-center justify-center mb-4 tracking-widest lowercase text-input gap-x-3">
                <MdLanguage />
                <select
-                  className="cursor-pointer bg-background text-foreground border border-gray-300 rounded-md px-2 py-1"
+                  className="cursor-pointer bg-background text-foreground border border-gray-300 rounded-md px-2 py-1 text-[#000]"
                   value={selectedLanguage}
                   onChange={handleLanguageChange}
                >
