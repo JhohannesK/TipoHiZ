@@ -37,6 +37,8 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
                   'dark-orange',
                   'light-green',
                   'dark-green',
+                  'dark-gray',
+                  'midnight-blue',
                   'ocean',
                   'girly',
                   'retro',
