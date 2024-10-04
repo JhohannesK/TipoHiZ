@@ -44,12 +44,12 @@
    }
 
    .dark-green {
-      --background: 127 100% 5%;
-      --foreground: 0, 0%, 20%;
+      --background: 20 14.3% 4.1%;
+      --foreground: 158, 3%, 50%;
       --input: 142.1 70.6% 45.3%;
       --destructive: 0 62.8% 30.6%;
-      --accent: 127 100% 77%;
-      --cursor: 127 100% 37%;
+      --accent: 144.9 80.4% 10%;
+      --cursor: 152, 89%, 32%;
       --radius: 0.5rem;
    }
 
@@ -131,7 +131,30 @@
       --input: 120 30% 15%;
       --radius: 0.5rem;
    }
+   
+   
+   .cyberpunk {
+      --background: 219 17% 12%;
+      --foreground: 190, 100%, 91%;
+      --input: 281, 100%, 50%;
+      --destructive: 0 100% 35%;
+      --accent: 304, 100%, 46%;
+      --cursor: 300, 100%, 50%;
+      --border: 200, 100%, 50%;
+      --radius: 0.5rem;
+   }
 
+   .cyberpunk {
+      --background: 219 17% 12%;
+      --foreground: 190, 100%, 91%;
+      --input: 281, 100%, 50%;
+      --destructive: 0 100% 35%;
+      --accent: 304, 100%, 46%;
+      --cursor: 300, 100%, 50%;
+      --border: 200, 100%, 50%;
+      --radius: 0.5rem;
+   }
+   
    body {
       font-feature-settings: 'rlig' 1, 'calt' 1;
       transition: cubic-bezier(1, 0, 0, 1);
