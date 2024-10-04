@@ -47,7 +47,9 @@ export const setNextChar = () =>
 
 export const setPrevChar = () =>
    wordStore.setState((state) => ({
-      activeWord: state.nextIndex ? state.wordList[state.nextIndex - 1] : state.wordList[0],
+      activeWord: state.nextIndex
+         ? state.wordList[state.nextIndex - 1]
+         : state.wordList[0],
       nextIndex: state.nextIndex ? state.nextIndex - 1 : 0,
    }));
 

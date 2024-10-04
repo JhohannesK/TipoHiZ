@@ -36,7 +36,7 @@ export const useHandleText = (
          wordStore.setState((state) => ({
             userInput:
                userInput !== '' ? state.userInput.slice(0, -1) : prevWord,
-               typedHistory: prevTypedHistory,
+            typedHistory: prevTypedHistory,
          }));
          break;
       case 'Tab':
