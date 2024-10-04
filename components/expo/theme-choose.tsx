@@ -1,6 +1,6 @@
 // TODO: Delete after theme integration
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 // import useTimer from '@/helpers/utils/useTimer';
 import {
@@ -13,7 +13,13 @@ import {
 } from '../UI/dialog';
 
 export default function ThemeChoose() {
-   const { setTheme, theme } = useTheme();
+   const { setTheme, theme, resolvedTheme } = useTheme();
+
+   const [mounted, setMounted] = useState(false); //tracking wether the component is mounted or not
+
+   useEffect(() => {
+      setMounted(true);
+   }, []);
    // const { timer, run, reset, pause, isRunning, isExited } = useTimer(
    //    // () => alert('Count Down/UP finished'),
    //    0,
@@ -27,10 +33,15 @@ export default function ThemeChoose() {
       'light-green',
       'dark-green',
    ];
+
+   if (!mounted) return null;
+
    return (
       <>
          <Dialog>
-            <DialogTrigger className="text-input">{theme}</DialogTrigger>
+            <DialogTrigger className="text-input">
+               {theme || resolvedTheme}
+            </DialogTrigger>
             <DialogContent>
                <DialogHeader>
                   <DialogTitle className="text-input">
