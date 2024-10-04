@@ -30,7 +30,7 @@ Tipohiz is a sleek and customizable typing test platform designed to enhance you
 ![Docker](https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![RadixUI](https://img.shields.io/badge/radixui-161618?style=for-the-badge&logo=radixui&logoColor=white)
 
-## Do you like to see how tioHiZ looks like?
+## Do you like to see how tipoHiZ looks like?
 
 Use the link below:
 [https://tipohiz.vercel.app/](https://tipohiz.vercel.app/)
