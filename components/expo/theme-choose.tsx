@@ -39,7 +39,9 @@ export default function ThemeChoose() {
       'retro',
       'sunshine',
       'hacktoberfest',
-   ];
+      'cyberpunk',
+];
+  
 
    if (!mounted) return null;
 
