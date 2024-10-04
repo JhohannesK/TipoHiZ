@@ -34,6 +34,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
                   'dark-orange',
                   'light-green',
                   'dark-green',
+                  'cyberpunk',
                ]}
             >
                {children}
