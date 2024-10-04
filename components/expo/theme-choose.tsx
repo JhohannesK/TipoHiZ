@@ -40,8 +40,8 @@ export default function ThemeChoose() {
       'sunshine',
       'hacktoberfest',
       'cyberpunk',
-];
-  
+   ];
+
 
    if (!mounted) return null;
 
