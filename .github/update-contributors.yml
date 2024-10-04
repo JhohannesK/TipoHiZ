@@ -1,0 +1,28 @@
+name: Update Contributors
+
+   on:
+     push:
+       branches:
+         - main
+     pull_request:
+       types: [closed]
+
+   jobs:
+     update-contributors:
+       runs-on: ubuntu-latest
+       steps:
+         - uses: actions/checkout@v2
+         - name: Update Contributors in README
+           run: |
+             # Get list of contributors
+             contributors=$(git log --format='%aN' | sort -u | awk '{printf "- %s\\n", $0}')
+             
+             # Update README.md
+             sed -i '/## Contributors/,/## /c\## Contributors\n\n'"$contributors"'\n\n## ' README.md
+             
+             # Commit changes if any
+             git config --local user.email "action@github.com"
+             git config --local user.name "GitHub Action"
+             git add README.md
+             git diff --quiet && git diff --staged --quiet || git commit -m "Update contributors list"
+             git push
