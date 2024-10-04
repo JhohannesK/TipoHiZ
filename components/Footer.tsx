@@ -3,7 +3,10 @@ import React from 'react';
 import Chip from './UI/Chip';
 import { AiOutlineBranches } from 'react-icons/ai';
 import { SiAdguard } from 'react-icons/si';
-import { SocialIcon } from 'react-social-icons'
+import Image from 'next/image';
+import SVGIMG from '../public/assets/1161953_instagram_icon.svg';
+import DISCORD from '../public/assets//2959743_chat_discord_gaming_icon.svg';
+import TWITTER from '../public/assets/5305170_bird_social media_social network_tweet_twitter_icon.svg';
 function Footer() {
    return (
       <div className="flex flex-col items-center justify-center w-full gap-8 border-t-2 text-input">
@@ -26,9 +29,17 @@ function Footer() {
                   </span>
                </p>
                <p>Follow us on</p>
-                  <SocialIcon url="https://twitter.com" />
-                  <SocialIcon url="https://discord.com" />
-                  <SocialIcon url="https://instagram.com" />
+               <div style={{ display: 'inline-flex;' }}>
+                  <a href="https://www.w3schools.com">
+                     <Image src={SVGIMG} alt={''} />
+                  </a>
+                  <a href="https://discord.gg/8Z67Fv8z">
+                     <Image src={DISCORD} alt={''} height="57" width="57" />
+                  </a>
+                  <a href="https://www.w3schools.com">
+                     <Image src={TWITTER} alt={''} height="57" width="57" />
+                  </a>
+               </div>
             </div>
             <div>
                <div className="flex items-center gap-2">
