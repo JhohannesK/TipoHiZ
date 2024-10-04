@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { resetTest } from '@/helpers/reset';
 import { userConfigStore } from '@/store';
 import { setCaretRef, setUserInput } from '@/store/actions/WordActions';
@@ -6,6 +6,35 @@ import { BsArrowRepeat } from 'react-icons/bs';
 
 export default function ResetTestButton({ reset }: { reset: () => void }) {
    const { type } = userConfigStore((state) => state);
+   const previousKeyRef = React.useRef('');
+
+   useEffect(() => {
+      function handleKeydown(e: KeyboardEvent) {
+         if (e.key === 'Tab') {
+            e.preventDefault();
+            previousKeyRef.current = e.key;
+            return
+         }
+         
+         if (e.key === 'Enter' && previousKeyRef.current === 'Tab') {
+            e.preventDefault();
+            previousKeyRef.current = '';
+            
+            resetTest(type, reset);
+            setUserInput('');
+            setCaretRef(null);
+            return
+         }
+
+         previousKeyRef.current = ''
+      }
+
+      document.addEventListener('keydown', handleKeydown);
+
+      return () => {
+         document.removeEventListener('keydown', handleKeydown);
+      };
+   }, [])
 
    return (
       <button
