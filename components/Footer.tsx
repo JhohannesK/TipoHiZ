@@ -3,7 +3,7 @@ import React from 'react';
 import Chip from './UI/Chip';
 import { AiOutlineBranches } from 'react-icons/ai';
 import { SiAdguard } from 'react-icons/si';
-
+import { SocialIcon } from 'react-social-icons'
 function Footer() {
    return (
       <div className="flex flex-col items-center justify-center w-full gap-8 border-t-2 text-input">
@@ -24,20 +24,11 @@ function Footer() {
                         href="https://github.com/JhohannesK/TipoHiZ"
                      >{`\<TipoHiZ/\>`}</Link>
                   </span>
-                  <p>Follow us on</p>
-                  <span>
-                     <a href="https://x.com/" target="_blank" rel="noreferrer">
-                        Twitter
-                     </a>
-                     <a
-                        href="https://discord.com/"
-                        target="_blank"
-                        rel="noreferrer"
-                     >
-                        Discord
-                     </a>
-                  </span>
                </p>
+               <p>Follow us on</p>
+                  <SocialIcon url="https://twitter.com" />
+                  <SocialIcon url="https://discord.com" />
+                  <SocialIcon url="https://instagram.com" />
             </div>
             <div>
                <div className="flex items-center gap-2">
