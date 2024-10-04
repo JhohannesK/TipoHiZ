@@ -1,7 +1,7 @@
 import { persist } from 'zustand/middleware';
 import Constants from '../modules/_constants';
 import { IuserConfig, MyPersist, WordState } from './@types.';
-import create from 'zustand';
+import { create } from 'zustand';
 import { mountStoreDevtool } from 'simple-zustand-devtools';
 
 export const userConfigStore = create<IuserConfig>()(

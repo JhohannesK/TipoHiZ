@@ -4,7 +4,7 @@ Tipohiz is a sleek and customizable typing test platform designed to enhance you
 
 > **Note**
 >
-> The project was built using Nextjs
+> This project is built using Nextjs
 
 # Features
 
@@ -22,11 +22,21 @@ Tipohiz is a sleek and customizable typing test platform designed to enhance you
 
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 ![Eslint](https://img.shields.io/badge/eslint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white)
+![Nextjs](https://img.shields.io/badge/nextjs-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+![Vercel](https://img.shields.io/badge/vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+![Zustand](https://img.shields.io/badge/zustand-brown?style=for-the-badge&logo=zustand&logoColor=black)
+![Tailwind](https://img.shields.io/badge/tailwindcss-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![Prettier](https://img.shields.io/badge/prettier-F7B93E?style=for-the-badge&logo=prettier&logoColor=black)
+![Docker](https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![RadixUI](https://img.shields.io/badge/radixui-161618?style=for-the-badge&logo=radixui&logoColor=white)
 
 ## Do you like to see how tioHiZ looks like?
 
 Use the link below:
 [https://tipohiz.vercel.app/](https://tipohiz.vercel.app/)
+
+For contributers, you merged PRs do not immediately go live. Instead, they are deployed on a preview link first and if it looks okay, they are pushed to main.
+**Preview Link**: https://tipohiz-preview.vercel.app/
 
 # Bug report or Feature request
 

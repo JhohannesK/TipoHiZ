@@ -45,6 +45,14 @@ export const setNextChar = () =>
       nextChar: state.activeWord[state.nextCharIdx],
    }));
 
+export const setPrevChar = () =>
+   wordStore.setState((state) => ({
+      activeWord: state.nextIndex
+         ? state.wordList[state.nextIndex - 1]
+         : state.wordList[0],
+      nextIndex: state.nextIndex ? state.nextIndex - 1 : 0,
+   }));
+
 export const setDisabled = (disabled: boolean) =>
    wordStore.setState({ disabled });
 
