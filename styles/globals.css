@@ -63,6 +63,25 @@
       --radius: 0.5rem;
    }
 
+   .dark-gray {
+      --background: 220 10% 15%;
+      --foreground: 70 5.2% 22.7%;
+      --input: 0 0% 96.1%;
+      --accent: 240 5.9% 50%;
+      --destructive: 0 50% 50%;
+      --cursor: 240 5.9% 75%;
+      --radius: 0.5rem;
+   }
+
+   .midnight-blue {
+      --background: 228 22% 12%;
+      --foreground: 231 27.2% 44.7%;
+      --input: 0 0% 97.3%;
+      --accent: 164 91.8% 52.2%;
+      --destructive: 0 72.8% 52.6%;
+      --cursor: 228 45% 65%;
+   }
+
    .ocean {
       --background: 193 60% 95%;
       --cursor: 191 70% 50%;
@@ -110,6 +129,18 @@
       --destructive: 60 33% 90%;
       --accent: 0 0% 0%;
       --input: 120 30% 15%;
+      --radius: 0.5rem;
+   }
+   
+   
+   .cyberpunk {
+      --background: 219 17% 12%;
+      --foreground: 190, 100%, 91%;
+      --input: 281, 100%, 50%;
+      --destructive: 0 100% 35%;
+      --accent: 304, 100%, 46%;
+      --cursor: 300, 100%, 50%;
+      --border: 200, 100%, 50%;
       --radius: 0.5rem;
    }
 

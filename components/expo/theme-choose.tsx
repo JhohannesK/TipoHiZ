@@ -1,6 +1,6 @@
 // TODO: Delete after theme integration
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 // import useTimer from '@/helpers/utils/useTimer';
 import {
@@ -13,7 +13,13 @@ import {
 } from '../UI/dialog';
 
 export default function ThemeChoose() {
-   const { setTheme, theme } = useTheme();
+   const { setTheme, theme, resolvedTheme } = useTheme();
+
+   const [mounted, setMounted] = useState(false); //tracking wether the component is mounted or not
+
+   useEffect(() => {
+      setMounted(true);
+   }, []);
    // const { timer, run, reset, pause, isRunning, isExited } = useTimer(
    //    // () => alert('Count Down/UP finished'),
    //    0,
@@ -26,6 +32,8 @@ export default function ThemeChoose() {
       'dark-orange',
       'light-green',
       'dark-green',
+      'dark-gray',
+      'midnight-blue',
       'ocean',
       'girly',
       'retro',
@@ -34,39 +42,43 @@ export default function ThemeChoose() {
       'cyberpunk',
    ];
 
-   return (
-      <>
-         <Dialog>
-            <DialogTrigger className="text-input">{theme}</DialogTrigger>
-            <DialogContent>
-               <DialogHeader>
-                  <DialogTitle className="text-input">
-                     Choose a theme
-                  </DialogTitle>
-                  <DialogDescription>
-                     {/* This action cannot be undone. This will permanently delete
-                     your account and remove your data from our servers. */}
-                     <div className="flex flex-col justify-center gap-3">
-                        {themes.map((currtheme) => (
-                           <button
-                              className={`rounded w-full h-14 font-bold text-input bg-background hover:bg-foreground ${
-                                 theme === currtheme
-                                    ? 'border-foreground border-2'
-                                    : 'border-destructive border'
-                              }`}
-                              key={currtheme}
-                              onClick={() => setTheme(currtheme)}
-                           >
-                              {currtheme}
-                           </button>
-                        ))}
-                     </div>
-                  </DialogDescription>
-               </DialogHeader>
-            </DialogContent>
-         </Dialog>
 
-         {/* <div className="flex flex-col items-center justify-center mt-10">
+   if (!mounted) return null;
+
+   //script.js
+
+   return (
+      <Dialog>
+         <DialogTrigger className="text-input">
+            {theme || resolvedTheme}
+         </DialogTrigger>
+         <DialogContent className="max-w-[400px] rounded-xl shadow-lg p-6 bg-background border border-gray-300 h-[600px] overflow-y-auto">
+            <DialogHeader>
+               <DialogTitle className="text-xl font-semibold text-center mb-4 text-input">
+                  Choose a Theme
+               </DialogTitle>
+               <DialogDescription className="text-accent mb-4 text-center">
+                  Select your preferred theme from the options below.
+               </DialogDescription>
+            </DialogHeader>
+            <div className="flex flex-row flex-wrap justify-center gap-3 p-3 w-full overflow-auto">
+               {themes.map((currtheme) => (
+                  <button
+                     className={`flex items-center justify-center rounded-lg w-full h-12 font-bold text-sm transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none ${
+                        theme === currtheme
+                           ? 'bg-foreground text-input  border-input hover:bg-accent hover:text-destructive border-2 transition duration-300 ease-in-out'
+                           : 'bg-background text-input border border-input hover:bg-accent hover:text-destructive transition duration-150 ease-in-out'
+                     }`}
+                     key={currtheme}
+                     onClick={() => setTheme(currtheme)}
+                  >
+                     {currtheme}
+                  </button>
+               ))}
+            </div>
+         </DialogContent>
+      </Dialog>
+      /* <div className="flex flex-col items-center justify-center mt-10">
             <div className="font-extrabold text-9xl text-input">{timer}</div>
             <div className="flex flex-col">
                <button
@@ -94,7 +106,6 @@ export default function ThemeChoose() {
                   reset
                </button>
             </div>
-         </div> */}
-      </>
+         </div> */
    );
 }

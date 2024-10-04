@@ -1,10 +1,12 @@
 import React from 'react';
 import { FaUserAlt } from 'react-icons/fa';
+import { SvgRender } from './SvgRender';
 
 function Header() {
    return (
       <div className="flex items-center justify-between p-7">
-         <div className="flex items-center justify-center gap-x-5">
+         <div className="flex items-center justify-center gap-x-2">
+            <SvgRender />
             <p className="text-xl font-bold select-none text-input hover:animate-shake">
                TipoHiz.__
             </p>
