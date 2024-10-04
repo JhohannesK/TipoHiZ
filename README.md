@@ -71,5 +71,3 @@ This project needs a ⭐️ from you. Don't forget to leave a star ⭐️
 Thanks a lot for spending your time helping TipoHiz grow. Thanks a lot! Keep on code-jamming 🍻
 
 [![Contributors](https://contrib.rocks/image?repo=JhohannesK/TipoHiZ)](https://github.com/JhohannesK/TipoHiZ/graphs/contributors)
-
-<p align="right">(<a href="#top">back to top</a>)</p>
