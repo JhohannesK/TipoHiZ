@@ -70,6 +70,4 @@ This project needs a ⭐️ from you. Don't forget to leave a star ⭐️
 
 Thanks a lot for spending your time helping TipoHiz grow. Thanks a lot! Keep on code-jamming 🍻
 
-<a href="https://github.com/JhohannesK/TipoHiZ/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=JhohannesK/TipoHiZ" />
-</a>
+[![Contributors](https://contrib.rocks/image?repo=JhohannesK/TipoHiz)](https://github.com/JhohannesK/TipoHiz/graphs/contributors)
