@@ -7,7 +7,7 @@ import { SiAdguard } from 'react-icons/si';
 function Footer() {
    return (
       <div className="flex flex-col items-center justify-center w-full gap-8 border-t-2 text-input">
-         <div className="flex items-center justify-center gap-3">
+         <div className="flex items-center justify-center gap-3 mt-[13px]">
             <Chip className="bg-foreground text-input" name="tab" /> +{' '}
             <Chip className="bg-foreground text-input" name="enter" /> to reset
             test
