@@ -13,20 +13,20 @@ export default function ResetTestButton({ reset }: { reset: () => void }) {
          if (e.key === 'Tab') {
             e.preventDefault();
             previousKeyRef.current = e.key;
-            return
+            return;
          }
-         
+
          if (e.key === 'Enter' && previousKeyRef.current === 'Tab') {
             e.preventDefault();
             previousKeyRef.current = '';
-            
+
             resetTest(type, reset);
             setUserInput('');
             setCaretRef(null);
-            return
+            return;
          }
 
-         previousKeyRef.current = ''
+         previousKeyRef.current = '';
       }
 
       document.addEventListener('keydown', handleKeydown);
@@ -34,7 +34,7 @@ export default function ResetTestButton({ reset }: { reset: () => void }) {
       return () => {
          document.removeEventListener('keydown', handleKeydown);
       };
-   }, [])
+   }, []);
 
    return (
       <button
