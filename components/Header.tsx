@@ -1,6 +1,6 @@
 import React from 'react';
 import { FaUserAlt } from 'react-icons/fa';
-import { SvgRender } from './SvgRender.jsx';
+import { SvgRender } from './SvgRender';
 
 function Header() {
    return (
