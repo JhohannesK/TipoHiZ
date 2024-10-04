@@ -41,11 +41,15 @@ export default function ThemeChoose() {
       'hacktoberfest',
    ];
 
+   if (!mounted) return null;
+
    //script.js
 
    return (
       <Dialog>
-         <DialogTrigger className="text-input">{theme}</DialogTrigger>
+         <DialogTrigger className="text-input">
+            {theme || resolvedTheme}
+         </DialogTrigger>
          <DialogContent className="max-w-[400px] rounded-xl shadow-lg p-6 bg-background border border-gray-300 h-[600px] overflow-y-auto">
             <DialogHeader>
                <DialogTitle className="text-xl font-semibold text-center mb-4 text-input">
