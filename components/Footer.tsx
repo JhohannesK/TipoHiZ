@@ -24,6 +24,19 @@ function Footer() {
                         href="https://github.com/JhohannesK/TipoHiZ"
                      >{`\<TipoHiZ/\>`}</Link>
                   </span>
+                  <p>Follow us on</p>
+                  <span>
+                     <a href="https://x.com/" target="_blank" rel="noreferrer">
+                        Twitter
+                     </a>
+                     <a
+                        href="https://discord.com/"
+                        target="_blank"
+                        rel="noreferrer"
+                     >
+                        Discord
+                     </a>
+                  </span>
                </p>
             </div>
             <div>
@@ -44,5 +57,3 @@ function Footer() {
 }
 
 export default Footer;
-
-// TODO: Add social links
