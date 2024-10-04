@@ -57,8 +57,13 @@ const TextArea = () => {
                      ) : null}
                   </div>
                   {word.split('').map((char, charIndex) => {
+                     const isCorrectlyTyped =
+                        isActive && char === userInput[charIndex];
                      return (
-                        <span className={``} key={char + charIndex}>
+                        <span
+                           key={char + charIndex}
+                           className={isCorrectlyTyped ? 'text-yellow-500' : ''}
+                        >
                            {char}
                         </span>
                      );
