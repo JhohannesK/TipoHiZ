@@ -3,6 +3,9 @@ import React from 'react';
 import Chip from './UI/Chip';
 import { AiOutlineBranches } from 'react-icons/ai';
 import { SiAdguard } from 'react-icons/si';
+import { FaXTwitter } from "react-icons/fa6";
+import { FaDiscord } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
 
 function Footer() {
    return (
@@ -25,6 +28,18 @@ function Footer() {
                      >{`\<TipoHiZ/\>`}</Link>
                   </span>
                </p>
+               <p>Follow us on</p>
+               <div className="flex items-center gap-2">
+                  <a href="https://github.com/JhohannesK">
+                  <FaGithub />
+                  </a>
+                  <a href="https://discord.gg/8Z67Fv8z">
+                  <FaDiscord />
+                  </a>
+                  <a href="#">
+                  <FaXTwitter />
+                  </a>
+               </div>
             </div>
             <div>
                <div className="flex items-center gap-2">
@@ -44,5 +59,3 @@ function Footer() {
 }
 
 export default Footer;
-
-// TODO: Add social links
