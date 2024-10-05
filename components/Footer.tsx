@@ -12,9 +12,9 @@ function Footer() {
             <Chip className="bg-foreground text-input" name="enter" /> to reset
             test
          </div>
-         <div className="pb-[58px] w-full flex items-center gap-2 justify-between">
+         <div className="pb-[58px] w-full flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-2 justify-between sm:px-4">
             <div>
-               <p className="flex items-center justify-center gap-2">
+            <p className="flex items-center justify-center sm:justify-start gap-2 text-center sm:text-left">
                   Contribute on Github{' '}
                   <span className="text-sm text-primary">
                      <Link
@@ -35,7 +35,7 @@ function Footer() {
             <div>
                <div className="flex items-center gap-2">
                   <SiAdguard />
-                  <div>Privacy policy and terms of use</div>
+                  <div className="text-center sm:text-left">Privacy policy and terms of use</div>
                </div>
             </div>
          </div>
