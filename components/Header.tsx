@@ -11,17 +11,16 @@ function Header() {
                TipoHiz.__
             </p>
          </div>
-         <div className='flex justify-between items-center gap-3 font-semibold '>
-            <div className="flex items-center justify-center p-2 rounded-xl bg-foreground gap-3 cursor-pointer text-black bg-slate-100">
-               <p className="text-sm tracking-wide">Login</p>
-               <LuUser />
+         <div className='flex justify-between items-center gap-3 font-semibold'>
+            <div className="flex items-center justify-center p-2 rounded-xl gap-3 cursor-pointer text-foreground bg-input">
+               <p className="text-sm tracking-wide text-background">Login</p>
+               <LuUser className='text-background' />
             </div>
-            <div className="flex items-center justify-center p-2 rounded-xl bg-foreground gap-3 cursor-pointer text-white">
-               <p className="text-sm tracking-wide">Sign up</p>
-               <LuUser  />
+            <div className="flex items-center justify-center p-2 rounded-xl bg-foreground gap-3 cursor-pointer">
+               <p className="text-sm tracking-wide text-input">Sign up</p>
+               <LuUser className='text-input'/>
             </div>
          </div>
-
       </div>
    );
 }
