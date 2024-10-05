@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaUserAlt } from 'react-icons/fa';
+import { LuUser } from "react-icons/lu";
 import { SvgRender } from './SvgRender';
 
 function Header() {
@@ -11,10 +11,17 @@ function Header() {
                TipoHiz.__
             </p>
          </div>
-         <div className="flex items-center justify-center p-2 px-2 rounded-full gap-x-5 bg-foreground">
-            <FaUserAlt className="text-input" />
-            <p className="text-sm tracking-wide text-input">Login</p>
+         <div className='flex justify-between items-center gap-3'>
+            <div className="flex items-center justify-center p-2 rounded-xl bg-foreground gap-3 cursor-pointer bg-slate-100">
+               <p className="text-sm tracking-wide text-input text-black">Login</p>
+               <LuUser className="text-input text-black" />
+            </div>
+            <div className="flex items-center justify-center p-2 rounded-xl bg-foreground gap-3 cursor-pointer">
+               <p className="text-sm tracking-wide text-input text-white">Sign up</p>
+               <LuUser className="text-input text-white" />
+            </div>
          </div>
+
       </div>
    );
 }
