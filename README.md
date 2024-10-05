@@ -41,7 +41,7 @@ For contributers, you merged PRs do not immediately go live. Instead, they are d
 # Bug report or Feature request
 
 If you encounter a bug or have a feature request, [create an issue](https://github.com/jhohannesK/tipohiz/issues),
-[create a discussion thread](https://github.comjhohannesK/tipohiz/discussions)
+[create a discussion thread](https://github.comjhohannesK/tipohiz/discussions) <br/>
 
 # Want to Contribute?
 
@@ -64,7 +64,9 @@ To report a security vulnerability, please refer to [SECURITY.md](SECURITY.md).
 
 ## 🙏 Support
 
-This project needs a ⭐️ from you. Don't forget to leave a star ⭐️
+This project needs a ⭐️ from you. Don't forget to leave a star ⭐️ <br/>
+
+Join our [discord](https://discord.gg/8Z67Fv8z)
 
 ## 💪 Thanks to all Contributors
 
