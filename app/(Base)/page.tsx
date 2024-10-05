@@ -18,7 +18,7 @@ export default function HomePage() {
       <div>
          <UserSelectPallete reset={reset} />
          <div className="flex items-center justify-between mt-16 sm:px-10">
-            <div className="text-2xl font-medium font-poppins text-accent">
+            <div className="text-xl font-medium font-poppins text-accent flex-wrap">
                {/* <button
                   className={`flex font-bold items-center justify-center rounded py-2 mt-5 text-input w-48 ${
                      isRunning || isExited ? 'bg-background' : 'bg-foreground'
@@ -28,14 +28,14 @@ export default function HomePage() {
                >
                   start
                </button> */}
-               <div>{timer}</div>
+               <div className='mb-2'>{timer}</div>
             </div>
-            <div className="flex items-center justify-center mb-4 tracking-widest lowercase text-input gap-x-3">
-               <MdLanguage />
-               <p className="cursor-pointer">english</p>
+            <div className="flex items-center justify-center mb-4 tracking-widest lowercase text-input gap-x-1">
+               <MdLanguage className='mt-2'/>
+               <p className="cursor-pointer mt-2">english</p>
             </div>
             <div>
-               <div className="flex items-center gap-1 cursor-pointer text-input">
+               <div className="flex items-center gap-1 cursor-pointer text-input mb-3">
                   <IoIosColorPalette />
                   <ThemeChoose />
                </div>
