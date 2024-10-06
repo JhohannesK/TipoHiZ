@@ -1,14 +1,12 @@
 import React from 'react';
 import { userConfigStore, wordStore } from '../store';
 import { setCaretRef, setRef, setWordList } from '../store/actions/WordActions';
-import { useTheme } from 'next-themes';
 
 const TextArea = () => {
    const { type } = userConfigStore((state) => state);
    const { wordList, activeWord, userInput, typedHistory } = wordStore(
       (state) => state
    );
-   const { theme } = useTheme();
 
    const caretRef = React.useRef<HTMLSpanElement>(null);
    const activeWordRef = React.useRef<HTMLDivElement>(null);
@@ -24,74 +22,11 @@ const TextArea = () => {
       });
    }, [type]);
 
-   const getCorrectColor = () => {
-      switch (theme) {
-         case 'light':
-            return 'text-lightcorrect';
-         case 'dark':
-            return 'text-darkcorrect';
-         case 'light-orange':
-            return 'text-lightorangecorrect';
-         case 'dark-orange':
-            return 'text-darkorangecorrect';
-         case 'light-green':
-            return 'text-lightgreencorrect';
-         case 'dark-green':
-            return 'text-darkgreencorrect';
-         case 'dark-gray':
-            return 'text-darkgraycorrect';
-         case 'midnight-blue':
-            return 'text-midnightbluecorrect';
-         case 'ocean':
-            return 'text-oceancorrect';
-         case 'girly':
-            return 'text-girlycorrect';
-         case 'retro':
-            return 'text-retrocorrect';
-         case 'sunshine':
-            return 'text-sunshinecorrect';
-         case 'hacktoberfest':
-            return 'text-hacktoberfestcorrect';
-         case 'cyberpunk':
-            return 'text-cyberpunkcorrect';
-         default:
-            return 'text-lightcorrect';
-      }
-   };
-
-   const getWrongColor = () => {
-      switch (theme) {
-         case 'light':
-            return 'text-lightwrong';
-         case 'dark':
-            return 'text-darkwrong';
-         case 'light-orange':
-            return 'text-lightorangewrong';
-         case 'dark-orange':
-            return 'text-darkorangewrong';
-         case 'light-green':
-            return 'text-lightgreenwrong';
-         case 'dark-green':
-            return 'text-darkgreenwrong';
-         case 'dark-gray':
-            return 'text-darkgraywrong';
-         case 'midnight-blue':
-            return 'text-midnightbluewrong';
-         case 'ocean':
-            return 'text-oceanwrong';
-         case 'girly':
-            return 'text-girlywrong';
-         case 'retro':
-            return 'text-retrowrong';
-         case 'sunshine':
-            return 'text-sunshinewrong';
-         case 'hacktoberfest':
-            return 'text-hacktoberfestwrong';
-         case 'cyberpunk':
-            return 'text-cyberpunkwrong';
-         default:
-            return 'text-lightwrong';
-      }
+   const getCharStyle = (isCorrect: boolean | null) => {
+      if (isCorrect === null) return {};
+      return {
+         color: `hsl(var(--${isCorrect ? 'correct' : 'wrong'}_char))`
+      };
    };
 
    return (
@@ -127,22 +62,19 @@ const TextArea = () => {
                   )}
                   {word.split('').map((char, charIndex) => {
                      const typedChar = typedWord[charIndex];
-                     const isCorrect = char === typedChar;
-                     const colorClass = typedChar
-                        ? (isCorrect ? getCorrectColor() : getWrongColor())
-                        : '';
+                     const isCorrect = typedChar !== undefined ? char === typedChar : null;
                      
                      return (
                         <span
                            key={char + charIndex}
-                           className={colorClass}
+                           style={getCharStyle(isCorrect)}
                         >
                            {char}
                         </span>
                      );
                   })}
                   {typedWord.length > word.length && (
-                     <span className={getWrongColor()}>
+                     <span style={getCharStyle(false)}>
                         {typedWord.slice(word.length)}
                      </span>
                   )}
