@@ -31,6 +31,7 @@ export const wordStore = create<WordState>(() => ({
    caretPos: 0,
    nextCharIdx: 0,
    typedEntries: 0,
+   errorCount: 0,
 }));
 
 // export const timeStore = create<TimeState>(() => ({

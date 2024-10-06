@@ -1,7 +1,12 @@
 'use client';
 import React from 'react';
 import { userConfigStore, wordStore } from '../store';
-import { setCaretRef, setRef, setWordList } from '../store/actions/WordActions';
+import {
+   setCaretRef,
+   setErrorCount,
+   setRef,
+   setWordList,
+} from '../store/actions/WordActions';
 
 const TextArea = () => {
    const { type } = userConfigStore((state) => state);
@@ -12,6 +17,30 @@ const TextArea = () => {
    const caretRef = React.useRef<HTMLSpanElement>(null);
    const activeWordRef = React.useRef<HTMLDivElement>(null);
    const extraLetters = userInput.slice(activeWord.length).split('');
+
+   const calculateErrors = React.useCallback(() => {
+      let count = 0;
+      const activeWordLength = activeWord.length;
+      const userInputLength = userInput.length;
+
+      for (let i = 0; i < Math.min(activeWordLength, userInputLength); i++) {
+         if (userInput[i] !== activeWord[i]) {
+            count++;
+         }
+      }
+
+      if (userInputLength > activeWordLength) {
+         count += userInputLength - activeWordLength;
+      } else if (userInputLength < activeWordLength) {
+         count += activeWordLength - userInputLength;
+      }
+
+      setErrorCount(count);
+   }, [userInput, activeWord]);
+
+   React.useEffect(() => {
+      calculateErrors();
+   }, [userInput, activeWord]);
 
    React.useEffect(() => {
       setRef(activeWordRef);
