@@ -8,9 +8,7 @@ export default function ResultsPage() {
    const { typedEntries, errorCount } = wordStore.getState();
    const { time, category } = userConfigStore.getState();
 
-   const wpm = grossWPM(typedEntries, time);
-
-   console.log('wpm', wpm);
+   const rawWpm = grossWPM(typedEntries, time);
 
    const accurateWpm = accurateWPM(errorCount, typedEntries, time);
 
@@ -27,6 +25,9 @@ export default function ResultsPage() {
          </div>
          <div>
             <h2 className="text-6xl font-bold">{accurateWpm.toFixed(2)} WPM</h2>
+         </div>
+          <div>
+            <h2 className="text-6xl font-bold">{rawWpm} WPM</h2>
          </div>
          <div className="text-center">
             <h2 className="text-6xl font-bold">Test Type</h2>
