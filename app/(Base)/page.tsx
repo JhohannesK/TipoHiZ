@@ -22,7 +22,7 @@ export default function HomePage() {
          typingSound.volume = 0;
       } else {
          setSound(true);
-         typingSound.volume = 1;
+         typingSound.volume = 0.1;
       }
    };
    useKeydownGetter({ run, reset });

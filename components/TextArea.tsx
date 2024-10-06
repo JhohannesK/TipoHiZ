@@ -46,7 +46,7 @@ const TextArea: React.FC<soundProps> = ({ sound }) => {
          ) {
             if (typingSound) {
                typingSound.currentTime = 0; // Reset sound to the beginning
-               typingSound.volume = sound ? 1 : 0; // Set volume based on the `sound` prop
+               typingSound.volume = sound ? 0.1 : 0; // Set volume based on the `sound` prop
                typingSound.playbackRate = 1; // Adjust playback speed if needed
                typingSound.play();
             }
