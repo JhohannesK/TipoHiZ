@@ -75,5 +75,6 @@ Thanks a lot for spending your time helping TipoHiz grow. Thanks a lot! Keep on 
 [![Contributors](https://contrib.rocks/image?repo=JhohannesK/TipoHiz)](https://github.com/JhohannesK/TipoHiz/graphs/contributors)
 
 ## Credits
+
 Logo Credit - [Puneet Upadhyay](https://github.com/debianbaker) <br/>
 Designs - [Kwaw Kumi Miezah](https://github.com/Kay-kwaw)

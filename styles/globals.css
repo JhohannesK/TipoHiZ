@@ -131,8 +131,7 @@
       --input: 120 30% 15%;
       --radius: 0.5rem;
    }
-   
-   
+
    .cyberpunk {
       --background: 219 17% 12%;
       --foreground: 190, 100%, 91%;
@@ -154,7 +153,7 @@
       --border: 200, 100%, 50%;
       --radius: 0.5rem;
    }
-   
+
    body {
       font-feature-settings: 'rlig' 1, 'calt' 1;
       transition: cubic-bezier(1, 0, 0, 1);

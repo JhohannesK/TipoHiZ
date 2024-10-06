@@ -13,6 +13,18 @@ import ThemeChoose from '@/components/expo/theme-choose';
 export default function HomePage() {
    const { time } = userConfigStore((state) => state);
    const { timer, run, reset } = useTimer(1, time);
+   const [sound, setSound] = React.useState(true);
+
+   const handleSound = () => {
+      const typingSound = new Audio('/modules/AudioFiles/type.mp3');
+      if (sound) {
+         setSound(false);
+         typingSound.volume = 0;
+      } else {
+         setSound(true);
+         typingSound.volume = 1;
+      }
+   };
    useKeydownGetter({ run, reset });
    return (
       <div>
@@ -28,12 +40,19 @@ export default function HomePage() {
                >
                   start
                </button> */}
-               <div className='mb-2'>{timer}</div>
+               <div className="mb-2">{timer}</div>
             </div>
             <div className="flex items-center justify-center mb-4 tracking-widest lowercase text-input gap-x-1">
-               <MdLanguage className='mt-2'/>
+               <MdLanguage className="mt-2" />
                <p className="cursor-pointer mt-2">english</p>
             </div>
+
+            <div className="flex items-center justify-center mb-4 tracking-widest lowercase text-input gap-x-1">
+               <button className="outline-none" onClick={handleSound}>
+                  {sound ? 'Sound: On' : 'Sound: Off'}
+               </button>
+            </div>
+
             <div>
                <div className="flex items-center gap-1 cursor-pointer text-input mb-3">
                   <IoIosColorPalette />
@@ -41,7 +60,7 @@ export default function HomePage() {
                </div>
             </div>
          </div>
-         <TextArea />
+         <TextArea sound={sound} />
          <ResetTestButton reset={reset} />
       </div>
    );
