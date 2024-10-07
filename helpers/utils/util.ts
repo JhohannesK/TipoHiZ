@@ -28,3 +28,13 @@ export const loadFromLocalStorage = ({ key }: { key: string }) => {
 export const grossWPM = (typedEntries: number, time: number) => {
    return ((typedEntries / 5) * 60) / time;
 };
+
+export const accurateWPM = (
+   errorCount: number,
+   typedEntries: number,
+   time: number
+) => {
+   const minutes = time / 60;
+   const wordsTyped = typedEntries / 5;
+   return Math.max((wordsTyped - errorCount) / minutes, 0);
+};
