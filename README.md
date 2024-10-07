@@ -4,7 +4,8 @@ Tipohiz is a sleek and customizable typing test platform designed to enhance you
 
 > **Note**
 >
-> This project is built using Nextjs
+> -  This project is built using Nextjs <br>
+> -  Inspired by MonkeyType
 
 # Features
 

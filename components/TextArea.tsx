@@ -23,7 +23,9 @@ const TextArea: React.FC<soundProps> = ({ sound }) => {
    );
 
    //state to hold the typing sound
-   const [typingSound, setTypingSound] = useState<HTMLAudioElement | null>(null);
+   const [typingSound, setTypingSound] = useState<HTMLAudioElement | null>(
+      null
+   );
 
    //effect to load the typing sound
    useEffect(() => {
@@ -109,7 +111,8 @@ const TextArea: React.FC<soundProps> = ({ sound }) => {
    return (
       <div className="flex flex-wrap overflow-hidden text-xl select-none h-28 sm:px-10 font-poppins md:text-2xl selection:bg-yellow-300 selection:text-white text-input">
          {wordList?.map((word, index) => {
-            const isActive = activeWord === word && typedHistory.length === index;
+            const isActive =
+               activeWord === word && typedHistory.length === index;
             return (
                <div
                   key={word + index}
@@ -129,7 +132,8 @@ const TextArea: React.FC<soundProps> = ({ sound }) => {
                      )}
                   </div>
                   {word.split('').map((char, charIndex) => {
-                     const isCorrectlyTyped = isActive && char === userInput[charIndex];
+                     const isCorrectlyTyped =
+                        isActive && char === userInput[charIndex];
                      return (
                         <span
                            key={char + charIndex}

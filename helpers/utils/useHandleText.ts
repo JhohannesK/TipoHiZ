@@ -21,11 +21,11 @@ export const useHandleText = (
    currWordEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
    let inputWithShift = '';
-   if(key.startsWith('Shift')){
-      inputWithShift = key.charAt(key.length-1);
+   if (key.startsWith('Shift')) {
+      inputWithShift = key.charAt(key.length - 1);
       key = 'Shift';
    }
-   
+
    switch (key) {
       case 'Backspace':
          let prevWord: string = '';
@@ -49,8 +49,8 @@ export const useHandleText = (
          return;
       case 'Shift':
          wordStore.setState((state) => ({
-            userInput: state.userInput + inputWithShift.toUpperCase()
-         }))
+            userInput: state.userInput + inputWithShift.toUpperCase(),
+         }));
          break;
       case ' ':
          if (userInput === '') return;

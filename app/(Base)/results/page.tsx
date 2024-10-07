@@ -26,7 +26,7 @@ export default function ResultsPage() {
          <div>
             <h2 className="text-6xl font-bold">{accurateWpm.toFixed(2)} WPM</h2>
          </div>
-          <div>
+         <div>
             <h2 className="text-6xl font-bold">{rawWpm} WPM</h2>
          </div>
          <div className="text-center">
