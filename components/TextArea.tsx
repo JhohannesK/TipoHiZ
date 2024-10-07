@@ -22,24 +22,13 @@ const TextArea = () => {
       });
    }, [type]);
 
-   const getCharStyle = (isCorrect: boolean | null) => {
-      if (isCorrect === null) return {};
-      return {
-         color: `hsl(var(--${isCorrect ? 'correct' : 'wrong'}_char))`
-      };
+   const getCharClass = (isCorrect: boolean | null) => {
+      if (isCorrect === null) return '';
+      return isCorrect ? 'text-correct_char' : 'text-wrong_char';
    };
 
    return (
       <div className="flex flex-wrap overflow-hidden text-xl select-none h-28 sm:px-10 font-poppins md:text-2xl selection:bg-yellow-300 selection:text-white text-input">
-         {/* <input
-            type="text"
-            className="absolute bg-transparent cursor-default pointer-events-none -z-10 "
-            autoCapitalize="off"
-            aria-autocomplete="none"
-            autoCorrect="off"
-            spellCheck="false"
-            data-enable-grammarly="false"
-         /> */}
          {wordList?.map((word, wordIndex) => {
             const isActive = activeWord === word && typedHistory.length === wordIndex;
             const typedWord = isActive ? userInput : typedHistory[wordIndex] || '';
@@ -67,14 +56,14 @@ const TextArea = () => {
                      return (
                         <span
                            key={char + charIndex}
-                           style={getCharStyle(isCorrect)}
+                           className={getCharClass(isCorrect)}
                         >
                            {char}
                         </span>
                      );
                   })}
                   {typedWord.length > word.length && (
-                     <span style={getCharStyle(false)}>
+                     <span className="text-wrong_char">
                         {typedWord.slice(word.length)}
                      </span>
                   )}
