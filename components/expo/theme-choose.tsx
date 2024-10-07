@@ -1,7 +1,7 @@
 // TODO: Delete after theme integration
 'use client';
-import React, { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
 // import useTimer from '@/helpers/utils/useTimer';
 import {
    Dialog,
@@ -15,10 +15,15 @@ import {
 export default function ThemeChoose() {
    const { setTheme, theme, resolvedTheme } = useTheme();
 
-   const [mounted, setMounted] = useState(false); //tracking wether the component is mounted or not
+   // 'unmounted' - component just rendered;
+   // 'mounted' - component has mounted and has been hydrated, and is dialog closed state;
+   // 'dialogOpen' - theme selection dialog is open
+   const [status, setStatus] = useState<'unmounted' | 'mounted' | 'dialogOpen'>(
+      'unmounted'
+   );
 
    useEffect(() => {
-      setMounted(true);
+      setStatus('mounted');
    }, []);
    // const { timer, run, reset, pause, isRunning, isExited } = useTimer(
    //    // () => alert('Count Down/UP finished'),
@@ -42,13 +47,15 @@ export default function ThemeChoose() {
       'cyberpunk',
    ];
 
-
-   if (!mounted) return null;
+   if (status === 'unmounted') return null;
 
    //script.js
 
    return (
-      <Dialog>
+      <Dialog
+         open={status === 'dialogOpen'}
+         onOpenChange={(open) => setStatus(open ? 'dialogOpen' : 'mounted')}
+      >
          <DialogTrigger className="text-input">
             {theme || resolvedTheme}
          </DialogTrigger>
@@ -70,7 +77,10 @@ export default function ThemeChoose() {
                            : 'bg-background text-input border border-input hover:bg-accent hover:text-destructive transition duration-150 ease-in-out'
                      }`}
                      key={currtheme}
-                     onClick={() => setTheme(currtheme)}
+                     onClick={() => {
+                        setTheme(currtheme)
+                        setStatus('mounted')
+                     }}
                   >
                      {currtheme}
                   </button>
