@@ -42,7 +42,6 @@ export default function ThemeChoose() {
       'cyberpunk',
    ];
 
-
    if (!mounted) return null;
 
    //script.js

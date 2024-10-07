@@ -28,10 +28,10 @@ export default function HomePage() {
                >
                   start
                </button> */}
-               <div className='mb-2'>{timer}</div>
+               <div className="mb-2">{timer}</div>
             </div>
             <div className="flex items-center justify-center mb-4 tracking-widest lowercase text-input gap-x-1">
-               <MdLanguage className='mt-2'/>
+               <MdLanguage className="mt-2" />
                <p className="cursor-pointer mt-2">english</p>
             </div>
             <div>
