@@ -42,11 +42,9 @@ export default function ThemeChoose() {
       'cyberpunk',
    ];
 
-
-   if (!mounted) return null;
-
    //script.js
 
+   if (!mounted) return null;
    return (
       <Dialog>
          <DialogTrigger className="text-input">

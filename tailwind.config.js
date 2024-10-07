@@ -22,7 +22,8 @@ module.exports = {
             background: 'hsl(var(--background))',
             foreground: 'hsl(var(--foreground))',
             cursor: 'hsl(var(--cursor))',
-
+            correct_char: 'hsl(var(--correct_char))',  
+            wrong_char: 'hsl(var(--wrong_char))',
             // secondary: {
             //    DEFAULT: 'var(--secondary)',
             //    foreground: 'var(--secondary-foreground)',
@@ -71,6 +72,6 @@ module.exports = {
             shake: 'shake 0.8s cubic-bezier(.36, .07, .19, .97) both',
          },
       },
-      plugins: [],
    },
+   plugins: [],
 };
