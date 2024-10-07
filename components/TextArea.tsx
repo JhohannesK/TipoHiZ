@@ -1,7 +1,12 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
 import { userConfigStore, wordStore } from '../store';
-import { setCaretRef, setRef, setWordList } from '../store/actions/WordActions';
+import {
+   setCaretRef,
+   setErrorCount,
+   setRef,
+   setWordList,
+} from '../store/actions/WordActions';
 
 interface keyObj {
    key: string;
@@ -17,22 +22,23 @@ const TextArea: React.FC<soundProps> = ({ sound }) => {
       (state) => state
    );
 
-   // State to hold the typing sound
-   const [typingSound, setTypingSound] = useState<HTMLAudioElement | null>(
-      null
-   );
+   //state to hold the typing sound
+   const [typingSound, setTypingSound] = useState<HTMLAudioElement | null>(null);
 
-   // Effect to load the typing sound
+   //effect to load the typing sound
    useEffect(() => {
       const audio = new Audio('/modules/AudioFiles/type.mp3');
       setTypingSound(audio);
       return () => {
-         // Clean up audio instance on unmount
+         if (typingSound) {
+            typingSound.pause(); //pause the audio
+            typingSound.currentTime = 0; //reset to the beginning
+         }
          setTypingSound(null);
       };
    }, []);
 
-   // Effect to handle keydown events and play sound
+   //effect to handle keydown events and play sound
    useEffect(() => {
       const handleKeyDown = (e: keyObj) => {
          if (
@@ -55,7 +61,7 @@ const TextArea: React.FC<soundProps> = ({ sound }) => {
 
       window.addEventListener('keydown', handleKeyDown);
 
-      // Clean up the event listener on component unmount
+      // clean up the event listener on component unmount
       return () => {
          window.removeEventListener('keydown', handleKeyDown);
       };
@@ -64,6 +70,30 @@ const TextArea: React.FC<soundProps> = ({ sound }) => {
    const caretRef = useRef<HTMLSpanElement>(null);
    const activeWordRef = useRef<HTMLDivElement>(null);
    const extraLetters = userInput.slice(activeWord.length).split('');
+
+   const calculateErrors = () => {
+      let count = 0;
+      const activeWordLength = activeWord.length;
+      const userInputLength = userInput.length;
+
+      for (let i = 0; i < Math.min(activeWordLength, userInputLength); i++) {
+         if (userInput[i] !== activeWord[i]) {
+            count++;
+         }
+      }
+
+      if (userInputLength > activeWordLength) {
+         count += userInputLength - activeWordLength;
+      } else if (userInputLength < activeWordLength) {
+         count += activeWordLength - userInputLength;
+      }
+
+      setErrorCount(count);
+   };
+
+   useEffect(() => {
+      calculateErrors();
+   }, [userInput, activeWord]);
 
    useEffect(() => {
       setRef(activeWordRef);
@@ -79,8 +109,7 @@ const TextArea: React.FC<soundProps> = ({ sound }) => {
    return (
       <div className="flex flex-wrap overflow-hidden text-xl select-none h-28 sm:px-10 font-poppins md:text-2xl selection:bg-yellow-300 selection:text-white text-input">
          {wordList?.map((word, index) => {
-            const isActive =
-               activeWord === word && typedHistory.length === index;
+            const isActive = activeWord === word && typedHistory.length === index;
             return (
                <div
                   key={word + index}
@@ -100,8 +129,7 @@ const TextArea: React.FC<soundProps> = ({ sound }) => {
                      )}
                   </div>
                   {word.split('').map((char, charIndex) => {
-                     const isCorrectlyTyped =
-                        isActive && char === userInput[charIndex];
+                     const isCorrectlyTyped = isActive && char === userInput[charIndex];
                      return (
                         <span
                            key={char + charIndex}

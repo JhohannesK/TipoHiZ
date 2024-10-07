@@ -74,3 +74,6 @@ export const IncreaseTypedEntries = () =>
    wordStore.setState((state) => ({
       typedEntries: state.typedEntries + 1,
    }));
+
+export const setErrorCount = (errorCount: number) =>
+   wordStore.setState({ errorCount });
