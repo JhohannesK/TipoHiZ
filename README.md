@@ -4,7 +4,8 @@ Tipohiz is a sleek and customizable typing test platform designed to enhance you
 
 > **Note**
 >
-> This project is built using Nextjs
+> -  This project is built using Nextjs <br>
+> -  Inspired by MonkeyType
 
 # Features
 
@@ -75,5 +76,6 @@ Thanks a lot for spending your time helping TipoHiz grow. Thanks a lot! Keep on 
 [![Contributors](https://contrib.rocks/image?repo=JhohannesK/TipoHiz)](https://github.com/JhohannesK/TipoHiz/graphs/contributors)
 
 ## Credits
+
 Logo Credit - [Puneet Upadhyay](https://github.com/debianbaker) <br/>
 Designs - [Kwaw Kumi Miezah](https://github.com/Kay-kwaw)

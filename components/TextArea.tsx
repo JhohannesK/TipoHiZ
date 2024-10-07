@@ -1,24 +1,108 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { userConfigStore, wordStore } from '../store';
-import { setCaretRef, setRef, setWordList } from '../store/actions/WordActions';
+import {
+   setCaretRef,
+   setErrorCount,
+   setRef,
+   setWordList,
+} from '../store/actions/WordActions';
 
-const TextArea = () => {
+interface keyObj {
+   key: string;
+}
+
+interface soundProps {
+   sound: boolean;
+}
+
+const TextArea: React.FC<soundProps> = ({ sound }) => {
    const { type } = userConfigStore((state) => state);
    const { wordList, activeWord, userInput, typedHistory } = wordStore(
       (state) => state
    );
 
-   const caretRef = React.useRef<HTMLSpanElement>(null);
-   const activeWordRef = React.useRef<HTMLDivElement>(null);
+   //state to hold the typing sound
+   const [typingSound, setTypingSound] = useState<HTMLAudioElement | null>(
+      null
+   );
+
+   //effect to load the typing sound
+   useEffect(() => {
+      const audio = new Audio('/modules/AudioFiles/type.mp3');
+      setTypingSound(audio);
+      return () => {
+         if (typingSound) {
+            typingSound.pause(); //pause the audio
+            typingSound.currentTime = 0; //reset to the beginning
+         }
+         setTypingSound(null);
+      };
+   }, []);
+
+   //effect to handle keydown events and play sound
+   useEffect(() => {
+      const handleKeyDown = (e: keyObj) => {
+         if (
+            e &&
+            e.key !== 'Meta' &&
+            e.key !== 'Alt' &&
+            e.key !== 'Control' &&
+            e.key !== 'Shift' &&
+            e.key !== 'CapsLock' &&
+            e.key !== 'Tab'
+         ) {
+            if (typingSound) {
+               typingSound.currentTime = 0; // Reset sound to the beginning
+               typingSound.volume = sound ? 0.1 : 0; // Set volume based on the `sound` prop
+               typingSound.playbackRate = 1; // Adjust playback speed if needed
+               typingSound.play();
+            }
+         }
+      };
+
+      window.addEventListener('keydown', handleKeyDown);
+
+      // clean up the event listener on component unmount
+      return () => {
+         window.removeEventListener('keydown', handleKeyDown);
+      };
+   }, [typingSound, sound]); // Adding `sound` to dependencies
+
+   const caretRef = useRef<HTMLSpanElement>(null);
+   const activeWordRef = useRef<HTMLDivElement>(null);
    const extraLetters = userInput.slice(activeWord.length).split('');
 
-   React.useEffect(() => {
+   const calculateErrors = () => {
+      let count = 0;
+      const activeWordLength = activeWord.length;
+      const userInputLength = userInput.length;
+
+      for (let i = 0; i < Math.min(activeWordLength, userInputLength); i++) {
+         if (userInput[i] !== activeWord[i]) {
+            count++;
+         }
+      }
+
+      if (userInputLength > activeWordLength) {
+         count += userInputLength - activeWordLength;
+      } else if (userInputLength < activeWordLength) {
+         count += activeWordLength - userInputLength;
+      }
+
+      setErrorCount(count);
+   };
+
+   useEffect(() => {
+      calculateErrors();
+   }, [userInput, activeWord]);
+
+   useEffect(() => {
       setRef(activeWordRef);
       setCaretRef(caretRef);
    }, [caretRef, activeWordRef]);
 
-   React.useEffect(() => {
+   useEffect(() => {
       import(`../modules/TextFiles/${type}.json`).then((word) => {
          setWordList(word.default);
       });
@@ -26,15 +110,6 @@ const TextArea = () => {
 
    return (
       <div className="flex flex-wrap overflow-hidden text-xl select-none h-28 sm:px-10 font-poppins md:text-2xl selection:bg-yellow-300 selection:text-white text-input">
-         {/* <input
-            type="text"
-            className="absolute bg-transparent cursor-default pointer-events-none -z-10 "
-            autoCapitalize="off"
-            aria-autocomplete="none"
-            autoCorrect="off"
-            spellCheck="false"
-            data-enable-grammarly="false"
-         /> */}
          {wordList?.map((word, index) => {
             const isActive =
                activeWord === word && typedHistory.length === index;
@@ -45,16 +120,16 @@ const TextArea = () => {
                   ref={isActive ? activeWordRef : null}
                >
                   <div className="startView">
-                     {isActive ? (
+                     {isActive && (
                         <span
                            ref={caretRef}
                            id="caret"
-                           className="animate-blink rounded-sm flex items-start w-[.08em] h-7 top-1 bg-cursor justify-start text-cursor  absolute"
+                           className="animate-blink rounded-sm flex items-start w-[.08em] h-7 top-1 bg-cursor justify-start text-cursor absolute"
                            style={{
                               left: userInput.length * 12.3833,
                            }}
                         />
-                     ) : null}
+                     )}
                   </div>
                   {word.split('').map((char, charIndex) => {
                      const isCorrectlyTyped =
@@ -69,27 +144,20 @@ const TextArea = () => {
                      );
                   })}
                   {isActive
-                     ? extraLetters.map((char, charId) => {
-                          return (
-                             <span key={char + charId} className="wrong extra">
-                                {char}
-                             </span>
-                          );
-                       })
+                     ? extraLetters.map((char, charId) => (
+                          <span key={char + charId} className="wrong extra">
+                             {char}
+                          </span>
+                       ))
                      : typedHistory[index]
                      ? typedHistory[index]
                           .slice(wordList[index].length)
                           .split('')
-                          .map((char, charId) => {
-                             return (
-                                <span
-                                   key={char + charId}
-                                   className="wrong extra"
-                                >
-                                   {char}
-                                </span>
-                             );
-                          })
+                          .map((char, charId) => (
+                             <span key={char + charId} className="wrong extra">
+                                {char}
+                             </span>
+                          ))
                      : null}
                </div>
             );

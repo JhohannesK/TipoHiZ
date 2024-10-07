@@ -19,9 +19,17 @@ const useKeydownGetter = ({ run }: { run: () => void; reset: () => void }) => {
             useHandleText(e.key, activeWordRef, run);
             // run()
             e.preventDefault();
+         } else if (
+            e.shiftKey &&
+            e.key.length === 1 &&
+            !e.ctrlKey &&
+            !e.altKey
+         ) {
+            const charToAdd = e.key.toUpperCase(); // Convert to uppercase if Shift is pressed
+            useHandleText(`Shift${charToAdd}`, activeWordRef, run);
+            e.preventDefault();
          }
       };
-
       return () => {
          document.onkeydown = null;
       };
