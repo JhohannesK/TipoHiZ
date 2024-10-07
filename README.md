@@ -63,4 +63,3 @@ Thanks a lot for spending your time helping TipoHiz grow. Thanks a lot! Keep on 
 <a href="https://github.com/JhohannesK/TipoHiZ/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=JhohannesK/TipoHiZ" />
 </a>
-

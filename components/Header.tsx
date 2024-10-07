@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaUserAlt } from 'react-icons/fa';
+import Link from 'next/link';
 
 function Header() {
    return (
@@ -11,7 +12,9 @@ function Header() {
          </div>
          <div className="flex items-center justify-center p-2 px-2 rounded-full gap-x-5 bg-foreground">
             <FaUserAlt className="text-input" />
-            <p className="text-sm tracking-wide text-input">Login</p>
+            <Link href="/login" className="text-sm tracking-wide text-input">
+               Login
+            </Link>
          </div>
       </div>
    );
