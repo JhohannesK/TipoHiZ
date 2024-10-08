@@ -18,6 +18,8 @@ Please complete the below checklist. Failure to follow these instructions may re
 - [ ] This PR is still a work in progress (WIP)
 - [ ] This PR is completed and ready for review
 
+### Screenshot if applicable
+<!-- screenshot of the feature implemented by this issue -->
 ### Additional Information
 <!-- Any additional information or context about this PR. -->
 
