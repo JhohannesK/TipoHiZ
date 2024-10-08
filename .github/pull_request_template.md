@@ -1,6 +1,7 @@
 #### THIS IS A PULL REQUEST TEMPLATE! 
 
 ⚠️ This helps you complete a pull request. Please follow the instructions below. Reminder that you are bound to abide by the [Code of Conduct](/CODE_OF_CONDUCT.md) ⚠️ 
+> Request for review from **JhohannesK**
 
 ### Submission Checklist
 
@@ -24,5 +25,7 @@ closes #
 
 ### Additional Information
 <!-- Any additional information or context about this PR. -->
-- [ ] Did you edit the package.json or pnpm.yaml? If yes, explain reason for modification and add the `depedencies` label to this PR.
+- [ ] Did you edit the package.json or pnpm.yaml? If yes, explain reason for modification and add the `dependencies` label to this PR. <br>
+
+
 
