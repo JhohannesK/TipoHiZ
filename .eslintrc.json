@@ -19,8 +19,9 @@
    },
    "plugins": ["react", "prettier"],
    "rules": {
-      "prettier/prettier": ["off"]
+      "prettier/prettier": ["off"],
       // "react-refresh/only-export-components": "warn",
       // "react-hooks/exhaustive-deps": "warn"
+      "react/prop-types": "warn"
    }
 }
