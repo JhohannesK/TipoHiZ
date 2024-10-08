@@ -20,6 +20,7 @@ Please complete the below checklist. Failure to follow these instructions may re
 
 ### Screenshot if applicable
 <!-- screenshot of the feature implemented by this issue -->
+
 ### Additional Information
 <!-- Any additional information or context about this PR. -->
 
