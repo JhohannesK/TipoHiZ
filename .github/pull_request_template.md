@@ -24,5 +24,5 @@ closes #
 
 ### Additional Information
 <!-- Any additional information or context about this PR. -->
-- [ ] Did you edit the package.json or pnpm.yaml? If yes, explain reason for modification.
+- [ ] Did you edit the package.json or pnpm.yaml? If yes, explain reason for modification and add the `depedencies` label to this PR.
 
