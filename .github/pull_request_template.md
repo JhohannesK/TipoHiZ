@@ -8,9 +8,8 @@
 
 Please complete the below checklist. Failure to follow these instructions may result in your pull request being closed without review.
 
-### What issue does this PR address?
+### What issue does this PR closes?
 <!-- Add tag of the issue or describe the problem your PR solves. -->
-closes #
 
 ### Description of file changes
 <!-- A detailed description of the changes made in this pull request. -->
