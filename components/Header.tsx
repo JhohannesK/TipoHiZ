@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useState } from 'react';
 import { LuUser, LuMenu, LuX } from 'react-icons/lu';
 import { SvgRender } from './SvgRender';
@@ -18,6 +19,7 @@ function Header() {
                TipoHiz.__
             </p>
          </div>
+
          <div className="md:hidden flex items-center text-input z-30">
             <button onClick={toggleMenu} aria-label="Toggle Menu">
                {menuOpen ? (
