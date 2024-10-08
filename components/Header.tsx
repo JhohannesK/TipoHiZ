@@ -21,7 +21,7 @@ function Header() {
          <div className="md:hidden flex items-center text-input z-30">
             <button onClick={toggleMenu} aria-label="Toggle Menu">
                {menuOpen ? (
-                  <LuX className="text-2xl text-foreground" />
+                  <LuX className="text-2xl text-background" />
                ) : (
                   <LuMenu className="text-2xl" />
                )}
@@ -48,7 +48,7 @@ function Header() {
                      </p>
                      <LuUser className="text-background" />
                   </div>
-                  <div className="flex p-2 rounded-xl bg-foreground gap-3 cursor-pointer">
+                  <div className="flex p-2 rounded-xl bg-background gap-3 cursor-pointer">
                      <p className="text-sm tracking-wide text-input">Sign up</p>
                      <LuUser className="text-input" />
                   </div>
