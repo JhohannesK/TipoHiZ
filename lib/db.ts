@@ -1,14 +1,9 @@
-import mongoose from 'mongoose';
+import { PrismaClient } from '@prisma/client';
 
-const connectDB = async () => {
-   try {
-      await mongoose.connect(process.env.MONGO_URI!);
-      console.log('Connected to Database!');
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   } catch (error: any) {
-      console.error(error.message);
-      process.exit(1);
-   }
+const globalForPrisma = globalThis as unknown as {
+   prisma: PrismaClient | undefined;
 };
 
-export default connectDB;
+export const prisma = globalForPrisma.prisma ?? new PrismaClient();
+
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;

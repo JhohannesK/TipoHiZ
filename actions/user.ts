@@ -1,8 +1,7 @@
 'use server';
 
 import { signIn } from '@/auth';
-import connectDB from '@/lib/db';
-import { User } from '@/models/User';
+import { prisma } from '@/lib/db';
 import { hash } from 'bcryptjs';
 import { redirect } from 'next/navigation';
 
@@ -13,15 +12,21 @@ const register = async (formData: FormData) => {
 
    if (!name || !email || !password) throw new Error('Please fill all fields');
 
-   await connectDB();
-
-   const existingUser = await User.findOne({ email });
+   const existingUser = await prisma.user.findFirst({
+      where: { email },
+   });
 
    if (existingUser) throw new Error('User already exists with given email.');
 
    const hashedPassword = await hash(password, 10);
 
-   await User.create({ name, email, password: hashedPassword });
+   await prisma.user.create({
+      data: {
+         email,
+         name,
+         password: hashedPassword,
+      },
+   });
    redirect('/login');
 };
 
