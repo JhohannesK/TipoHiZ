@@ -27,6 +27,7 @@ const register = async (formData: FormData) => {
          password: hashedPassword,
       },
    });
+
    redirect('/login');
 };
 
