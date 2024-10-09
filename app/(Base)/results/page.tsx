@@ -2,7 +2,11 @@
 import React from 'react';
 import Link from 'next/link';
 import { userConfigStore, wordStore } from '@/store';
-import { accurateWPM, grossWPM } from '@/helpers/utils/util';
+import {
+   accuratePercentage,
+   accurateWPM,
+   grossWPM,
+} from '@/helpers/utils/util';
 
 export default function ResultsPage() {
    const { typedEntries, errorCount } = wordStore.getState();
@@ -11,7 +15,7 @@ export default function ResultsPage() {
    const rawWpm = grossWPM(typedEntries, time);
 
    const accurateWpm = accurateWPM(errorCount, typedEntries, time);
-
+   const accuracyPrecentage = accuratePercentage(errorCount, typedEntries);
    return (
       <div className="flex flex-col items-center gap-10 justify-center text-input">
          <Link
@@ -28,6 +32,11 @@ export default function ResultsPage() {
          </div>
          <div>
             <h2 className="text-6xl font-bold">{rawWpm} WPM</h2>
+         </div>
+         <div>
+            <h2 className="text-6xl font-bold">
+               Accuracy:{accuracyPrecentage}%
+            </h2>
          </div>
          <div className="text-center">
             <h2 className="text-6xl font-bold">Test Type</h2>
