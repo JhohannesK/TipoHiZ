@@ -5,18 +5,16 @@ import UserSelectPallete from '@/components/UserSelectPallete';
 import ResetTestButton from '@/components/reset-test-button';
 import { MdLanguage } from 'react-icons/md';
 import useTimer from '@/helpers/utils/useTimer';
-import { userConfigStore, wordStore } from '@/store';
+import { userConfigStore } from '@/store';
 import useKeydownGetter from '@/helpers/utils/useKeydownGetter';
 import { IoIosColorPalette } from 'react-icons/io';
 import ThemeChoose from '@/components/expo/theme-choose';
-import { accuratePercentage } from '@/helpers/utils/util';
 
 export default function HomePage() {
    const { time } = userConfigStore((state) => state);
-   const { errorCount, typedEntries } = wordStore((state) => state);
    const { timer, run, reset } = useTimer(1, time);
    const [sound, setSound] = React.useState(true);
-   const accuracy = accuratePercentage(errorCount, typedEntries);
+
    const handleSound = () => {
       const typingSound = new Audio('/modules/AudioFiles/type.mp3');
       if (sound) {
@@ -44,12 +42,7 @@ export default function HomePage() {
                </button> */}
                <div className="mb-2">{timer}</div>
             </div>
-            <p className="text-input font-poppins">
-               accuracy:
-               <span className="font-bold text-green-500 text-xl">
-                  {` ${accuracy}`}%
-               </span>
-            </p>
+
             <div className="flex items-center justify-center mb-4 tracking-widest lowercase text-input gap-x-1">
                <MdLanguage className="mt-2" />
                <p className="cursor-pointer mt-2">english</p>

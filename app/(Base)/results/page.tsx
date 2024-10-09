@@ -7,19 +7,24 @@ import {
    accurateWPM,
    grossWPM,
 } from '@/helpers/utils/util';
+import { resetAccuracy } from '@/helpers/reset';
 
 export default function ResultsPage() {
-   const { typedEntries, errorCount } = wordStore.getState();
+   const { typedEntries, errorCount, correctWord, incorrectWord } =
+      wordStore.getState();
    const { time, category } = userConfigStore.getState();
 
    const rawWpm = grossWPM(typedEntries, time);
 
    const accurateWpm = accurateWPM(errorCount, typedEntries, time);
-   const accuracyPrecentage = accuratePercentage(errorCount, typedEntries);
+   const accuracyPrecentage = accuratePercentage(correctWord, incorrectWord);
    return (
       <div className="flex flex-col items-center gap-10 justify-center text-input">
          <Link
             href={'/'}
+            onClick={() => {
+               resetAccuracy();
+            }}
             className="text-lg px-5 py-3 bg-foreground rounded-lg hover:bg-accent transition-all duration-200"
          >
             Retake

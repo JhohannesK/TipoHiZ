@@ -40,9 +40,9 @@ export const accurateWPM = (
 };
 
 export const accuratePercentage = (
-   errorCount: number,
-   typedEntries: number
+   correctWord: number,
+   incorrectWord: number
 ) => {
-   if (typedEntries === 0) return 100;
-   return Math.round((errorCount / typedEntries) * 100);
+   if (correctWord + incorrectWord === 0) return 100;
+   return ((correctWord / (incorrectWord + correctWord)) * 100).toFixed(0);
 };

@@ -54,6 +54,15 @@ export const useHandleText = (
          break;
       case ' ':
          if (userInput === '') return;
+         if (activeWord === userInput) {
+            wordStore.setState((state) => ({
+               correctWord: state.correctWord + 1,
+            }));
+         } else {
+            wordStore.setState((state) => ({
+               incorrectWord: state.incorrectWord + 1,
+            }));
+         }
          currWordEl?.classList.add(
             userInput !== activeWord ? 'wrong' : 'right'
          );
