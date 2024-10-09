@@ -1,5 +1,6 @@
 // TODO: Delete after theme integration
 'use client';
+import React from 'react';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 // import useTimer from '@/helpers/utils/useTimer';
