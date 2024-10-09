@@ -13,6 +13,8 @@ export interface WordState {
    nextIndex: number;
    nextCharIdx: number;
    typedEntries: number;
+   correctEntries: number;
+   incorrectEntries: number;
 }
 
 export interface TimeState {

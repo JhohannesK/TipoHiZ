@@ -28,3 +28,14 @@ export const loadFromLocalStorage = ({ key }: { key: string }) => {
 export const grossWPM = (typedEntries: number, time: number) => {
    return ((typedEntries / 5) * 60) / time;
 };
+
+export const calculateAccuracy = (
+   correctEntries: number,
+   incorrectEntries: number
+) => {
+   if (correctEntries + incorrectEntries === 0) return 100;
+   const accuracy =
+      (correctEntries / (correctEntries + incorrectEntries)) * 100;
+
+   return accuracy.toFixed(0);
+};

@@ -13,7 +13,13 @@ export const useHandleText = (
    activeWordRef: React.RefObject<HTMLDivElement> | null,
    run: () => void
 ) => {
-   const { userInput, activeWord, typedHistory } = wordStore.getState();
+   const {
+      userInput,
+      activeWord,
+      typedHistory,
+      correctEntries,
+      incorrectEntries,
+   } = wordStore.getState();
 
    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
    const currWordEl = activeWordRef?.current!;
@@ -43,6 +49,15 @@ export const useHandleText = (
          return;
       case ' ':
          if (userInput === '') return;
+         if (userInput !== activeWord) {
+            wordStore.setState({
+               incorrectEntries: incorrectEntries + 1,
+            });
+         } else {
+            wordStore.setState({
+               correctEntries: correctEntries + 1,
+            });
+         }
          currWordEl?.classList.add(
             userInput !== activeWord ? 'wrong' : 'right'
          );

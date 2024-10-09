@@ -2,13 +2,14 @@
 import React from 'react';
 import Link from 'next/link';
 import { userConfigStore, wordStore } from '@/store';
-import { grossWPM } from '@/helpers/utils/util';
+import { calculateAccuracy, grossWPM } from '@/helpers/utils/util';
 
 export default function ResultsPage() {
-   const { typedEntries } = wordStore.getState();
+   const { typedEntries, correctEntries, incorrectEntries } =
+      wordStore.getState();
    const { time, category } = userConfigStore.getState();
    const wpm = grossWPM(typedEntries, time);
-
+   const accuracy = calculateAccuracy(correctEntries, incorrectEntries);
    return (
       <div className="flex flex-col items-center gap-10 justify-center text-input">
          <Link
@@ -22,6 +23,9 @@ export default function ResultsPage() {
          </div>
          <div>
             <h2 className="text-6xl font-bold">{wpm} WPM</h2>
+         </div>
+         <div>
+            <h2 className="text-6xl font-bold">Accuracy: {accuracy}%</h2>
          </div>
          <div className="text-center">
             <h2 className="text-6xl font-bold">Test Type</h2>
