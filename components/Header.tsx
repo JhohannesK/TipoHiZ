@@ -2,6 +2,7 @@
 import React from 'react';
 import { LuUser } from 'react-icons/lu';
 import { SvgRender } from './SvgRender';
+import Settings from '@/components/Settings';
 
 function Header() {
    return (
@@ -11,6 +12,7 @@ function Header() {
             <p className="text-xl font-bold select-none text-input hover:animate-shake">
                TipoHiz.__
             </p>
+            <Settings />
          </div>
          <div className="flex justify-between items-center gap-3 font-semibold">
             <div className="flex items-center justify-center p-2 rounded-xl gap-3 cursor-pointer text-foreground bg-input">
