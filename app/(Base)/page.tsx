@@ -28,6 +28,7 @@ export default function HomePage() {
             <div className="text-xl font-medium font-poppins text-accent flex-wrap">
                <div className="mb-2">{timer}</div>
             </div>
+
             <div className="flex items-center justify-center mb-4 tracking-widest lowercase text-input gap-x-1">
                <MdLanguage className="mt-2" />
                <p className="cursor-pointer mt-2">english</p>

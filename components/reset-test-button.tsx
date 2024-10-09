@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { resetTest } from '@/helpers/reset';
+import { resetAccuracy, resetTest } from '@/helpers/reset';
 import { userConfigStore } from '@/store';
 import { setCaretRef, setUserInput } from '@/store/actions/WordActions';
 import { BsArrowRepeat } from 'react-icons/bs';
@@ -43,6 +43,7 @@ export default function ResetTestButton({ reset }: { reset: () => void }) {
          onClick={(e) => {
             // setDefaultTime(time);
             resetTest(type, reset);
+            resetAccuracy();
             setUserInput('');
             setCaretRef(null);
             e.preventDefault();

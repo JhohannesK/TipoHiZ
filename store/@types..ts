@@ -14,6 +14,8 @@ export interface WordState {
    nextCharIdx: number;
    typedEntries: number;
    errorCount: number;
+   correctWord: number;
+   incorrectWord: number;
 }
 
 export interface TimeState {
