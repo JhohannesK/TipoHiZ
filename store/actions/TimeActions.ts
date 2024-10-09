@@ -11,6 +11,7 @@ export const resetStates = () => {
       // activeWordRef: null,
       nextIndex: 0,
       typedEntries: 0,
+      errorCount: 0,
    });
 };
 

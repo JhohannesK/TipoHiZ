@@ -4,7 +4,8 @@ Tipohiz is a sleek and customizable typing test platform designed to enhance you
 
 > **Note**
 >
-> This project is built using Nextjs
+> -  This project is built using Nextjs <br>
+> -  Inspired by MonkeyType
 
 # Features
 
@@ -30,7 +31,7 @@ Tipohiz is a sleek and customizable typing test platform designed to enhance you
 ![Docker](https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![RadixUI](https://img.shields.io/badge/radixui-161618?style=for-the-badge&logo=radixui&logoColor=white)
 
-## Do you like to see how tioHiZ looks like?
+## Do you like to see how tipoHiZ looks like?
 
 Use the link below:
 [https://tipohiz.vercel.app/](https://tipohiz.vercel.app/)
@@ -41,7 +42,7 @@ For contributers, you merged PRs do not immediately go live. Instead, they are d
 # Bug report or Feature request
 
 If you encounter a bug or have a feature request, [create an issue](https://github.com/jhohannesK/tipohiz/issues),
-[create a discussion thread](https://github.comjhohannesK/tipohiz/discussions)
+[create a discussion thread](https://github.comjhohannesK/tipohiz/discussions) <br/>
 
 # Want to Contribute?
 
@@ -64,12 +65,17 @@ To report a security vulnerability, please refer to [SECURITY.md](SECURITY.md).
 
 ## 🙏 Support
 
-This project needs a ⭐️ from you. Don't forget to leave a star ⭐️
+This project needs a ⭐️ from you. Don't forget to leave a star ⭐️ <br/>
+
+Join our [discord](https://discord.gg/8Z67Fv8z)
 
 ## 💪 Thanks to all Contributors
 
 Thanks a lot for spending your time helping TipoHiz grow. Thanks a lot! Keep on code-jamming 🍻
 
-<a href="https://github.com/JhohannesK/TipoHiZ/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=JhohannesK/TipoHiZ" />
-</a>
+[![Contributors](https://contrib.rocks/image?repo=JhohannesK/TipoHiz)](https://github.com/JhohannesK/TipoHiz/graphs/contributors)
+
+## Credits
+
+Logo Credit - [Puneet Upadhyay](https://github.com/debianbaker) <br/>
+Designs - [Kwaw Kumi Miezah](https://github.com/Kay-kwaw)

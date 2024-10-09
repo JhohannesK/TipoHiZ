@@ -13,35 +13,40 @@ import ThemeChoose from '@/components/expo/theme-choose';
 export default function HomePage() {
    const { time } = userConfigStore((state) => state);
    const { timer, run, reset } = useTimer(1, time);
+   const [sound, setSound] = React.useState(false); // Set default sound to off
+
+   const handleSound = () => {
+      setSound((prevSound) => !prevSound); // Toggle sound state
+   };
+
    useKeydownGetter({ run, reset });
+
    return (
       <div>
          <UserSelectPallete reset={reset} />
          <div className="flex items-center justify-between mt-16 sm:px-10">
-            <div className="text-2xl font-medium font-poppins text-accent">
-               {/* <button
-                  className={`flex font-bold items-center justify-center rounded py-2 mt-5 text-input w-48 ${
-                     isRunning || isExited ? 'bg-background' : 'bg-foreground'
-                  }`}
-                  onClick={run}
-                  disabled={isRunning || isExited}
-               >
-                  start
-               </button> */}
-               <div>{timer}</div>
+            <div className="text-xl font-medium font-poppins text-accent flex-wrap">
+               <div className="mb-2">{timer}</div>
             </div>
-            <div className="flex items-center justify-center mb-4 tracking-widest lowercase text-input gap-x-3">
-               <MdLanguage />
-               <p className="cursor-pointer">english</p>
+            <div className="flex items-center justify-center mb-4 tracking-widest lowercase text-input gap-x-1">
+               <MdLanguage className="mt-2" />
+               <p className="cursor-pointer mt-2">english</p>
             </div>
+
+            <div className="flex items-center justify-center mb-4 tracking-widest lowercase text-input gap-x-1">
+               <button className="outline-none" onClick={handleSound}>
+                  {sound ? 'Sound: On' : 'Sound: Off'}
+               </button>
+            </div>
+
             <div>
-               <div className="flex items-center gap-1 cursor-pointer text-input">
+               <div className="flex items-center gap-1 cursor-pointer text-input mb-3">
                   <IoIosColorPalette />
                   <ThemeChoose />
                </div>
             </div>
          </div>
-         <TextArea />
+         <TextArea sound={sound} />
          <ResetTestButton reset={reset} />
       </div>
    );

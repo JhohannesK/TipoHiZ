@@ -7,8 +7,6 @@
 
 ### Contribute in framework
 
-### Contribute in framework
-
 -  [Nextjs](<[https://graphql.org/](https://nextjs.org/docs)>)
 
 ### Contribute in state-management
@@ -118,10 +116,10 @@ git push origin YourBranchName
 
 Once you have completed the above steps, you are ready to build and run TipoHiZ.
 
-1. Run `npm run install-all` in the project root to install all dependencies.
-   -  If you are on Windows, use `npm run install-win`.
-   -  If neither works, you will have to run `npm install` in root, frontend, and backend directories.
-2. Run `npm run dev` (`npm run dev-fe` if you skipped the Backend section) to start a local dev server on [port 3000](http://localhost:3000). It will watch for changes and rebuild when you edit files in `src/` or `public/` directories. Note that rebuilding doesn't happen instantaneously so be patient for changes to appear. Use <kbd>Ctrl+C</kbd> to kill it.
+1. Run `pnpm run install-all` in the project root to install all dependencies.
+   -  If you are on Windows, use `pnpm run install-win`.
+   -  If neither works, you will have to run `pnpm install` in root.
+2. Run `pnpm dev` to start a local dev server on [port 3000](http://localhost:3000). Use <kbd>Ctrl+C</kbd> to kill it.
 
 **_:🏆🏆🏆: After this, the maintainers will review the PR and will merge it if it helps move the TipoHiZ project forward. Otherwise, it will be given constructive feedback and suggestions for the changes needed to add the PR to the codebase._**
 
