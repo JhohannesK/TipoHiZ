@@ -20,7 +20,7 @@ export default function ThemeChoose() {
    // 'mounted' - component has mounted and has been hydrated, and is dialog closed state;
    // 'dialogOpen' - theme selection dialog is open
    const [status, setStatus] = useState<'unmounted' | 'mounted' | 'dialogOpen'>(
-      'unmounted'
+      'unmounted',
    );
 
    useEffect(() => {
@@ -79,8 +79,8 @@ export default function ThemeChoose() {
                      }`}
                      key={currtheme}
                      onClick={() => {
-                        setTheme(currtheme)
-                        setStatus('mounted')
+                        setTheme(currtheme);
+                        setStatus('mounted');
                      }}
                   >
                      {currtheme}

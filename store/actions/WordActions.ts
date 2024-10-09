@@ -22,13 +22,13 @@ export const setWordList = (wordList: string[]) => {
 };
 
 export const setCaretRef = (
-   caretRef: React.RefObject<HTMLSpanElement> | null
+   caretRef: React.RefObject<HTMLSpanElement> | null,
 ) => {
    wordStore.setState({ caretRef });
 };
 
 export const setRef = (
-   activeWordRef: React.RefObject<HTMLDivElement> | null
+   activeWordRef: React.RefObject<HTMLDivElement> | null,
 ) => {
    wordStore.setState({ activeWordRef });
 };
