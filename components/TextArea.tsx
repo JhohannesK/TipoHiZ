@@ -19,12 +19,12 @@ interface soundProps {
 const TextArea: React.FC<soundProps> = ({ sound }) => {
    const { type } = userConfigStore((state) => state);
    const { wordList, activeWord, userInput, typedHistory } = wordStore(
-      (state) => state
+      (state) => state,
    );
 
    //state to hold the typing sound
    const [typingSound, setTypingSound] = useState<HTMLAudioElement | null>(
-      null
+      null,
    );
 
    //effect to load the typing sound
@@ -150,15 +150,18 @@ const TextArea: React.FC<soundProps> = ({ sound }) => {
                           </span>
                        ))
                      : typedHistory[index]
-                     ? typedHistory[index]
-                          .slice(wordList[index].length)
-                          .split('')
-                          .map((char, charId) => (
-                             <span key={char + charId} className="wrong extra">
-                                {char}
-                             </span>
-                          ))
-                     : null}
+                       ? typedHistory[index]
+                            .slice(wordList[index].length)
+                            .split('')
+                            .map((char, charId) => (
+                               <span
+                                  key={char + charId}
+                                  className="wrong extra"
+                               >
+                                  {char}
+                               </span>
+                            ))
+                       : null}
                </div>
             );
          })}
