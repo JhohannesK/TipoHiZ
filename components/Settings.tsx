@@ -7,23 +7,34 @@ import {
    DialogHeader,
    DialogTitle, DialogTrigger
 } from '@/components/UI/dialog';
-import { LuSettings } from 'react-icons/lu';
-
+import { LuSettings, LuVolume2, LuVolumeX } from 'react-icons/lu';
+import ThemeChoose from '@/components/expo/theme-choose';
 export default function Settings() {
 
    const [mounted, setMounted] = useState(false); //tracking wether the component is mounted or not
+   const [sound, setSound] = useState(true);
 
    useEffect(() => {
       setMounted(true);
    }, []);
+   const handleSound = () => {
+      const typingSound = new Audio('/modules/AudioFiles/type.mp3');
+      if (sound) {
+         setSound(false);
+         typingSound.volume = 0;
+      } else {
+         setSound(true);
+         typingSound.volume = 0.1;
+      }
+   };
 
    if (!mounted) return null;
 
    return (
       <Dialog>
-         <DialogTrigger className="flex items-center justify-center p-2 rounded-xl gap-3 cursor-pointer text-foreground bg-input">
-            <LuSettings className="text-background" />
-            <p className="text-sm tracking-wide text-background">Settings</p>
+         <DialogTrigger className="flex items-center justify-center p-2 rounded-xl gap-3 cursor-pointer text-background bg-input">
+            <LuSettings />
+            <p className="text-sm tracking-wide">Settings</p>
          </DialogTrigger>
          <DialogContent className="max-w-[400px] rounded-xl shadow-lg p-6 bg-background border border-gray-300 h-[600px] overflow-y-auto">
             <DialogHeader>
@@ -34,6 +45,28 @@ export default function Settings() {
                   Select your preferred settings.
                </DialogDescription>
             </DialogHeader>
+            <div className="flex flex-col items-center text-input">
+               <div className="flex gap-2 mb-4">
+                  <span>Theme:</span>
+                  <ThemeChoose />
+                  {/*<IoIosColorPalette />*/}
+               </div>
+               <div className="flex  gap-2 mb-4">
+                  <span>Sound:</span>
+                  <button className="outline-none" onClick={handleSound}>
+                     {sound ? <LuVolume2 /> : <LuVolumeX />}
+                  </button>
+               </div>
+               <div className="flex gap-2 mb-4">
+                  <span>Language:</span>
+                  <select className="cursor-pointer bg-background">
+                     <option value="english">English</option>
+                     <option value="spanish">Spanish</option>
+                     <option value="french">French</option>
+                     <option value="german">German</option>
+                  </select>
+               </div>
+            </div>
          </DialogContent>
       </Dialog>
    );
