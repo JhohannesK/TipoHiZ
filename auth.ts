@@ -1,8 +1,7 @@
 import NextAuth, { CredentialsSignin } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
-import connectDB from './lib/db';
-import { User } from './models/User';
 import { compare } from 'bcryptjs';
+import { prisma } from './lib/db';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
    providers: [
@@ -21,9 +20,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                   'Please provide both email and password.'
                );
 
-            await connectDB();
-
-            const user = await User.findOne({ email }).select('+password');
+            const user = await prisma.user.findFirst({
+               where: {
+                  email,
+               },
+            });
 
             if (!user) throw new Error('Invalid credentials.');
 
@@ -36,7 +37,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             const userData = {
                name: user.name,
                email: user.email,
-               id: user._id,
+               id: user.id,
             };
 
             return userData;

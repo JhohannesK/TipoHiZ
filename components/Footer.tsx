@@ -10,7 +10,7 @@ import { FaGithub } from 'react-icons/fa';
 function Footer() {
    return (
       <div className="flex flex-col items-center justify-center w-full gap-8 border-t-2 text-input">
-         <div className="flex items-center justify-center gap-3">
+         <div className="flex items-center justify-center gap-3 mt-3">
             <Chip className="bg-foreground text-input" name="tab" /> +{' '}
             <Chip className="bg-foreground text-input" name="enter" /> to reset
             test
