@@ -5,9 +5,7 @@
 /.pnp
 .pnp.js
 
-pnpm lock file
-pnpm-lock.yaml
-
+package-lock.json
 tsconfig.tsbuildinfo
 
 # testing

@@ -13,6 +13,7 @@ export interface WordState {
    nextIndex: number;
    nextCharIdx: number;
    typedEntries: number;
+   errorCount: number;
 }
 
 export interface TimeState {
@@ -30,5 +31,5 @@ export interface IuserConfig {
 
 export type MyPersist = (
    config: StateCreator<IuserConfig>,
-   options: PersistOptions<IuserConfig>
+   options: PersistOptions<IuserConfig>,
 ) => StateCreator<IuserConfig>;

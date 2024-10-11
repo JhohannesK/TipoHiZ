@@ -5,34 +5,57 @@ import {
    afterPressingSpace,
    setChar,
    setNextChar,
+   setPrevChar,
 } from '../../store/actions/WordActions';
 
 export const useHandleText = (
    key: string,
    activeWordRef: React.RefObject<HTMLDivElement> | null,
-   run: () => void
+   run: () => void,
 ) => {
-   const { userInput, activeWord } = wordStore.getState();
+   const { userInput, activeWord, typedHistory } = wordStore.getState();
 
    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
    const currWordEl = activeWordRef?.current!;
 
    currWordEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
+   let inputWithShift = '';
+   if (key.startsWith('Shift')) {
+      inputWithShift = key.charAt(key.length - 1);
+      key = 'Shift';
+   }
+
    switch (key) {
       case 'Backspace':
-         return;
-         wordStore.setState(() => ({
-            userInput: '',
-            typedHistory: [],
+         let prevWord: string = '';
+         let prevTypedHistory: string[] = typedHistory;
+         if (userInput === '') {
+            prevWord = typedHistory.length
+               ? typedHistory[typedHistory.length - 1]
+               : '';
+            prevTypedHistory =
+               typedHistory.length > 0 ? typedHistory.slice(0, -1) : [];
+            prevWord ? setPrevChar() : null;
+            currWordEl?.classList.remove('wrong', 'right');
+         }
+         wordStore.setState((state) => ({
+            userInput:
+               userInput !== '' ? state.userInput.slice(0, -1) : prevWord,
+            typedHistory: prevTypedHistory,
          }));
          break;
       case 'Tab':
          return;
+      case 'Shift':
+         wordStore.setState((state) => ({
+            userInput: state.userInput + inputWithShift.toUpperCase(),
+         }));
+         break;
       case ' ':
          if (userInput === '') return;
          currWordEl?.classList.add(
-            userInput !== activeWord ? 'wrong' : 'right'
+            userInput !== activeWord ? 'wrong' : 'right',
          );
          afterPressingSpace();
          break;
