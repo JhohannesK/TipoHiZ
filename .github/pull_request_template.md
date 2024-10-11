@@ -17,10 +17,10 @@ Please complete the below checklist. Failure to follow these instructions may re
 ### Is this PR still in progress or completed?
 - [ ] This PR is still a work in progress (WIP)
 - [ ] This PR is completed and ready for review
+- [ ] Did you edit the package.json or pnpm.yaml? If yes, explain reason for modification and add the `dependencies` label to this PR. <br>
 
 ### Screenshot if applicable
 <!-- screenshot of the feature implemented by this issue -->
 
 ### Additional Information
 <!-- Any additional information or context about this PR. -->
-- [ ] Did you edit the package.json or pnpm.yaml? If yes, explain reason for modification and add the `dependencies` label to this PR. <br>
