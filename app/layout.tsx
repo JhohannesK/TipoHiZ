@@ -45,6 +45,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
                   'sunshine',
                   'hacktoberfest',
                   'cyberpunk',
+                  'chrismas',
                ]}
             >
                {children}
