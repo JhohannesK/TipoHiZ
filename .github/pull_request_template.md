@@ -10,6 +10,7 @@ Please complete the below checklist. Failure to follow these instructions may re
 
 ### What issue does this PR closes?
 <!-- Add tag of the issue or describe the problem your PR solves. -->
+close #
 
 ### Description of file changes
 <!-- A detailed description of the changes made in this pull request. -->
