@@ -123,6 +123,17 @@
       --border: 200, 100%, 50%;
       --radius: 0.5rem;
    }
+
+   .chrismas {
+      --background: 0 0% 10%;
+      --foreground: 0 100% 80%;
+      --input: 240, 50%, 30%;
+      --destructive: 0 100% 50%;
+      --accent: 200, 100%, 50%;
+      --cursor: 300, 100%, 50%;
+      --border: 200, 100%, 50%;
+      --radius: 0.5rem;
+   }
    
    body {
       font-feature-settings: 'rlig' 1, 'calt' 1;

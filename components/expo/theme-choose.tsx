@@ -32,6 +32,7 @@ export default function ThemeChoose() {
       'sunshine',
       'hacktoberfest',
       'cyberpunk',
+      'chrismas',
    ];
 
    return (
