@@ -6,7 +6,7 @@ export const resetTest = async (type: string, reset: () => void) => {
       .querySelectorAll('.wrong, .right')
       .forEach((el) => el.classList.remove('wrong', 'right'));
    import(`../modules/TextFiles/${type}.json`).then((word) =>
-      setWordList(word.default)
+      setWordList(word.default),
    );
    document.getElementsByClassName('startView')[0].scrollIntoView();
    reset();

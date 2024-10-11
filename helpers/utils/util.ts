@@ -32,7 +32,7 @@ export const grossWPM = (typedEntries: number, time: number) => {
 export const accurateWPM = (
    errorCount: number,
    typedEntries: number,
-   time: number
+   time: number,
 ) => {
    const minutes = time / 60;
    const wordsTyped = typedEntries / 5;
