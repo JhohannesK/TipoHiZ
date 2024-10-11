@@ -144,12 +144,12 @@
    }
 
    .chrismas {
-      --background: 0 0% 10%;
-      --foreground: 0 100% 80%;
-      --input: 240, 50%, 30%;
+      --background: 132, 8%, 13%;
+      --foreground: 128, 56%, 17%;
+      --input: 0, 93%, 30%;
       --destructive: 0 100% 50%;
-      --accent: 200, 100%, 50%;
-      --cursor: 300, 100%, 50%;
+      --accent: 0, 94%, 21%;
+      --cursor: 0, 93%, 30%;
       --border: 200, 100%, 50%;
       --radius: 0.5rem;
    }
