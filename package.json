@@ -4,11 +4,13 @@
    "private": true,
    "scripts": {
       "dev": "next dev",
-      "build": "next build",
-      "start": "next start",
-      "lint": "eslint --ext .js,.jsx,.ts,.tsx --fix .",
-      "prepare": "husky install",
-      "ts-check": "tsc --noEmit"
+       "build": "prisma generate && next build",
+       "start": "next start",
+       "lint": "next lint",
+       "postinstall": "prisma generate",
+       "prisma:generate": "prisma generate",
+       "prisma:push": "prisma db push",
+       "prisma:studio": "prisma studio"
    },
    "dependencies": {
       "@prisma/client": "5.20.0",
