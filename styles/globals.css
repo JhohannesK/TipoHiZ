@@ -148,8 +148,8 @@
       --foreground: 128, 56%, 17%;
       --input: 0, 93%, 30%;
       --destructive: 0 100% 50%;
-      --accent: 0, 94%, 21%;
-      --cursor: 0, 93%, 30%;
+      --accent: 45, 93%, 47%;
+      --cursor: 45, 93%, 47%;
       --border: 200, 100%, 50%;
       --radius: 0.5rem;
    }
