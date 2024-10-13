@@ -65,7 +65,7 @@ export default function Settings() {
                      <option value="french">French</option>
                      <option value="german">German</option>
                   </select>
-               </div>
+               </div> 
             </div>
          </DialogContent>
       </Dialog>
