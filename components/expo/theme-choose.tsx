@@ -46,6 +46,7 @@ export default function ThemeChoose() {
       'sunshine',
       'hacktoberfest',
       'cyberpunk',
+      'chrismas',
    ];
 
    if (status === 'unmounted') return null;
