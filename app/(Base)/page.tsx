@@ -3,7 +3,6 @@ import React from 'react';
 import TextArea from '@/components/TextArea';
 import UserSelectPallete from '@/components/UserSelectPallete';
 import ResetTestButton from '@/components/reset-test-button';
-import { MdLanguage } from 'react-icons/md';
 import useTimer from '@/helpers/utils/useTimer';
 import { userConfigStore } from '@/store';
 import useKeydownGetter from '@/helpers/utils/useKeydownGetter';
@@ -14,20 +13,10 @@ import { useSettings } from '@/components/UI/settings-context';
 export default function HomePage() {
    const { time } = userConfigStore((state) => state);
    const { timer, run, reset } = useTimer(1, time);
-   const { sound, toggleSound } = useSettings();
+   const { sound } = useSettings();
 
-   const handleSound = () => {
-      const typingSound = new Audio('/modules/AudioFiles/type.mp3');
-      if (sound) {
-         typingSound.volume = 0;
-      } else {
-         typingSound.volume = 0.1;
-      }
-      toggleSound();
-   };
 
    useKeydownGetter({ run, reset });
-
    return (
       <div>
          <UserSelectPallete reset={reset} />
@@ -43,16 +32,6 @@ export default function HomePage() {
                   start
                </button> */}
                <div className="mb-2">{timer}</div>
-            </div>
-            <div className="flex items-center justify-center mb-4 tracking-widest lowercase text-input gap-x-1">
-               <MdLanguage className="mt-2" />
-               <p className="cursor-pointer mt-2">english</p>
-            </div>
-
-            <div className="flex items-center justify-center mb-4 tracking-widest lowercase text-input gap-x-1">
-               <button className="outline-none" onClick={handleSound}>
-                  {sound ? 'Sound: On' : 'Sound: Off'}
-               </button>
             </div>
 
             <div>

@@ -8,13 +8,40 @@ import {
    DialogTitle, DialogTrigger
 } from '@/components/UI/dialog';
 import { LuSettings, LuVolume2, LuVolumeX } from 'react-icons/lu';
-import ThemeChoose from '@/components/expo/theme-choose';
 import { useSettings } from '@/components/UI/settings-context';
+import { useTheme } from 'next-themes';
 
 export default function Settings() {
-
    const [mounted, setMounted] = useState(false); //tracking whether the component is mounted or not
    const { sound, toggleSound } = useSettings();
+   const { setTheme, theme } = useTheme();
+
+   const themes = [
+      'light',
+      'dark',
+      'light-orange',
+      'dark-orange',
+      'light-green',
+      'dark-green',
+      'dark-gray',
+      'midnight-blue',
+      'ocean',
+      'girly',
+      'retro',
+      'sunshine',
+      'hacktoberfest',
+      'cyberpunk',
+   ];
+
+   const handleSound = () => {
+      const typingSound = new Audio('/modules/AudioFiles/type.mp3');
+      if (sound) {
+         typingSound.volume = 0;
+      } else {
+         typingSound.volume = 0.1;
+      }
+      toggleSound();
+   };
 
    useEffect(() => {
       setMounted(true);
@@ -37,13 +64,9 @@ export default function Settings() {
                </DialogDescription>
             </DialogHeader>
             <div className="flex flex-col items-center text-input">
-               <div className="flex gap-2 mb-4">
-                  <span>Theme:</span>
-                  <ThemeChoose />
-               </div>
                <div className="flex  gap-2 mb-4">
                   <span>Sound:</span>
-                  <button className="outline-none" onClick={toggleSound}>
+                  <button className="outline-none" onClick={handleSound}>
                      {sound ? <LuVolume2 /> : <LuVolumeX />}
                   </button>
                </div>
@@ -55,7 +78,25 @@ export default function Settings() {
                      <option value="french">French</option>
                      <option value="german">German</option>
                   </select>
-               </div> 
+               </div>
+               <div className="flex gap-2 mb-4">
+                  <span>Theme:</span>
+               </div>
+               <div className="flex flex-row flex-wrap justify-center gap-3 p-3 w-full overflow-auto">
+                  {themes.map((currtheme) => (
+                     <button
+                        className={`flex items-center justify-center rounded-lg w-full h-12 font-bold text-sm transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none ${
+                           theme === currtheme
+                              ? 'bg-foreground text-input border-input hover:bg-accent hover:text-destructive border-2 transition duration-300 ease-in-out'
+                              : 'bg-background text-input border border-input hover:bg-accent hover:text-destructive transition duration-150 ease-in-out'
+                        }`}
+                        key={currtheme}
+                        onClick={() => setTheme(currtheme)}
+                     >
+                        {currtheme}
+                     </button>
+                  ))}
+               </div>
             </div>
          </DialogContent>
       </Dialog>
