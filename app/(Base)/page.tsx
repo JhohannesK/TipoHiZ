@@ -9,23 +9,25 @@ import { userConfigStore } from '@/store';
 import useKeydownGetter from '@/helpers/utils/useKeydownGetter';
 import { IoIosColorPalette } from 'react-icons/io';
 import ThemeChoose from '@/components/expo/theme-choose';
+import { useSettings } from '@/components/UI/settings-context';
 
 export default function HomePage() {
    const { time } = userConfigStore((state) => state);
    const { timer, run, reset } = useTimer(1, time);
-   const [sound, setSound] = React.useState(true);
+   const { sound, toggleSound } = useSettings();
 
    const handleSound = () => {
       const typingSound = new Audio('/modules/AudioFiles/type.mp3');
       if (sound) {
-         setSound(false);
          typingSound.volume = 0;
       } else {
-         setSound(true);
          typingSound.volume = 0.1;
       }
+      toggleSound();
    };
+
    useKeydownGetter({ run, reset });
+
    return (
       <div>
          <UserSelectPallete reset={reset} />

@@ -5,6 +5,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { Inconsolata } from 'next/font/google';
 import { ThemeProvider } from '@/helpers/lib/theme-provider';
 import Head from 'next/head';
+import { SettingsProvider } from '@/components/UI/settings-context';
 
 const font = Inconsolata({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -47,7 +48,9 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
                   'cyberpunk',
                ]}
             >
-               {children}
+               <SettingsProvider>
+                  {children}
+               </SettingsProvider>
             </ThemeProvider>
          </body>
       </html>

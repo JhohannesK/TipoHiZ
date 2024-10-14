@@ -9,24 +9,16 @@ import {
 } from '@/components/UI/dialog';
 import { LuSettings, LuVolume2, LuVolumeX } from 'react-icons/lu';
 import ThemeChoose from '@/components/expo/theme-choose';
+import { useSettings } from '@/components/UI/settings-context';
+
 export default function Settings() {
 
-   const [mounted, setMounted] = useState(false); //tracking wether the component is mounted or not
-   const [sound, setSound] = useState(true);
+   const [mounted, setMounted] = useState(false); //tracking whether the component is mounted or not
+   const { sound, toggleSound } = useSettings();
 
    useEffect(() => {
       setMounted(true);
    }, []);
-   const handleSound = () => {
-      const typingSound = new Audio('/modules/AudioFiles/type.mp3');
-      if (sound) {
-         setSound(false);
-         typingSound.volume = 0;
-      } else {
-         setSound(true);
-         typingSound.volume = 0.1;
-      }
-   };
 
    if (!mounted) return null;
 
@@ -34,7 +26,6 @@ export default function Settings() {
       <Dialog>
          <DialogTrigger className="flex items-center justify-center p-2 rounded-xl gap-3 cursor-pointer text-background bg-input">
             <LuSettings />
-            <p className="text-sm tracking-wide">Settings</p>
          </DialogTrigger>
          <DialogContent className="max-w-[400px] rounded-xl shadow-lg p-6 bg-background border border-gray-300 h-[600px] overflow-y-auto">
             <DialogHeader>
@@ -49,11 +40,10 @@ export default function Settings() {
                <div className="flex gap-2 mb-4">
                   <span>Theme:</span>
                   <ThemeChoose />
-                  {/*<IoIosColorPalette />*/}
                </div>
                <div className="flex  gap-2 mb-4">
                   <span>Sound:</span>
-                  <button className="outline-none" onClick={handleSound}>
+                  <button className="outline-none" onClick={toggleSound}>
                      {sound ? <LuVolume2 /> : <LuVolumeX />}
                   </button>
                </div>
