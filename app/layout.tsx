@@ -31,22 +31,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
                defaultTheme="system"
                enableSystem
                disableTransitionOnChange
-               themes={[
-                  'light',
-                  'dark',
-                  'light-orange',
-                  'dark-orange',
-                  'light-green',
-                  'dark-green',
-                  'dark-gray',
-                  'midnight-blue',
-                  'ocean',
-                  'girly',
-                  'retro',
-                  'sunshine',
-                  'hacktoberfest',
-                  'cyberpunk',
-               ]}
+               themes={THEMES}
             >
                <SettingsProvider>
                   {children}

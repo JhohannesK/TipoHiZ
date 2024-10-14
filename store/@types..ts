@@ -31,5 +31,5 @@ export interface IuserConfig {
 
 export type MyPersist = (
    config: StateCreator<IuserConfig>,
-   options: PersistOptions<IuserConfig>
+   options: PersistOptions<IuserConfig>,
 ) => StateCreator<IuserConfig>;
