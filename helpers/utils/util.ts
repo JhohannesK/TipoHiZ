@@ -38,3 +38,11 @@ export const accurateWPM = (
    const wordsTyped = typedEntries / 5;
    return Math.max((wordsTyped - errorCount) / minutes, 0);
 };
+
+export const accuratePercentage = (
+   correctWord: number,
+   incorrectWord: number
+) => {
+   if (correctWord + incorrectWord === 0) return 100;
+   return ((correctWord / (incorrectWord + correctWord)) * 100).toFixed(0);
+};
