@@ -8,12 +8,12 @@ import { userConfigStore } from '@/store';
 import useKeydownGetter from '@/helpers/utils/useKeydownGetter';
 import { IoIosColorPalette } from 'react-icons/io';
 import ThemeChoose from '@/components/expo/theme-choose';
-import { useSettings } from '@/components/UI/settings-context';
+import { useSettingsStore } from '@/lib/providers/settingsStore';
 
 export default function HomePage() {
    const { time } = userConfigStore((state) => state);
    const { timer, run, reset } = useTimer(1, time);
-   const { sound } = useSettings();
+   const { sound } = useSettingsStore();
 
 
    useKeydownGetter({ run, reset });

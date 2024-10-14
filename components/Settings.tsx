@@ -8,12 +8,12 @@ import {
    DialogTitle, DialogTrigger
 } from '@/components/UI/dialog';
 import { LuSettings, LuVolume2, LuVolumeX } from 'react-icons/lu';
-import { useSettings } from '@/components/UI/settings-context';
 import { useTheme } from 'next-themes';
+import { useSettingsStore } from '@/lib/providers/settingsStore';
 
 export default function Settings() {
    const [mounted, setMounted] = useState(false); //tracking whether the component is mounted or not
-   const { sound, toggleSound } = useSettings();
+   const { sound, toggleSound } = useSettingsStore();
    const { setTheme, theme } = useTheme();
 
    const themes = [
@@ -35,11 +35,8 @@ export default function Settings() {
 
    const handleSound = () => {
       const typingSound = new Audio('/modules/AudioFiles/type.mp3');
-      if (sound) {
-         typingSound.volume = 0;
-      } else {
-         typingSound.volume = 0.1;
-      }
+      typingSound.volume = sound ? 0 : 0.1;
+      typingSound.play();
       toggleSound();
    };
 
