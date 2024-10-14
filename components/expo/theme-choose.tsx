@@ -12,6 +12,7 @@ import {
    DialogTitle,
    DialogTrigger,
 } from '../UI/dialog';
+import { THEMES } from './theme.constant';
 
 export default function ThemeChoose() {
    const { setTheme, theme, resolvedTheme } = useTheme();
@@ -31,23 +32,6 @@ export default function ThemeChoose() {
    //    0,
    //    10
    // );
-   const themes = [
-      'light',
-      'dark',
-      'light-orange',
-      'dark-orange',
-      'light-green',
-      'dark-green',
-      'dark-gray',
-      'midnight-blue',
-      'ocean',
-      'girly',
-      'retro',
-      'sunshine',
-      'hacktoberfest',
-      'cyberpunk',
-      'chrismas',
-   ];
 
    if (status === 'unmounted') return null;
 
@@ -71,7 +55,7 @@ export default function ThemeChoose() {
                </DialogDescription>
             </DialogHeader>
             <div className="flex flex-row flex-wrap justify-center gap-3 p-3 w-full overflow-auto">
-               {themes.map((currtheme) => (
+               {THEMES.map((currtheme) => (
                   <button
                      className={`flex items-center justify-center rounded-lg w-full h-12 font-bold text-sm transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none ${
                         theme === currtheme
