@@ -1,0 +1,17 @@
+export const THEMES = [
+   'light',
+   'dark',
+   'light-orange',
+   'dark-orange',
+   'light-green',
+   'dark-green',
+   'dark-gray',
+   'midnight-blue',
+   'ocean',
+   'girly',
+   'retro',
+   'sunshine',
+   'hacktoberfest',
+   'cyberpunk',
+   'chrismas',
+];
