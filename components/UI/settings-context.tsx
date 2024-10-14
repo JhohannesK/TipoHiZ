@@ -10,7 +10,7 @@ type SettingsContextType = {
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
-   const [sound, setSound] = useState(true);
+   const [sound, setSound] = useState(false);
 
    const toggleSound = () => {
       setSound((prev) => !prev);
