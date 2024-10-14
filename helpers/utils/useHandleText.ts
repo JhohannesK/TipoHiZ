@@ -11,7 +11,7 @@ import {
 export const useHandleText = (
    key: string,
    activeWordRef: React.RefObject<HTMLDivElement> | null,
-   run: () => void
+   run: () => void,
 ) => {
    const { userInput, activeWord, typedHistory } = wordStore.getState();
 
@@ -55,7 +55,7 @@ export const useHandleText = (
       case ' ':
          if (userInput === '') return;
          currWordEl?.classList.add(
-            userInput !== activeWord ? 'wrong' : 'right'
+            userInput !== activeWord ? 'wrong' : 'right',
          );
          afterPressingSpace();
          break;

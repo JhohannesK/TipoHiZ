@@ -7,7 +7,7 @@ const useTimer = (
    upperBound: number,
    countDown: boolean = true,
    runOnStart: boolean = false,
-   exitCallback?: (() => void) | null
+   exitCallback?: (() => void) | null,
 ) => {
    const initialTimer = countDown ? upperBound : lowerBound;
    const millisecond = useRef(initialTimer * 1000);

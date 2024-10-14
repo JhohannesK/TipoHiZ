@@ -143,19 +143,21 @@
       --radius: 0.5rem;
    }
 
-   .cyberpunk {
-      --background: 219 17% 12%;
-      --foreground: 190, 100%, 91%;
-      --input: 281, 100%, 50%;
-      --destructive: 0 100% 35%;
-      --accent: 304, 100%, 46%;
-      --cursor: 300, 100%, 50%;
+   .chrismas {
+      --background: 132, 8%, 13%;
+      --foreground: 128, 56%, 17%;
+      --input: 0, 93%, 30%;
+      --destructive: 0 100% 50%;
+      --accent: 45, 93%, 47%;
+      --cursor: 45, 93%, 47%;
       --border: 200, 100%, 50%;
       --radius: 0.5rem;
    }
 
    body {
-      font-feature-settings: 'rlig' 1, 'calt' 1;
+      font-feature-settings:
+         'rlig' 1,
+         'calt' 1;
       transition: cubic-bezier(1, 0, 0, 1);
       animation-duration: 300ms;
    }

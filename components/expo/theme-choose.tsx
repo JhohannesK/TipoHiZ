@@ -1,7 +1,8 @@
 // TODO: Delete after theme integration
 'use client';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
 // import useTimer from '@/helpers/utils/useTimer';
 import {
    Dialog,
@@ -11,43 +12,36 @@ import {
    DialogTitle,
    DialogTrigger,
 } from '../UI/dialog';
+import { THEMES } from './theme.constant';
 
 export default function ThemeChoose() {
    const { setTheme, theme, resolvedTheme } = useTheme();
 
-   const [mounted, setMounted] = useState(false); //tracking wether the component is mounted or not
+   // 'unmounted' - component just rendered;
+   // 'mounted' - component has mounted and has been hydrated, and is dialog closed state;
+   // 'dialogOpen' - theme selection dialog is open
+   const [status, setStatus] = useState<'unmounted' | 'mounted' | 'dialogOpen'>(
+      'unmounted',
+   );
 
    useEffect(() => {
-      setMounted(true);
+      setStatus('mounted');
    }, []);
    // const { timer, run, reset, pause, isRunning, isExited } = useTimer(
    //    // () => alert('Count Down/UP finished'),
    //    0,
    //    10
    // );
-   const themes = [
-      'light',
-      'dark',
-      'light-orange',
-      'dark-orange',
-      'light-green',
-      'dark-green',
-      'dark-gray',
-      'midnight-blue',
-      'ocean',
-      'girly',
-      'retro',
-      'sunshine',
-      'hacktoberfest',
-      'cyberpunk',
-   ];
 
-   if (!mounted) return null;
+   if (status === 'unmounted') return null;
 
    //script.js
 
    return (
-      <Dialog>
+      <Dialog
+         open={status === 'dialogOpen'}
+         onOpenChange={(open) => setStatus(open ? 'dialogOpen' : 'mounted')}
+      >
          <DialogTrigger className="text-input">
             {theme || resolvedTheme}
          </DialogTrigger>
@@ -61,7 +55,7 @@ export default function ThemeChoose() {
                </DialogDescription>
             </DialogHeader>
             <div className="flex flex-row flex-wrap justify-center gap-3 p-3 w-full overflow-auto">
-               {themes.map((currtheme) => (
+               {THEMES.map((currtheme) => (
                   <button
                      className={`flex items-center justify-center rounded-lg w-full h-12 font-bold text-sm transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none ${
                         theme === currtheme
@@ -69,7 +63,10 @@ export default function ThemeChoose() {
                            : 'bg-background text-input border border-input hover:bg-accent hover:text-destructive transition duration-150 ease-in-out'
                      }`}
                      key={currtheme}
-                     onClick={() => setTheme(currtheme)}
+                     onClick={() => {
+                        setTheme(currtheme);
+                        setStatus('mounted');
+                     }}
                   >
                      {currtheme}
                   </button>
