@@ -4,15 +4,18 @@
    "private": true,
    "scripts": {
       "dev": "next dev",
-       "build": "prisma generate && next build",
-       "start": "next start",
-       "lint": "next lint",
-       "postinstall": "prisma generate",
-       "prisma:generate": "prisma generate",
-       "prisma:push": "prisma db push",
-       "prisma:studio": "prisma studio"
+      "build": "prisma generate && next build",
+      "start": "next start",
+      "lint": "eslint --ext .js,.jsx,.ts,.tsx --fix .",
+      "prepare": "husky install",
+      "ts-check": "tsc --noEmit",
+      "postinstall": "prisma generate",
+      "prisma:generate": "prisma generate",
+      "prisma:push": "prisma db push",
+      "prisma:studio": "prisma studio"
    },
    "dependencies": {
+      "@auth/prisma-adapter": "^2.7.0",
       "@prisma/client": "5.20.0",
       "@radix-ui/react-dialog": "1.1.2",
       "@vercel/analytics": "1.3.1",

@@ -7,6 +7,9 @@ settings:
 importers:
    .:
       dependencies:
+         '@auth/prisma-adapter':
+            specifier: ^2.7.0
+            version: 2.7.0(@prisma/client@5.20.0(prisma@5.20.0))
          '@prisma/client':
             specifier: 5.20.0
             version: 5.20.0(prisma@5.20.0)
@@ -144,6 +147,31 @@ packages:
             optional: true
          nodemailer:
             optional: true
+
+   '@auth/core@0.37.0':
+      resolution:
+         {
+            integrity: sha512-LybAgfFC5dta3Mu3al0UbnzMGVBpZRqLMvvXupQOfETtPNlL7rXgTO13EVRTCdvPqMQrVYjODUDvgVfQM1M3Qg==,
+         }
+      peerDependencies:
+         '@simplewebauthn/browser': ^9.0.1
+         '@simplewebauthn/server': ^9.0.2
+         nodemailer: ^6.8.0
+      peerDependenciesMeta:
+         '@simplewebauthn/browser':
+            optional: true
+         '@simplewebauthn/server':
+            optional: true
+         nodemailer:
+            optional: true
+
+   '@auth/prisma-adapter@2.7.0':
+      resolution:
+         {
+            integrity: sha512-Ts4cvwxjXPPa9UMjONGcUSoP1Fb0GAkwIXHFzDGsmvoDQnbJExRFJ6OclGYPiJuNRR+4qhb/0w+gAi7x+42FdQ==,
+         }
+      peerDependencies:
+         '@prisma/client': '>=2.26.0 || >=3 || >=4 || >=5'
 
    '@cspotcode/source-map-support@0.8.1':
       resolution:
@@ -1337,6 +1365,13 @@ packages:
       resolution:
          {
             integrity: sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==,
+         }
+      engines: { node: '>= 0.6' }
+
+   cookie@0.7.1:
+      resolution:
+         {
+            integrity: sha512-6DnInpx7SJ2AK3+CTUE/ZM0vWTUboZCegxhC2xiIydHR9jNuTAASBrfEpHhiGOZw/nX51bHt6YQl8jsGo4y/0w==,
          }
       engines: { node: '>= 0.6' }
 
@@ -2785,6 +2820,12 @@ packages:
             integrity: sha512-lbC0Z7uzAFNFyzEYRIC+pkSVvDHJTbEW+dYlSBAlCYDe6RxUkJ26bClhk8ocBZip1wfI9uKTe0fm4Ib4RHn6uQ==,
          }
 
+   oauth4webapi@3.0.0:
+      resolution:
+         {
+            integrity: sha512-Rw9SxQYuQX9J41VgM4rVNGtm1ng0Qcd8ndv7JmhmwqQ3hHBokX+WjV379IJhKk7bVPHefgvrDgHoO/rB2dY7YA==,
+         }
+
    object-assign@4.1.1:
       resolution:
          {
@@ -3945,6 +3986,25 @@ snapshots:
          preact: 10.11.3
          preact-render-to-string: 5.2.3(preact@10.11.3)
 
+   '@auth/core@0.37.0':
+      dependencies:
+         '@panva/hkdf': 1.2.1
+         '@types/cookie': 0.6.0
+         cookie: 0.7.1
+         jose: 5.9.3
+         oauth4webapi: 3.0.0
+         preact: 10.11.3
+         preact-render-to-string: 5.2.3(preact@10.11.3)
+
+   '@auth/prisma-adapter@2.7.0(@prisma/client@5.20.0(prisma@5.20.0))':
+      dependencies:
+         '@auth/core': 0.37.0
+         '@prisma/client': 5.20.0(prisma@5.20.0)
+      transitivePeerDependencies:
+         - '@simplewebauthn/browser'
+         - '@simplewebauthn/server'
+         - nodemailer
+
    '@cspotcode/source-map-support@0.8.1':
       dependencies:
          '@jridgewell/trace-mapping': 0.3.9
@@ -4682,6 +4742,8 @@ snapshots:
    concat-map@0.0.1: {}
 
    cookie@0.6.0: {}
+
+   cookie@0.7.1: {}
 
    create-require@1.1.1: {}
 
@@ -5618,6 +5680,8 @@ snapshots:
    normalize-range@0.1.2: {}
 
    oauth4webapi@2.17.0: {}
+
+   oauth4webapi@3.0.0: {}
 
    object-assign@4.1.1: {}
 
