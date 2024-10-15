@@ -5,15 +5,17 @@ import {
    DialogContent,
    DialogDescription,
    DialogHeader,
-   DialogTitle, DialogTrigger
+   DialogTitle,
+   DialogTrigger
 } from '@/components/UI/dialog';
 import { LuSettings, LuVolume2, LuVolumeX } from 'react-icons/lu';
 import { useTheme } from 'next-themes';
-import { useSettingsStore } from '@/lib/providers/settingsStore';
+import { userConfigStore } from '@/store';
+import { toggleSound } from '@/store/actions/ConfigActions';
 
 export default function Settings() {
    const [mounted, setMounted] = useState(false); //tracking whether the component is mounted or not
-   const { sound, toggleSound } = useSettingsStore();
+   const { sound } = userConfigStore();
    const { setTheme, theme } = useTheme();
 
    const themes = [
