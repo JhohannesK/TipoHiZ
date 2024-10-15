@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { LuUser, LuMenu, LuX } from 'react-icons/lu';
 import { SvgRender } from './SvgRender';
+import Settings from '@/components/Settings';
 
 function Header() {
    const [menuOpen, setMenuOpen] = useState(false);
@@ -18,6 +19,7 @@ function Header() {
             <p className="text-xl font-bold select-none text-input hover:animate-shake">
                TipoHiz.__
             </p>
+            <Settings />
          </div>
 
          <div className="md:hidden flex items-center text-input z-30">
