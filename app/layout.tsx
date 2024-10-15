@@ -5,6 +5,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { Inconsolata } from 'next/font/google';
 import { ThemeProvider } from '@/helpers/lib/theme-provider';
 import Head from 'next/head';
+import { THEMES } from '@/components/expo/theme.constant';
 
 const font = Inconsolata({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -18,38 +19,23 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: React.PropsWithChildren) {
    return (
       <html lang="en" suppressHydrationWarning>
-         <Head>
-            <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-         </Head>
-         <Analytics />
-         <body
-            className={`min-h-screen bg-background text-foreground font-sans antialiased ${font.variable}`}
-         >
-            <ThemeProvider
-               attribute="class"
-               defaultTheme="system"
-               enableSystem
-               disableTransitionOnChange
-               themes={[
-                  'light',
-                  'dark',
-                  'light-orange',
-                  'dark-orange',
-                  'light-green',
-                  'dark-green',
-                  'dark-gray',
-                  'midnight-blue',
-                  'ocean',
-                  'girly',
-                  'retro',
-                  'sunshine',
-                  'hacktoberfest',
-                  'cyberpunk',
-               ]}
-            >
-                  {children}
-            </ThemeProvider>
-         </body>
+      <Head>
+         <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+      </Head>
+      <Analytics />
+      <body
+         className={`min-h-screen bg-background text-foreground font-sans antialiased ${font.variable}`}
+      >
+      <ThemeProvider
+         attribute="class"
+         defaultTheme="system"
+         enableSystem
+         disableTransitionOnChange
+         themes={THEMES}
+      >
+         {children}
+      </ThemeProvider>
+      </body>
       </html>
    );
 }

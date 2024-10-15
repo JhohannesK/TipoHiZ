@@ -12,28 +12,12 @@ import { LuSettings, LuVolume2, LuVolumeX } from 'react-icons/lu';
 import { useTheme } from 'next-themes';
 import { userConfigStore } from '@/store';
 import { toggleSound } from '@/store/actions/ConfigActions';
+import { THEMES } from '@/components/expo/theme.constant';
 
 export default function Settings() {
    const [mounted, setMounted] = useState(false); //tracking whether the component is mounted or not
    const { sound } = userConfigStore();
    const { setTheme, theme } = useTheme();
-
-   const themes = [
-      'light',
-      'dark',
-      'light-orange',
-      'dark-orange',
-      'light-green',
-      'dark-green',
-      'dark-gray',
-      'midnight-blue',
-      'ocean',
-      'girly',
-      'retro',
-      'sunshine',
-      'hacktoberfest',
-      'cyberpunk',
-   ];
 
    const handleSound = () => {
       const typingSound = new Audio('/modules/AudioFiles/type.mp3');
@@ -82,7 +66,7 @@ export default function Settings() {
                   <span>Theme:</span>
                </div>
                <div className="flex flex-row flex-wrap justify-center gap-3 p-3 w-full overflow-auto">
-                  {themes.map((currtheme) => (
+                  {THEMES.map((currtheme) => (
                      <button
                         className={`flex items-center justify-center rounded-lg w-full h-12 font-bold text-sm transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none ${
                            theme === currtheme
