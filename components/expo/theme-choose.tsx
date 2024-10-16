@@ -55,22 +55,35 @@ export default function ThemeChoose() {
                </DialogDescription>
             </DialogHeader>
             <div className="flex flex-row flex-wrap justify-center gap-3 p-3 w-full overflow-auto">
-               {THEMES.map((currtheme) => (
-                  <button
-                     className={`flex items-center justify-center rounded-lg w-full h-12 font-bold text-sm transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none ${
-                        theme === currtheme
-                           ? 'bg-foreground text-input  border-input hover:bg-accent hover:text-destructive border-2 transition duration-300 ease-in-out'
-                           : 'bg-background text-input border border-input hover:bg-accent hover:text-destructive transition duration-150 ease-in-out'
-                     }`}
-                     key={currtheme}
-                     onClick={() => {
-                        setTheme(currtheme);
-                        setStatus('mounted');
-                     }}
-                  >
-                     {currtheme}
-                  </button>
-               ))}
+               {THEMES.map((themeString) => {
+                  const [currtheme, color1, color2] = themeString.split(',');
+                  return (
+                     <button
+                        className={`flex items-center justify-center rounded-lg w-full h-12 font-bold text-sm transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none ${
+                           theme === currtheme
+                              ? 'bg-foreground text-input  border-input hover:bg-accent hover:text-destructive border-2 transition duration-300 ease-in-out'
+                              : 'bg-background text-input border border-input hover:bg-accent hover:text-destructive transition duration-150 ease-in-out'
+                        }`}
+                        key={currtheme}
+                        onClick={() => {
+                           setTheme(currtheme);
+                           setStatus('mounted');
+                        }}
+                     >
+                        {currtheme}
+                        <div className="flex gap-1 px-3 py-1 bg-foreground rounded-full">
+                           <span
+                              className="w-4 h-4 rounded-full border border-input"
+                              style={{ backgroundColor: color1 }}
+                           />
+                           <span
+                              className="w-4 h-4 rounded-full border border-input"
+                              style={{ backgroundColor: color2 }}
+                           />
+                        </div>
+                     </button>
+                  );
+               })}
             </div>
          </DialogContent>
       </Dialog>

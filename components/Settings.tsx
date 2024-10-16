@@ -6,7 +6,7 @@ import {
    DialogDescription,
    DialogHeader,
    DialogTitle,
-   DialogTrigger
+   DialogTrigger,
 } from '@/components/UI/dialog';
 import { LuSettings, LuVolume2, LuVolumeX } from 'react-icons/lu';
 import { useTheme } from 'next-themes';
