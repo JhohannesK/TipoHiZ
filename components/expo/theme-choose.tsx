@@ -59,7 +59,7 @@ export default function ThemeChoose() {
                   const [currtheme, color1, color2] = themeString.split(',');
                   return (
                      <button
-                        className={`flex items-center justify-center rounded-lg w-full h-12 font-bold text-sm transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none ${
+                        className={`flex items-center justify-between px-3 rounded-lg w-full h-12 font-bold text-sm transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none ${
                            theme === currtheme
                               ? 'bg-foreground text-input  border-input hover:bg-accent hover:text-destructive border-2 transition duration-300 ease-in-out'
                               : 'bg-background text-input border border-input hover:bg-accent hover:text-destructive transition duration-150 ease-in-out'
