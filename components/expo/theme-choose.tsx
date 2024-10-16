@@ -12,7 +12,7 @@ import {
    DialogTitle,
    DialogTrigger,
 } from '../UI/dialog';
-import { THEMES } from './theme.constant';
+import { THEMES,THEME_COLORS } from './theme.constant';
 
 export default function ThemeChoose() {
    const { setTheme, theme, resolvedTheme } = useTheme();
@@ -55,8 +55,8 @@ export default function ThemeChoose() {
                </DialogDescription>
             </DialogHeader>
             <div className="flex flex-row flex-wrap justify-center gap-3 p-3 w-full overflow-auto">
-               {THEMES.map((themeString) => {
-                  const [currtheme, color1, color2] = themeString.split(',');
+               {THEMES.map((currtheme) => {
+                  const colors = THEME_COLORS[currtheme];
                   return (
                      <button
                         className={`flex items-center justify-between px-3 rounded-lg w-full h-12 font-bold text-sm transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none ${
@@ -74,11 +74,11 @@ export default function ThemeChoose() {
                         <div className="flex gap-1 px-3 py-1 bg-foreground rounded-full">
                            <span
                               className="w-4 h-4 rounded-full border border-input"
-                              style={{ backgroundColor: color1 }}
+                              style={{ backgroundColor: colors[0] }}
                            />
                            <span
                               className="w-4 h-4 rounded-full border border-input"
-                              style={{ backgroundColor: color2 }}
+                              style={{ backgroundColor: colors[1] }}
                            />
                         </div>
                      </button>
