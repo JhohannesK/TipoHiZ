@@ -22,6 +22,7 @@ module.exports = {
             background: 'hsl(var(--background))',
             foreground: 'hsl(var(--foreground))',
             cursor: 'hsl(var(--cursor))',
+            borderColor:'hs(var(--border-color))',
 
             // secondary: {
             //    DEFAULT: 'var(--secondary)',
