@@ -11,7 +11,6 @@
       --accent: 96, 94%, 21%;
       --input: 240 5.9% 10%;
       --radius: 0.5rem;
-      --border-color: black;
    }
 
    .dark {
@@ -22,7 +21,6 @@
       --accent: 240, 54%, 65%;
       --cursor: 240, 74%, 77%;
       --radius: 0.5rem;
-      --border-color: white;
    }
 
    .light-green {
