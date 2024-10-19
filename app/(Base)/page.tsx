@@ -14,7 +14,6 @@ export default function HomePage() {
    const { timer, run, reset } = useTimer(1, time);
    const { sound } = userConfigStore();
 
-
    useKeydownGetter({ run, reset });
    return (
       <div>
