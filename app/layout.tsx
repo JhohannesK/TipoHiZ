@@ -5,6 +5,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { Inconsolata } from 'next/font/google';
 import { ThemeProvider } from '@/helpers/lib/theme-provider';
 import Head from 'next/head';
+import { THEMES } from '@/components/expo/theme.constant';
 
 const font = Inconsolata({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -30,22 +31,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
                defaultTheme="system"
                enableSystem
                disableTransitionOnChange
-               themes={[
-                  'light',
-                  'dark',
-                  'light-orange',
-                  'dark-orange',
-                  'light-green',
-                  'dark-green',
-                  'dark-gray',
-                  'midnight-blue',
-                  'ocean',
-                  'girly',
-                  'retro',
-                  'sunshine',
-                  'hacktoberfest',
-                  'cyberpunk',
-               ]}
+               themes={THEMES}
             >
                {children}
             </ThemeProvider>

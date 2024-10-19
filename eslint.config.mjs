@@ -22,6 +22,11 @@ export default [
       'plugin:@typescript-eslint/recommended'
    ),
    {
+      settings: {
+         react: {
+            version: 'detect',
+         },
+      },
       files: ['**/*.{ts,tsx}'],
       plugins: {
          react,
@@ -42,14 +47,8 @@ export default [
                jsx: true,
                arrowFunctions: true,
             },
-            project: './tsconfig.json', // Make sure this file includes your JSX
+            project: './tsconfig.json',
             tsconfigRootDir: __dirname,
-         },
-      },
-
-      settings: {
-         react: {
-            version: '18.3.1',
          },
       },
 
