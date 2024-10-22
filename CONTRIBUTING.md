@@ -121,6 +121,16 @@ Once you have completed the above steps, you are ready to build and run TipoHiZ.
    -  If neither works, you will have to run `pnpm install` in root.
 2. Run `pnpm dev` to start a local dev server on [port 3000](http://localhost:3000). Use <kbd>Ctrl+C</kbd> to kill it.
 
+### 🐳 Running the application from a Docker image
+Running the appication as a Docker container makes it easy to have a consistent development environment
+
+- **Ensure Docker is Running**: Install/Start Docker on the host machine
+- **Open a Terminal**: Open a terminal in the root project directory. (Where the docker-compose.yaml file is located)
+- **Run Compose Command**: Run the docker compose command. 'docker compose up' or 'docker compose up -d' to run the application in daemon mode
+- **Open a browser**: Navigate to the url http://localhost:3000
+- **Enjoy!**: You should be able to navigate the application in your browser!
+- **shut-down**: Remember to shutdown the application container when no longer in use. Run the command 'docker compose down'. You can read on other docker compose commands from [here](https://docs.docker.com/compose/gettingstarted/).
+
 **_:🏆🏆🏆: After this, the maintainers will review the PR and will merge it if it helps move the TipoHiZ project forward. Otherwise, it will be given constructive feedback and suggestions for the changes needed to add the PR to the codebase._**
 
 ---
