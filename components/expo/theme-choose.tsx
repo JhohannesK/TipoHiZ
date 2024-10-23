@@ -12,7 +12,7 @@ import {
    DialogTitle,
    DialogTrigger,
 } from '../UI/dialog';
-import { THEMES,THEME_COLORS } from './theme.constant';
+import { THEMES, THEME_COLORS } from './theme.constant';
 
 export default function ThemeChoose() {
    const { setTheme, theme, resolvedTheme } = useTheme();

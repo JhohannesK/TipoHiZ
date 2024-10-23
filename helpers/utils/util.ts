@@ -38,3 +38,14 @@ export const accurateWPM = (
    const wordsTyped = typedEntries / 5;
    return Math.max((wordsTyped - errorCount) / minutes, 0);
 };
+
+export const formatTime = (time: number) => {
+   if (time === 60) {
+      return '00:60:00';
+   }
+
+   const minutes = Math.floor(time / 60);
+   const seconds = Math.floor(time % 60);
+   const milliseconds = Math.floor((time % 60) / 1000);
+   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${milliseconds.toString().padStart(2, '0')}`;
+};
