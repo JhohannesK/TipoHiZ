@@ -16,7 +16,7 @@ export const THEMES = [
    'chrismas',
 ];
 
-export const THEME_COLORS: Record<string, string[]>  = {
+export const THEME_COLORS: Record<string, string[]> = {
    light: ['#FFFFFF', '#18181b'],
    dark: ['#18181b', '#FFFFFF'],
    'light-green': ['#FFFFFF', '#16a34a'],
