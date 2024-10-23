@@ -19,7 +19,7 @@ export default function ResultsPage() {
    const { typedEntries, errorCount } = wordStore.getState();
    const { time, category } = userConfigStore.getState();
 
-   const rawWpmw = grossWPM(typedEntries, time);
+   const rawWpm = grossWPM(typedEntries, time);
 
    const accurateWpm = accurateWPM(errorCount, typedEntries, time);
 
@@ -55,7 +55,7 @@ export default function ResultsPage() {
                      />
                      <StatCard
                         label="Total Speed"
-                        value={`${rawWpmw.toFixed(2)}wpm`}
+                        value={`${rawWpm.toFixed(2)}wpm`}
                      />
                   </div>
                </div>
