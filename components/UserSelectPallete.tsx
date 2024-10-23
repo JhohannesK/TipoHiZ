@@ -6,8 +6,8 @@ import { userConfigStore } from '../store';
 import { setCategory, setType } from '../store/actions/ConfigActions';
 import { setDefaultTime } from '../store/actions/TimeActions';
 import { AiTwotoneSetting } from 'react-icons/ai';
-import Chip from './UI/Chip';
-import { resetTest } from '@/helpers/reset';
+import Chip from './ui/Chip';
+import { resetTest } from '@/lib/reset';
 
 const UserSelectPallete = ({ reset }: { reset: () => void }) => {
    const [open, setOpen] = useState(false);
@@ -24,6 +24,7 @@ const UserSelectPallete = ({ reset }: { reset: () => void }) => {
          .querySelector(`button[value="${time}"]`)
          ?.classList.add('selected');
       reset();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [time]);
 
    React.useEffect(() => {

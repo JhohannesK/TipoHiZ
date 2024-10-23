@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import React from 'react';
-import Chip from './UI/Chip';
+import Chip from './ui/Chip';
 import { AiOutlineBranches } from 'react-icons/ai';
 import { SiAdguard } from 'react-icons/si';
 import { FaXTwitter } from 'react-icons/fa6';

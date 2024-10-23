@@ -7,7 +7,7 @@ import {
    DialogHeader,
    DialogTitle,
    DialogTrigger,
-} from '@/components/UI/dialog';
+} from '@/components/ui/dialog';
 import { LuSettings, LuVolume2, LuVolumeX } from 'react-icons/lu';
 import { useTheme } from 'next-themes';
 import { userConfigStore } from '@/store';

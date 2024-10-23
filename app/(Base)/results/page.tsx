@@ -7,10 +7,10 @@ import {
    SelectItem,
    SelectTrigger,
    SelectValue,
-} from '@/components/UI/select';
-import { accurateWPM, formatTime, grossWPM } from '@/helpers/utils/util';
+} from '@/components/ui/select';
 import { userConfigStore, wordStore } from '@/store';
 import Link from 'next/link';
+import { accurateWPM, formatTime, grossWPM } from '@/lib/utils';
 
 const LANGUAGES = ['English', 'Spanish', 'French', 'German'];
 const SHOW_ALL_TIME_STATS = false;
@@ -24,11 +24,11 @@ export default function ResultsPage() {
    const accurateWpm = accurateWPM(errorCount, typedEntries, time);
 
    return (
-      <div className="text-input pb-8">
+      <div className="pb-8 text-input">
          <h1 className="sr-only">Game Results page</h1>
-         <div className="space-y-8 pt-6">
-            <div className="flex max-sm:flex-col sm:items-center gap-2">
-               <h2 className="sm:text-lg font-medium">Show Statistics for:</h2>
+         <div className="pt-6 space-y-8">
+            <div className="flex gap-2 max-sm:flex-col sm:items-center">
+               <h2 className="font-medium sm:text-lg">Show Statistics for:</h2>
                <Select defaultValue={LANGUAGES[0]}>
                   <SelectTrigger className="max-w-[350px] w-full">
                      <SelectValue placeholder="Language" />
@@ -44,10 +44,10 @@ export default function ResultsPage() {
             </div>
             <div className="space-y-6">
                <div className="space-y-4">
-                  <h2 className="text-lg sm:text-xl font-medium">
+                  <h2 className="text-lg font-medium sm:text-xl">
                      Current Results
                   </h2>
-                  <div className="flex items-center gap-4 flex-wrap">
+                  <div className="flex flex-wrap items-center gap-4">
                      <StatCard label={category} value={formatTime(time)} />
                      <StatCard
                         label="Average Speed"
@@ -61,10 +61,10 @@ export default function ResultsPage() {
                </div>
                {SHOW_ALL_TIME_STATS && (
                   <div className="space-y-4">
-                     <h2 className="text-lg sm:text-xl font-medium">
+                     <h2 className="text-lg font-medium sm:text-xl">
                         All Time Statistics
                      </h2>
-                     <div className="flex items-center gap-4 flex-wrap">
+                     <div className="flex flex-wrap items-center gap-4">
                         <StatCard label="Time" value="00:60:00" />
                         <StatCard label="Average Speed" value="45.2wpm" />
                         <StatCard label="Test Type" value="Hard" />
@@ -77,7 +77,7 @@ export default function ResultsPage() {
             <div className="max-w-[100px] sm:max-w-[150px] sm:pt-4">
                <Link
                   href={'/'}
-                  className="font-medium block text-center sm:px-6 py-2 w-full bg-input/10 rounded-lg hover:bg-accent text-sm sm:text-lg transition-all duration-200"
+                  className="block w-full py-2 text-sm font-medium text-center transition-all duration-200 rounded-lg sm:px-6 bg-input/10 hover:bg-accent sm:text-lg"
                >
                   Retake
                </Link>

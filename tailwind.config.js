@@ -22,28 +22,6 @@ module.exports = {
             background: 'hsl(var(--background))',
             foreground: 'hsl(var(--foreground))',
             cursor: 'hsl(var(--cursor))',
-
-            // secondary: {
-            //    DEFAULT: 'var(--secondary)',
-            //    foreground: 'var(--secondary-foreground)',
-            // },
-
-            // muted: {
-            //    DEFAULT: 'var(--muted)',
-            //    foreground: 'var(--muted-foreground)',
-            // },
-            // accent: {
-            //    DEFAULT: 'var(--accent))',
-            //    foreground: 'var(--accent-foreground)',
-            // },
-            // popover: {
-            //    DEFAULT: 'var(--popover)',
-            //    foreground: 'var(--popover-foreground)',
-            // },
-            // card: {
-            //    DEFAULT: 'var(--card)',
-            //    foreground: 'var(--card-foreground)',
-            // },
          },
          borderRadius: {
             lg: `var(--radius)`,

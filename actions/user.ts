@@ -4,7 +4,6 @@ import { signIn } from '@/auth';
 import { prisma } from '@/lib/db';
 import { hash } from 'bcryptjs';
 import { redirect } from 'next/navigation';
-import { z } from 'zod';
 
 const register = async (formData: FormData) => {
    const name = formData.get('name') as string;
