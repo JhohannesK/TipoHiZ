@@ -7,9 +7,9 @@ async function Login() {
    const session = await auth();
    console.log(session);
    return (
-      <main className="w-screen h-screen bg-black text-white flex flex-col justify-center items-center">
-         <div className="flex flex-col items-center gap-y-4 w-5/6 sm:w-2/3">
-            <h1 className="font-medium text-2xl sm:text-3xl">Login</h1>
+      <main className="flex flex-col items-center justify-center w-screen h-screen text-white bg-black">
+         <div className="flex flex-col items-center w-5/6 gap-y-4 sm:w-2/3">
+            <h1 className="text-2xl font-medium sm:text-3xl">Login</h1>
             <form className="flex flex-col sm:w-2/5 gap-y-2" action={login}>
                <label htmlFor="email" className="text-sm">
                   Email Address
@@ -31,11 +31,11 @@ async function Login() {
                   required
                   className="px-2 py-1 rounded-sm outline-none"
                />
-               <button className="px-2 py-1 rounded-sm bg-white text-black w-fit my-3 font-semibold self-center">
+               <button className="self-center px-2 py-1 my-3 font-semibold text-black bg-white rounded-sm w-fit">
                   Login
                </button>
             </form>
-            <div className="sm:w-2/5 flex flex-col sm:flex-row sm:justify-between">
+            <div className="flex flex-col sm:w-2/5 sm:flex-row sm:justify-between">
                <p>Don&apos;t have an account?</p>
                <Link href="/register" className="hover:text-gray-400">
                   Register
