@@ -22,6 +22,8 @@ module.exports = {
             background: 'hsl(var(--background))',
             foreground: 'hsl(var(--foreground))',
             cursor: 'hsl(var(--cursor))',
+            correct_char: 'hsl(var(--correct_char))',
+            wrong_char: 'hsl(var(--wrong_char))',
          },
          borderRadius: {
             lg: `var(--radius)`,
