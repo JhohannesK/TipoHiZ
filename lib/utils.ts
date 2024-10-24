@@ -58,8 +58,3 @@ export const formatTime = (time: number) => {
       .toString()
       .padStart(2, '0')}:${milliseconds.toString().padStart(2, '0')}`;
 };
-
-export const getCharClass = (isCorrect: boolean | null) => {
-   if (isCorrect === null) return '';
-   return isCorrect ? 'text-correct_char' : 'text-wrong_char';
-};

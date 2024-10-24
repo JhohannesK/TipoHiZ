@@ -6,7 +6,6 @@ import {
    setRef,
    setWordList,
 } from '../store/actions/WordActions';
-import { getCharClass } from '@/lib/utils';
 
 interface keyObj {
    key: string;
@@ -106,6 +105,11 @@ const TextArea: React.FC<soundProps> = ({ sound }) => {
          setWordList(word.default);
       });
    }, [type]);
+
+   const getCharClass = (isCorrect: boolean | null) => {
+      if (isCorrect === null) return '';
+      return isCorrect ? 'text-correct_char' : 'text-wrong_char';
+   };
 
    return (
       <div className="flex flex-wrap overflow-hidden text-xl select-none h-28 sm:px-10 font-poppins md:text-2xl selection:bg-yellow-300 selection:text-white text-input">
