@@ -15,8 +15,8 @@ export const userConfigStore = create<IuserConfig>()(
       }),
       {
          name: 'userConfig',
-      },
-   ),
+      }
+   )
 );
 
 export const wordStore = create<WordState>(() => ({

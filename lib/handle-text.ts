@@ -1,17 +1,17 @@
 import React from 'react';
-import { wordStore } from '../../store';
+import { wordStore } from '../store';
 import {
    IncreaseTypedEntries,
    afterPressingSpace,
    setChar,
    setNextChar,
    setPrevChar,
-} from '../../store/actions/WordActions';
+} from '../store/actions/WordActions';
 
-export const useHandleText = (
+export const HandleText = (
    key: string,
    activeWordRef: React.RefObject<HTMLDivElement> | null,
-   run: () => void,
+   run: () => void
 ) => {
    const { userInput, activeWord, typedHistory } = wordStore.getState();
 
@@ -36,7 +36,10 @@ export const useHandleText = (
                : '';
             prevTypedHistory =
                typedHistory.length > 0 ? typedHistory.slice(0, -1) : [];
-            prevWord ? setPrevChar() : null;
+            if (prevWord) {
+               setPrevChar();
+            }
+
             currWordEl?.classList.remove('wrong', 'right');
          }
          wordStore.setState((state) => ({
@@ -55,7 +58,7 @@ export const useHandleText = (
       case ' ':
          if (userInput === '') return;
          currWordEl?.classList.add(
-            userInput !== activeWord ? 'wrong' : 'right',
+            userInput !== activeWord ? 'wrong' : 'right'
          );
          afterPressingSpace();
          break;

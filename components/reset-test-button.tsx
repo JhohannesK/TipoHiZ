@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { resetTest } from '@/helpers/reset';
+import { resetTest } from '@/lib/reset';
 import { userConfigStore } from '@/store';
 import { setCaretRef, setUserInput } from '@/store/actions/WordActions';
 import { BsArrowRepeat } from 'react-icons/bs';
@@ -34,7 +34,7 @@ export default function ResetTestButton({ reset }: { reset: () => void }) {
       return () => {
          document.removeEventListener('keydown', handleKeydown);
       };
-   }, []);
+   }, [reset, type]);
 
    return (
       <button

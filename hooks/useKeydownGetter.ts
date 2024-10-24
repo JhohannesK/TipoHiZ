@@ -1,7 +1,7 @@
 'use client';
 import { wordStore } from '@/store';
 import { useEffect } from 'react';
-import { useHandleText } from './useHandleText';
+import { HandleText } from '../lib/handle-text';
 
 const useKeydownGetter = ({ run }: { run: () => void; reset: () => void }) => {
    const { activeWordRef } = wordStore((state) => state);
@@ -16,7 +16,7 @@ const useKeydownGetter = ({ run }: { run: () => void; reset: () => void }) => {
             e.key !== 'Enter' &&
             e.key !== 'Tab' // Exclude Enter, Tab, and Space keys
          ) {
-            useHandleText(e.key, activeWordRef, run);
+            HandleText(e.key, activeWordRef, run);
             // run()
             e.preventDefault();
          } else if (
@@ -26,24 +26,15 @@ const useKeydownGetter = ({ run }: { run: () => void; reset: () => void }) => {
             !e.altKey
          ) {
             const charToAdd = e.key.toUpperCase(); // Convert to uppercase if Shift is pressed
-            useHandleText(`Shift${charToAdd}`, activeWordRef, run);
+            HandleText(`Shift${charToAdd}`, activeWordRef, run);
             e.preventDefault();
          }
       };
       return () => {
          document.onkeydown = null;
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [activeWordRef]);
-
-   // useHotkeys('tab+enter', () => {
-   //    resetTest(type, reset);
-   //    wordStore.setState(() => {
-   //       return {
-   //          typedHistory: [],
-   //          userInput: '',
-   //       };
-   //    });
-   // });
    return {};
 };
 

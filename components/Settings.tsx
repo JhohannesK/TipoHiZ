@@ -1,5 +1,10 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import { LuSettings, LuVolume2, LuVolumeX } from 'react-icons/lu';
+import { useTheme } from 'next-themes';
+import { userConfigStore } from '@/store';
+import { toggleSound } from '@/store/actions/ConfigActions';
+import { THEMES } from '@/components/expo/theme.constant';
 import {
    Dialog,
    DialogContent,
@@ -7,12 +12,7 @@ import {
    DialogHeader,
    DialogTitle,
    DialogTrigger,
-} from '@/components/UI/dialog';
-import { LuSettings, LuVolume2, LuVolumeX } from 'react-icons/lu';
-import { useTheme } from 'next-themes';
-import { userConfigStore } from '@/store';
-import { toggleSound } from '@/store/actions/ConfigActions';
-import { THEMES } from '@/components/expo/theme.constant';
+} from './UI/dialog';
 
 export default function Settings() {
    const [mounted, setMounted] = useState(false); //tracking whether the component is mounted or not
@@ -34,20 +34,20 @@ export default function Settings() {
 
    return (
       <Dialog>
-         <DialogTrigger className="flex items-center justify-center p-2 rounded-xl gap-3 cursor-pointer text-background bg-input">
+         <DialogTrigger className="flex items-center justify-center gap-3 p-2 cursor-pointer rounded-xl text-background bg-input">
             <LuSettings />
          </DialogTrigger>
          <DialogContent className="max-w-[400px] rounded-xl shadow-lg p-6 bg-background border border-gray-300 h-[600px] overflow-y-auto">
             <DialogHeader>
-               <DialogTitle className="text-xl font-semibold text-center mb-4 text-input">
+               <DialogTitle className="mb-4 text-xl font-semibold text-center text-input">
                   Settings
                </DialogTitle>
-               <DialogDescription className="text-accent mb-4 text-center">
+               <DialogDescription className="mb-4 text-center text-accent">
                   Select your preferred settings.
                </DialogDescription>
             </DialogHeader>
             <div className="flex flex-col items-center text-input">
-               <div className="flex  gap-2 mb-4">
+               <div className="flex gap-2 mb-4">
                   <span>Sound:</span>
                   <button className="outline-none" onClick={handleSound}>
                      {sound ? <LuVolume2 /> : <LuVolumeX />}
@@ -65,7 +65,7 @@ export default function Settings() {
                <div className="flex gap-2 mb-4">
                   <span>Theme:</span>
                </div>
-               <div className="flex flex-row flex-wrap justify-center gap-3 p-3 w-full overflow-auto">
+               <div className="flex flex-row flex-wrap justify-center w-full gap-3 p-3 overflow-auto">
                   {THEMES.map((currtheme) => (
                      <button
                         className={`flex items-center justify-center rounded-lg w-full h-12 font-bold text-sm transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none ${

@@ -14,7 +14,7 @@ export function StatCard({
       <article
          className={cn(
             'rounded-lg border border-input/30 px-4 sm:px-10 py-2 text-center',
-            className,
+            className
          )}
       >
          <h3 className="text-input/50 text-sm capitalize">{label}:</h3>
