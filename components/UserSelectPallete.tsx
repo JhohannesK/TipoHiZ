@@ -6,8 +6,8 @@ import { userConfigStore } from '../store';
 import { setCategory, setType } from '../store/actions/ConfigActions';
 import { setDefaultTime } from '../store/actions/TimeActions';
 import { AiTwotoneSetting } from 'react-icons/ai';
-import Chip from './ui/Chip';
 import { resetTest } from '@/lib/reset';
+import Chip from './ui/chip';
 
 const UserSelectPallete = ({ reset }: { reset: () => void }) => {
    const [open, setOpen] = useState(false);
