@@ -6,8 +6,8 @@ import { userConfigStore } from '../store';
 import { setCategory, setType } from '../store/actions/ConfigActions';
 import { setDefaultTime } from '../store/actions/TimeActions';
 import { AiTwotoneSetting } from 'react-icons/ai';
+import { resetTest } from '@/lib/reset';
 import Chip from './UI/Chip';
-import { resetTest } from '@/helpers/reset';
 
 const UserSelectPallete = ({ reset }: { reset: () => void }) => {
    const [open, setOpen] = useState(false);
@@ -24,6 +24,7 @@ const UserSelectPallete = ({ reset }: { reset: () => void }) => {
          .querySelector(`button[value="${time}"]`)
          ?.classList.add('selected');
       reset();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [time]);
 
    React.useEffect(() => {
@@ -62,28 +63,35 @@ const UserSelectPallete = ({ reset }: { reset: () => void }) => {
    };
 
    return (
-      <div className="flex items-center justify-center text-xl w-full pt-3">
+      <div className="flex items-center justify-center w-full pt-3 text-xl">
          <div className="items-center justify-center hidden px-3 py-2 space-x-2 rounded-md sm:flex bg-foreground text-input ">
-            {Object.entries(options).map(([option, choices]) => (
-               <div
-                  key={option}
-                  className={`${option} flex items-center justify-center space-x-2`}
-               >
-                  {choices.map((choice, index) => {
-                     return (
-                        <button
-                           tabIndex={-1}
-                           value={choice}
-                           key={index}
-                           data-option={option}
-                           onClick={(e) => handleOption(e)}
-                        >
-                           {choice}
-                        </button>
-                     );
-                  })}
-               </div>
-            ))}
+            {Object.entries(options).map(
+               ([option, choices], optionIndex, entries) => (
+                  <>
+                     <div
+                        key={option}
+                        className={`${option} flex items-center justify-center space-x-2`}
+                     >
+                        {choices.map((choice, index) => {
+                           return (
+                              <button
+                                 tabIndex={-1}
+                                 value={choice}
+                                 key={index}
+                                 data-option={option}
+                                 onClick={(e) => handleOption(e)}
+                              >
+                                 {choice}
+                              </button>
+                           );
+                        })}
+                     </div>
+                     {optionIndex < entries.length - 1 && (
+                        <span className="text-[2rem]">|</span>
+                     )}
+                  </>
+               )
+            )}
          </div>
          <div className="relative flex sm:hidden">
             <Chip

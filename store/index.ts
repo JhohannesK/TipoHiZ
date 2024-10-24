@@ -11,6 +11,7 @@ export const userConfigStore = create<IuserConfig>()(
          theme: '',
          type: 'default', // 'punctuation', 'numbers', 'code'
          category: 'time', // 'time', 'words'
+         sound: false,
       }),
       {
          name: 'userConfig',

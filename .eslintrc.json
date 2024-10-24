@@ -1,27 +1,4 @@
 {
-   "env": {
-      "browser": true,
-      "es6": true
-   },
-   "extends": [
-      "plugin:react/recommended",
-      "prettier",
-      "plugin:@typescript-eslint/recommended"
-   ],
-   "parser": "@typescript-eslint/parser",
-   "parserOptions": {
-      "ecmaFeatures": {
-         "jsx": true,
-         "arrowFunctions": true
-      },
-      "ecmaVersion": "latest",
-      "sourceType": "module"
-   },
-   "plugins": ["react", "prettier"],
-   "rules": {
-      "prettier/prettier": ["off"],
-      // "react-refresh/only-export-components": "warn",
-      // "react-hooks/exhaustive-deps": "warn"
-      "react/prop-types": "warn"
-   }
+   "extends": ["next/core-web-vitals", "next/typescript"],
+   "plugins": []
 }

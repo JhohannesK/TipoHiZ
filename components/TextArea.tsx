@@ -1,4 +1,3 @@
-'use client';
 import React, { useEffect, useRef, useState } from 'react';
 import { userConfigStore, wordStore } from '../store';
 import {
@@ -71,7 +70,6 @@ const TextArea: React.FC<soundProps> = ({ sound }) => {
 
    const caretRef = useRef<HTMLSpanElement>(null);
    const activeWordRef = useRef<HTMLDivElement>(null);
-   const extraLetters = userInput.slice(activeWord.length).split('');
 
    const calculateErrors = () => {
       let count = 0;
@@ -108,57 +106,55 @@ const TextArea: React.FC<soundProps> = ({ sound }) => {
       });
    }, [type]);
 
+   const getCharClass = (isCorrect: boolean | null) => {
+      if (isCorrect === null) return '';
+      return isCorrect ? 'text-correct_char' : 'text-wrong_char';
+   };
+
    return (
       <div className="flex flex-wrap overflow-hidden text-xl select-none h-28 sm:px-10 font-poppins md:text-2xl selection:bg-yellow-300 selection:text-white text-input">
-         {wordList?.map((word, index) => {
+         {wordList?.map((word, wordIndex) => {
             const isActive =
-               activeWord === word && typedHistory.length === index;
+               activeWord === word && typedHistory.length === wordIndex;
+            const typedWord = isActive
+               ? userInput
+               : typedHistory[wordIndex] || '';
+
             return (
                <div
-                  key={word + index}
+                  key={word + wordIndex}
                   className="relative mt-0 mx-[7px] mb-1"
                   ref={isActive ? activeWordRef : null}
                >
-                  <div className="startView">
-                     {isActive && (
-                        <span
-                           ref={caretRef}
-                           id="caret"
-                           className="animate-blink rounded-sm flex items-start w-[.08em] h-7 top-1 bg-cursor justify-start text-cursor absolute"
-                           style={{
-                              left: userInput.length * 12.3833,
-                           }}
-                        />
-                     )}
-                  </div>
+                  {isActive && (
+                     <span
+                        ref={caretRef}
+                        id="caret"
+                        className="animate-blink rounded-sm flex items-start w-[.08em] h-7 top-1 bg-cursor justify-start text-cursor absolute"
+                        style={{
+                           left: typedWord.length * 12.3833,
+                        }}
+                     />
+                  )}
                   {word.split('').map((char, charIndex) => {
-                     const isCorrectlyTyped =
-                        isActive && char === userInput[charIndex];
+                     const typedChar = typedWord[charIndex];
+                     const isCorrect =
+                        typedChar !== undefined ? char === typedChar : null;
+
                      return (
                         <span
                            key={char + charIndex}
-                           className={isCorrectlyTyped ? 'text-yellow-500' : ''}
+                           className={getCharClass(isCorrect)}
                         >
                            {char}
                         </span>
                      );
                   })}
-                  {isActive
-                     ? extraLetters.map((char, charId) => (
-                          <span key={char + charId} className="wrong extra">
-                             {char}
-                          </span>
-                       ))
-                     : typedHistory[index]
-                     ? typedHistory[index]
-                          .slice(wordList[index].length)
-                          .split('')
-                          .map((char, charId) => (
-                             <span key={char + charId} className="wrong extra">
-                                {char}
-                             </span>
-                          ))
-                     : null}
+                  {typedWord.length > word.length && (
+                     <span className="text-wrong_char">
+                        {typedWord.slice(word.length)}
+                     </span>
+                  )}
                </div>
             );
          })}

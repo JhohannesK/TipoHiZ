@@ -11,6 +11,8 @@
       --accent: 96, 94%, 21%;
       --input: 240 5.9% 10%;
       --radius: 0.5rem;
+      --correct_char: 145, 63%, 49%;
+      --wrong_char: 6, 78%, 57%;
    }
 
    .dark {
@@ -21,6 +23,8 @@
       --accent: 240, 54%, 65%;
       --cursor: 240, 74%, 77%;
       --radius: 0.5rem;
+      --correct_char: 145, 63%, 42%;
+      --wrong_char: 6, 78%, 57%;
    }
 
    .light-green {
@@ -31,6 +35,8 @@
       --accent: 303, 15%, 50%;
       --cursor: 240, 74%, 77%;
       --radius: 0.5rem;
+      --correct_char: 120, 100%, 20%;
+      --wrong_char: 9, 100%, 64%;
    }
 
    .dark-orange {
@@ -41,6 +47,8 @@
       --accent: 11, 64%, 87%;
       --cursor: 325, 73%, 37%;
       --radius: 0.5rem;
+      --correct_char: 120, 61%, 50%;
+      --wrong_char: 16, 100%, 50%;
    }
 
    .dark-green {
@@ -51,6 +59,8 @@
       --accent: 144.9 80.4% 10%;
       --cursor: 152, 89%, 32%;
       --radius: 0.5rem;
+      --correct_char: 91, 38%, 21%;
+      --wrong_char: 8, 100%, 50%;
    }
 
    .light-orange {
@@ -61,6 +71,8 @@
       --destructive: 0 84.2% 60.2%;
       --cursor: 24 9.8% 10%;
       --radius: 0.5rem;
+      --correct_char: 120, 61%, 34%;
+      --wrong_char: 348, 83%, 47%;
    }
 
    .dark-gray {
@@ -71,6 +83,8 @@
       --destructive: 0 50% 50%;
       --cursor: 240 5.9% 75%;
       --radius: 0.5rem;
+      --correct_char: 111, 100%, 54%;
+      --wrong_char: 16, 100%, 50%;
    }
 
    .midnight-blue {
@@ -80,6 +94,8 @@
       --accent: 164 91.8% 52.2%;
       --destructive: 0 72.8% 52.6%;
       --cursor: 228 45% 65%;
+      --correct_char: 75, 100%, 50%;
+      --wrong_char: 0, 100%, 63%;
    }
 
    .ocean {
@@ -90,6 +106,8 @@
       --accent: 255 100% 30%;
       --input: 191 80% 30%;
       --radius: 0.5rem;
+      --correct_char: 146, 50%, 36%;
+      --wrong_char: 0, 100%, 63%;
    }
 
    .girly {
@@ -100,6 +118,8 @@
       --accent: 298 49% 41%;
       --input: 340 80% 30%;
       --radius: 0.5rem;
+      --correct_char: 330, 100%, 71%;
+      --wrong_char: 328, 100%, 54%;
    }
 
    .retro {
@@ -110,6 +130,8 @@
       --accent: 0 100% 100%;
       --input: 0 0% 50%;
       --radius: 0.5rem;
+      --correct_char: 160, 51%, 60%;
+      --wrong_char: 0, 68%, 42%;
    }
 
    .sunshine {
@@ -120,6 +142,8 @@
       --accent: 20 84% 56%;
       --input: 46 100% 18%;
       --radius: 0.5rem;
+      --correct_char: 84, 100%, 59%;
+      --wrong_char: 348, 83%, 47%;
    }
 
    .hacktoberfest {
@@ -130,6 +154,8 @@
       --accent: 0 0% 0%;
       --input: 120 30% 15%;
       --radius: 0.5rem;
+      --correct_char: 91, 38%, 21%;
+      --wrong_char: 47, 44%, 89%;
    }
 
    .cyberpunk {
@@ -141,17 +167,21 @@
       --cursor: 300, 100%, 50%;
       --border: 200, 100%, 50%;
       --radius: 0.5rem;
+      --correct_char: 180, 100%, 50%;
+      --wrong_char: 300, 100%, 50%;
    }
 
-   .cyberpunk {
-      --background: 219 17% 12%;
-      --foreground: 190, 100%, 91%;
-      --input: 281, 100%, 50%;
-      --destructive: 0 100% 35%;
-      --accent: 304, 100%, 46%;
-      --cursor: 300, 100%, 50%;
+   .chrismas {
+      --background: 132, 8%, 13%;
+      --foreground: 128, 56%, 17%;
+      --input: 0, 93%, 30%;
+      --destructive: 0 100% 50%;
+      --accent: 45, 93%, 47%;
+      --cursor: 45, 93%, 47%;
       --border: 200, 100%, 50%;
       --radius: 0.5rem;
+      --correct_char: 91, 38%, 21%;
+      --wrong_char: 47, 44%, 89%;
    }
 
    body {

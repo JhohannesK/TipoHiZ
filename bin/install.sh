@@ -1,2 +1,2 @@
-npm ci &
+pnpm ci &
 wait
