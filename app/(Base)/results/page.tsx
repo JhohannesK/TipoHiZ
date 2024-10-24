@@ -10,7 +10,7 @@ import {
    SelectItem,
    SelectTrigger,
    SelectValue,
-} from '@/components/ui/select';
+} from '@/components/UI/select';
 
 const LANGUAGES = ['English', 'Spanish', 'French', 'German'];
 const SHOW_ALL_TIME_STATS = false;
