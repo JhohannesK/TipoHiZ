@@ -11,6 +11,7 @@ import {
    SelectTrigger,
    SelectValue,
 } from '@/components/UI/select';
+import { resetStates } from '@/store/actions/TimeActions';
 
 const LANGUAGES = ['English', 'Spanish', 'French', 'German'];
 const SHOW_ALL_TIME_STATS = false;
@@ -77,6 +78,10 @@ export default function ResultsPage() {
             <div className="max-w-[100px] sm:max-w-[150px] sm:pt-4">
                <Link
                   href={'/'}
+                  onClick={() => {
+                     // reset();
+                     resetStates();
+                  }}
                   className="block w-full py-2 text-sm font-medium text-center transition-all duration-200 rounded-lg sm:px-6 bg-input/10 hover:bg-accent sm:text-lg"
                >
                   Retake
