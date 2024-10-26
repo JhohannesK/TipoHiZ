@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Constants from '../modules/_constants';
 import { userConfigStore } from '../store';
 import { setCategory, setType } from '../store/actions/ConfigActions';
-import { setDefaultTime } from '../store/actions/TimeActions';
+import { resetStates, setDefaultTime } from '../store/actions/TimeActions';
 import { AiTwotoneSetting } from 'react-icons/ai';
 import { resetTest } from '@/lib/reset';
 import Chip from './UI/Chip';
@@ -51,11 +51,17 @@ const UserSelectPallete = ({ reset }: { reset: () => void }) => {
             case 'time':
                setDefaultTime(+target.value);
                resetTest(type, reset);
+               reset();
+               resetStates();
                break;
             case 'type':
+               reset();
+               resetStates();
                setType(target.value);
                break;
             case 'category':
+               reset();
+               resetStates();
                setCategory(target.value);
                break;
          }

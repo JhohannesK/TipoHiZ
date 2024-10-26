@@ -3,6 +3,7 @@ import { resetTest } from '@/lib/reset';
 import { userConfigStore } from '@/store';
 import { setCaretRef, setUserInput } from '@/store/actions/WordActions';
 import { BsArrowRepeat } from 'react-icons/bs';
+import { resetStates } from '@/store/actions/TimeActions';
 
 export default function ResetTestButton({ reset }: { reset: () => void }) {
    const { type } = userConfigStore((state) => state);
@@ -21,6 +22,8 @@ export default function ResetTestButton({ reset }: { reset: () => void }) {
             previousKeyRef.current = '';
 
             resetTest(type, reset);
+            reset();
+            resetStates();
             setUserInput('');
             setCaretRef(null);
             return;
@@ -34,7 +37,7 @@ export default function ResetTestButton({ reset }: { reset: () => void }) {
       return () => {
          document.removeEventListener('keydown', handleKeydown);
       };
-   }, [reset, type]);
+   }, []);
 
    return (
       <button
@@ -43,6 +46,8 @@ export default function ResetTestButton({ reset }: { reset: () => void }) {
          onClick={(e) => {
             // setDefaultTime(time);
             resetTest(type, reset);
+            reset();
+            resetStates();
             setUserInput('');
             setCaretRef(null);
             e.preventDefault();
