@@ -45,7 +45,7 @@
       "file-loader": "6.2.0",
       "globals": "^15.11.0",
       "husky": "9.1.6",
-      "next": "14.2.14",
+      "next": "14.2.21",
       "postcss": "8.4.47",
       "prisma": "5.20.0",
       "simple-zustand-devtools": "1.1.0",
