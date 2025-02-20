@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import React from 'react';
-import Chip from './UI/Chip';
 import { AiOutlineBranches } from 'react-icons/ai';
 import { SiAdguard } from 'react-icons/si';
 import { FaXTwitter } from 'react-icons/fa6';
 import { FaDiscord } from 'react-icons/fa';
 import { FaGithub } from 'react-icons/fa';
+import Chip from './ui/chip';
 
 function Footer() {
    return (
@@ -17,7 +17,7 @@ function Footer() {
          </div>
          <div className="pb-[58px] w-full flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-2 justify-between sm:px-4">
             <div>
-               <p className="flex items-center justify-center sm:justify-start gap-2 text-center sm:text-left">
+               <p className="flex items-center justify-center gap-2 text-center sm:justify-start sm:text-left">
                   Contribute on Github{' '}
                   <span className="text-sm text-primary">
                      <Link

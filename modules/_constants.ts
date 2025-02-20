@@ -3,7 +3,7 @@ import { IConstants } from './_types';
 const Constants: IConstants = {
    TimeSec: 60,
    options: {
-      type: ['default', 'punctuation', 'numbers', 'code'],
+      type: ['default', 'punctuation', 'numbers'],
       category: ['time', 'words'],
       time: [15, 30, 60, 120],
    },

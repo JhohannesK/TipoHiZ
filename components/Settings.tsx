@@ -12,7 +12,7 @@ import {
    DialogHeader,
    DialogTitle,
    DialogTrigger,
-} from './UI/dialog';
+} from './ui/dialog';
 
 export default function Settings() {
    const [mounted, setMounted] = useState(false); //tracking whether the component is mounted or not

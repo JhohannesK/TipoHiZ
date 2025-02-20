@@ -3,7 +3,7 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 import { LuUser, LuMenu, LuX } from 'react-icons/lu';
 import { SvgRender } from './SvgRender';
-import Settings from '@/components/Settings';
+import Settings from './settings';
 
 function Header() {
    const [menuOpen, setMenuOpen] = useState(false);
