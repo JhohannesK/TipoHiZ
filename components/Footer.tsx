@@ -37,7 +37,7 @@ function Footer() {
                   <Link target="_blank" href="https://discord.gg/8Z67Fv8z">
                      <FaDiscord />
                   </Link>
-                  <Link href="#">
+                  <Link href="https://x.com/_jhohannes">
                      <FaXTwitter />
                   </Link>
                </div>

@@ -16,6 +16,8 @@ import { Button } from './ui/button';
 import { ArrowRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
+import { OAuthButtons } from './oauth-buttons';
+import { SvgRender } from './SvgRender';
 
 interface AuthFormProps {
    mode: 'login' | 'register';
@@ -51,16 +53,25 @@ const AuthForm = ({ mode, action }: AuthFormProps) => {
    return (
       <Card className="w-[350px] sm:w-[400px]">
          <CardHeader>
-            <CardTitle>
-               {mode === 'login' ? 'Login' : 'Create Account'}
+            <CardTitle className="flex flex-col items-center gap-3">
+               <div className="flex items-center justify-center gap-x-2">
+                  <SvgRender />
+                  <p className="text-xl font-bold select-none text-input hover:animate-shake">
+                     TipoHiz.__
+                  </p>
+               </div>
+               <p className="font-bold">
+                  {mode === 'login' ? 'Login' : 'Create Account'}
+               </p>
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-center">
                {mode === 'login'
                   ? 'Enter your credentials to login'
                   : 'Enter your details to create an account'}
             </CardDescription>
          </CardHeader>
          <CardContent>
+            <OAuthButtons />
             <form action={onSubmit} className="flex flex-col gap-3">
                {mode === 'register' && (
                   <div>

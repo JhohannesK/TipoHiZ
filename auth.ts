@@ -48,7 +48,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
             if (!user) throw new Error('Invalid credentials.');
 
-            if (!user.password) throw new Error('Invalid password');
+            if (!user.password)
+               throw new Error('Please try another login method.');
 
             const isMatch = await compare(password, user.password);
 

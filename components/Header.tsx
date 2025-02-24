@@ -11,6 +11,7 @@ import { Button } from './ui/button';
 function Header() {
    const [menuOpen, setMenuOpen] = useState(false);
    const session = useSession();
+   const username = session.data?.user?.name;
    const isAuthenticated = session.status === 'authenticated';
 
    const toggleMenu = () => {
@@ -38,6 +39,7 @@ function Header() {
          </div>
 
          <div className="flex items-center justify-between gap-3 font-semibold">
+            <p className="text-input">Hi, {username}</p>
             {!isAuthenticated ? (
                <>
                   <Link
