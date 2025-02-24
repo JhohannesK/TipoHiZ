@@ -21,6 +21,7 @@ function Footer() {
                   Contribute on Github{' '}
                   <span className="text-sm text-primary">
                      <Link
+                        target="_blank"
                         tabIndex={-1}
                         aria-label="Link to TipoHiZ on GitHub"
                         className="font-bold"
@@ -30,15 +31,15 @@ function Footer() {
                </p>
                <p>Follow us on</p>
                <div className="flex items-center gap-2">
-                  <a href="https://github.com/JhohannesK">
+                  <Link target="_blank" href="https://github.com/JhohannesK">
                      <FaGithub />
-                  </a>
-                  <a href="https://discord.gg/8Z67Fv8z">
+                  </Link>
+                  <Link target="_blank" href="https://discord.gg/8Z67Fv8z">
                      <FaDiscord />
-                  </a>
-                  <a href="#">
+                  </Link>
+                  <Link href="https://x.com/_jhohannes">
                      <FaXTwitter />
-                  </a>
+                  </Link>
                </div>
             </div>
             <div>
@@ -50,7 +51,7 @@ function Footer() {
             <div>
                <div className="flex items-center gap-2">
                   <SiAdguard />
-                  <div className="text-center sm:text-left">
+                  <div className="text-sm text-center sm:text-left">
                      Privacy policy and terms of use
                   </div>
                </div>

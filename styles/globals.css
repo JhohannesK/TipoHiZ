@@ -83,7 +83,7 @@
       --destructive: 0 50% 50%;
       --cursor: 240 5.9% 75%;
       --radius: 0.5rem;
-      --correct_char: 111, 100%, 54%;
+      --correct_char: 111 100% 54%;
       --wrong_char: 16, 100%, 50%;
    }
 

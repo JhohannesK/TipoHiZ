@@ -2,52 +2,72 @@
 
 import { signIn } from '@/auth';
 import { prisma } from '@/lib/db';
+import { loginSchema, registerSchema } from '@/lib/validation/auth.schema';
 import { hash } from 'bcryptjs';
-import { redirect } from 'next/navigation';
+import { ZodError } from 'zod';
 
-const register = async (formData: FormData) => {
-   const name = formData.get('name') as string;
-   const email = formData.get('email') as string;
-   const password = formData.get('password') as string;
-
-   if (!name || !email || !password) throw new Error('Please fill all fields');
-
-   const existingUser = await prisma.user.findFirst({
-      where: { email },
-   });
-
-   if (existingUser) throw new Error('User already exists with given email.');
-
-   const hashedPassword = await hash(password, 10);
-
-   await prisma.user.create({
-      data: {
-         email,
-         name,
-         password: hashedPassword,
-      },
-   });
-
-   redirect('/login');
+export type ActionResponse = {
+   error?: string;
+   success?: boolean;
 };
 
-const login = async (formData: FormData) => {
-   const email = formData.get('email') as string;
-   const password = formData.get('password') as string;
-
+const register = async (formData: FormData): Promise<ActionResponse> => {
    try {
-      await signIn('credentials', {
-         redirect: false,
-         callbackUrl: '/',
-         email,
-         password,
+      const rawData = Object.fromEntries(formData.entries());
+      const validatedData = registerSchema.parse(rawData);
+
+      const existingUser = await prisma.user.findFirst({
+         where: {
+            email: validatedData.email,
+         },
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   } catch (error: any) {
-      console.error(error.message);
+      if (existingUser) {
+         return { error: 'User already exists with this email' };
+      }
+
+      const hashedPassword = await hash(validatedData.password, 10);
+
+      await prisma.user.create({
+         data: {
+            email: validatedData.email,
+            name: validatedData.name,
+            password: hashedPassword,
+         },
+      });
+
+      return { success: true };
+   } catch (error) {
+      if (error instanceof ZodError) {
+         return { error: error.errors[0].message };
+      }
+
+      return { error: 'An unexpected error occured' };
    }
-   redirect('/');
+};
+
+const login = async (formData: FormData): Promise<ActionResponse> => {
+   try {
+      const rawData = Object.fromEntries(formData.entries());
+      const validatedData = loginSchema.parse(rawData);
+
+      const result = await signIn('credentials', {
+         redirect: false,
+         email: validatedData.email,
+         password: validatedData.password,
+      });
+
+      if (!result.ok) {
+         return { error: 'Invalid credentials' };
+      }
+
+      return { success: true };
+   } catch (error) {
+      if (error instanceof ZodError) {
+         return { error: 'Authentication failed' };
+      }
+      return { error: 'An unexpected error occured' };
+   }
 };
 
 export { register, login };
