@@ -1,7 +1,7 @@
 import React from 'react';
-import Footer from '@/components/Footer';
 import AuthSessionProvider from '@/lib/providers/session-provider';
-import Header from '@/components/Header';
+import Header from '@/components/header';
+import Footer from '@/components/footer';
 
 export default async function BaseLayout({
    children,
