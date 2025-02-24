@@ -3,6 +3,9 @@ import Credentials from 'next-auth/providers/credentials';
 import { compare } from 'bcryptjs';
 import { prisma } from './lib/db';
 import { PrismaAdapter } from '@auth/prisma-adapter';
+import Google from 'next-auth/providers/google';
+import GitHub from 'next-auth/providers/github';
+import Twitter from 'next-auth/providers/twitter';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
    adapter: PrismaAdapter(prisma),
@@ -10,6 +13,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       strategy: 'jwt',
    },
    providers: [
+      Google({
+         clientId: process.env.GOOGLE_CLIENT_ID,
+         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      }),
+      GitHub({
+         clientId: process.env.GITHUB_CLIENT_ID,
+         clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      }),
+      Twitter({
+         clientId: process.env.TWITTER_CLIENT_ID,
+         clientSecret: process.env.TWITTER_CLIENT_SECRET,
+      }),
       Credentials({
          name: 'credentials',
          credentials: {
@@ -35,9 +50,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
             if (!user.password) throw new Error('Invalid password');
 
-            const isMatch = compare(password, user.password);
+            const isMatch = await compare(password, user.password);
 
-            if (!isMatch) throw new Error('Incorrect Password.');
+            if (!isMatch) throw new Error('Invalid credentials.');
 
             const userData = {
                name: user.name,
@@ -52,5 +67,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
    pages: {
       signIn: '/login',
+      error: '/login',
    },
 });
