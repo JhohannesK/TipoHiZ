@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import React from 'react';
-import Chip from './UI/Chip';
 import { AiOutlineBranches } from 'react-icons/ai';
 import { SiAdguard } from 'react-icons/si';
 import { FaXTwitter } from 'react-icons/fa6';
 import { FaDiscord } from 'react-icons/fa';
 import { FaGithub } from 'react-icons/fa';
+import Chip from './ui/chip';
 
 function Footer() {
    return (
@@ -17,10 +17,11 @@ function Footer() {
          </div>
          <div className="pb-[58px] w-full flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-2 justify-between sm:px-4">
             <div>
-               <p className="flex items-center justify-center sm:justify-start gap-2 text-center sm:text-left">
+               <p className="flex items-center justify-center gap-2 text-center sm:justify-start sm:text-left">
                   Contribute on Github{' '}
                   <span className="text-sm text-primary">
                      <Link
+                        target="_blank"
                         tabIndex={-1}
                         aria-label="Link to TipoHiZ on GitHub"
                         className="font-bold"
@@ -30,15 +31,15 @@ function Footer() {
                </p>
                <p>Follow us on</p>
                <div className="flex items-center gap-2">
-                  <a href="https://github.com/JhohannesK">
+                  <Link target="_blank" href="https://github.com/JhohannesK">
                      <FaGithub />
-                  </a>
-                  <a href="https://discord.gg/8Z67Fv8z">
+                  </Link>
+                  <Link target="_blank" href="https://discord.gg/8Z67Fv8z">
                      <FaDiscord />
-                  </a>
-                  <a href="#">
+                  </Link>
+                  <Link href="https://x.com/_jhohannes">
                      <FaXTwitter />
-                  </a>
+                  </Link>
                </div>
             </div>
             <div>
@@ -50,7 +51,7 @@ function Footer() {
             <div>
                <div className="flex items-center gap-2">
                   <SiAdguard />
-                  <div className="text-center sm:text-left">
+                  <div className="text-sm text-center sm:text-left">
                      Privacy policy and terms of use
                   </div>
                </div>

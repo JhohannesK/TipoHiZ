@@ -11,7 +11,7 @@ import {
    DialogHeader,
    DialogTitle,
    DialogTrigger,
-} from '../UI/dialog';
+} from '../ui/dialog';
 
 export default function ThemeChoose() {
    const { setTheme, theme, resolvedTheme } = useTheme();

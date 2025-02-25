@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { StatCard } from '@/components/StatCard';
+import { StatCard } from '@/components/stat-card';
 import { userConfigStore, wordStore } from '@/store';
 import Link from 'next/link';
 import { accurateWPM, formatTime, grossWPM } from '@/lib/utils';
@@ -10,7 +10,7 @@ import {
    SelectItem,
    SelectTrigger,
    SelectValue,
-} from '@/components/UI/select';
+} from '@/components/ui/select';
 import { resetStates } from '@/store/actions/TimeActions';
 
 const LANGUAGES = ['English', 'Spanish', 'French', 'German'];

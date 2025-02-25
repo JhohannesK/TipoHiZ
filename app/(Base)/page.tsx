@@ -1,13 +1,14 @@
 'use client';
 import React from 'react';
 import TextArea from '@/components/TextArea';
-import UserSelectPallete from '@/components/UserSelectPallete';
+import UserSelectPallete from '@/components/user-select-pallete';
 import ResetTestButton from '@/components/reset-test-button';
 import { userConfigStore } from '@/store';
 import useKeydownGetter from '@/hooks/useKeydownGetter';
 import { IoIosColorPalette } from 'react-icons/io';
 import useTimer from '@/hooks/useTimer';
 import ThemeChoose from '@/components/expo/theme-choose';
+import { Globe } from 'lucide-react';
 
 export default function HomePage() {
    const { time } = userConfigStore((state) => state);
@@ -21,6 +22,11 @@ export default function HomePage() {
          <div className="flex items-center justify-between mt-16 sm:px-10">
             <div className="flex-wrap text-xl font-medium font-poppins text-accent">
                <div className="mb-2">{timer}</div>
+            </div>
+
+            <div className="flex items-center gap-3 text-input">
+               <Globe size={15} />
+               <p>English</p>
             </div>
 
             <div>
