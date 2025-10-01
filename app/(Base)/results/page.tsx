@@ -3,7 +3,12 @@ import React from 'react';
 import { StatCard } from '@/components/stat-card';
 import { userConfigStore, wordStore } from '@/store';
 import Link from 'next/link';
-import { accurateWPM, formatTime, grossWPM } from '@/lib/utils';
+import {
+   accurateWPM,
+   calculateAccuracy,
+   formatTime,
+   grossWPM,
+} from '@/lib/utils';
 import {
    Select,
    SelectContent,
@@ -21,8 +26,8 @@ export default function ResultsPage() {
    const { time, category } = userConfigStore.getState();
 
    const rawWpm = grossWPM(typedEntries, time);
-
    const accurateWpm = accurateWPM(errorCount, typedEntries, time);
+   const accuracy = calculateAccuracy(errorCount, typedEntries);
 
    return (
       <div className="pb-8 text-input">
@@ -57,6 +62,10 @@ export default function ResultsPage() {
                      <StatCard
                         label="Total Speed"
                         value={`${rawWpm.toFixed(2)}wpm`}
+                     />
+                     <StatCard
+                        label="Accuracy"
+                        value={`${accuracy.toFixed(1)}%`}
                      />
                   </div>
                </div>

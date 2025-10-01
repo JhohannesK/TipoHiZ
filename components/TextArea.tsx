@@ -26,6 +26,10 @@ const TextArea: React.FC<soundProps> = ({ sound }) => {
       null
    );
 
+   // State to track cursor position
+   const [caretPosition, setCaretPosition] = useState(0);
+   const animationFrameRef = useRef<number | null>(null);
+
    //effect to load the typing sound
    useEffect(() => {
       const audio = new Audio('/modules/AudioFiles/type.mp3');
@@ -91,6 +95,26 @@ const TextArea: React.FC<soundProps> = ({ sound }) => {
       setErrorCount(count);
    };
 
+   // Update caret position with requestAnimationFrame
+   useEffect(() => {
+      // Cancel any existing animation frame
+      if (animationFrameRef.current !== null) {
+         cancelAnimationFrame(animationFrameRef.current);
+      }
+
+      // Schedule a new animation frame
+      animationFrameRef.current = requestAnimationFrame(() => {
+         setCaretPosition(userInput.length);
+      });
+
+      // Cleanup function
+      return () => {
+         if (animationFrameRef.current !== null) {
+            cancelAnimationFrame(animationFrameRef.current);
+         }
+      };
+   }, [userInput]);
+
    useEffect(() => {
       calculateErrors();
    }, [userInput, activeWord]);
@@ -132,7 +156,8 @@ const TextArea: React.FC<soundProps> = ({ sound }) => {
                         id="caret"
                         className="animate-blink rounded-sm flex items-start w-[.08em] h-7 top-1 bg-cursor justify-start text-cursor absolute"
                         style={{
-                           left: typedWord.length * 12.3833,
+                           left: `${caretPosition}ch`,
+                           transform: 'translateZ(0)',
                         }}
                      />
                   )}

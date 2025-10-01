@@ -42,8 +42,19 @@ export const accurateWPM = (
    time: number
 ) => {
    const minutes = time / 60;
-   const wordsTyped = typedEntries / 5;
-   return Math.max((wordsTyped - errorCount) / minutes, 0);
+   // Subtract errors from character count before converting to words
+   const adjustedCharCount = Math.max(typedEntries - errorCount, 0);
+   const adjustedWordCount = adjustedCharCount / 5;
+   return adjustedWordCount / minutes;
+};
+
+export const calculateAccuracy = (errorCount: number, typedEntries: number) => {
+   if (typedEntries === 0) return 100;
+   const accuracy = Math.max(
+      0,
+      ((typedEntries - errorCount) / typedEntries) * 100
+   );
+   return Math.min(accuracy, 100);
 };
 
 export const formatTime = (time: number) => {
