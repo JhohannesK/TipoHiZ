@@ -4,18 +4,34 @@ import TextArea from '@/components/TextArea';
 import UserSelectPallete from '@/components/user-select-pallete';
 import ResetTestButton from '@/components/reset-test-button';
 import { userConfigStore } from '@/store';
+import { setLanguage } from '@/store/actions/ConfigActions';
 import useKeydownGetter from '@/hooks/useKeydownGetter';
 import { IoIosColorPalette } from 'react-icons/io';
 import useTimer from '@/hooks/useTimer';
 import ThemeChoose from '@/components/expo/theme-choose';
 import { Globe } from 'lucide-react';
+import {
+   Select,
+   SelectContent,
+   SelectItem,
+   SelectTrigger,
+   SelectValue,
+} from '@/components/ui/select';
+import { languageOptions } from '@/lib/i18n';
+import { resetTest } from '@/lib/reset';
 
 export default function HomePage() {
-   const { time } = userConfigStore((state) => state);
+   const { time, language, type } = userConfigStore((state) => state);
    const { timer, run, reset } = useTimer(1, time);
    const { sound } = userConfigStore();
 
    useKeydownGetter({ run, reset });
+
+   const handleLanguageChange = (value: string) => {
+      setLanguage(value);
+      resetTest(type, reset);
+   };
+
    return (
       <div>
          <UserSelectPallete reset={reset} />
@@ -26,7 +42,18 @@ export default function HomePage() {
 
             <div className="flex items-center gap-3 text-input">
                <Globe size={15} />
-               <p>English</p>
+               <Select value={language} onValueChange={handleLanguageChange}>
+                  <SelectTrigger className="w-[110px]">
+                     <SelectValue placeholder="Language" />
+                  </SelectTrigger>
+                  <SelectContent>
+                     {languageOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                           {option.label}
+                        </SelectItem>
+                     ))}
+                  </SelectContent>
+               </Select>
             </div>
 
             <div>

@@ -28,6 +28,7 @@ export interface IuserConfig {
    type: string;
    category: string;
    sound: boolean;
+   language: string;
 }
 
 export type MyPersist = (
