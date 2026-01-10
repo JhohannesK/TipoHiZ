@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { userConfigStore, wordStore } from '../store';
+import { HandleText } from '../lib/handle-text';
 import {
    setCaretRef,
    setErrorCount,
@@ -13,9 +14,10 @@ interface keyObj {
 
 interface soundProps {
    sound: boolean;
+   run: () => void;
 }
 
-const TextArea: React.FC<soundProps> = ({ sound }) => {
+const TextArea: React.FC<soundProps> = ({ sound, run }) => {
    const { type } = userConfigStore((state) => state);
    const { wordList, activeWord, userInput, typedHistory } = wordStore(
       (state) => state
@@ -74,6 +76,30 @@ const TextArea: React.FC<soundProps> = ({ sound }) => {
 
    const caretRef = useRef<HTMLSpanElement>(null);
    const activeWordRef = useRef<HTMLDivElement>(null);
+   const hiddenInputRef = useRef<HTMLTextAreaElement>(null);
+   const suppressInputRef = useRef(false);
+
+   const focusHiddenInput = () => {
+      const el = hiddenInputRef.current;
+      if (!el) return;
+      // Virtual keyboards generally require a focusable input/textarea.
+      // This may no-op without a user gesture (browser policy), so we also
+      // call it from pointer events.
+      try {
+         // Older TS DOM libs may not include preventScroll typing.
+         (el as unknown as { focus: (opts?: unknown) => void }).focus({
+            preventScroll: true,
+         });
+      } catch {
+         el.focus();
+      }
+      // Keep caret at end (some mobile keyboards behave better).
+      try {
+         el.setSelectionRange(el.value.length, el.value.length);
+      } catch {
+         // ignore
+      }
+   };
 
    const calculateErrors = () => {
       let count = 0;
@@ -125,6 +151,11 @@ const TextArea: React.FC<soundProps> = ({ sound }) => {
    }, [caretRef, activeWordRef]);
 
    useEffect(() => {
+      focusHiddenInput();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, []);
+
+   useEffect(() => {
       import(`../modules/TextFiles/${type}.json`).then((word) => {
          setWordList(word.default);
       });
@@ -136,53 +167,129 @@ const TextArea: React.FC<soundProps> = ({ sound }) => {
    };
 
    return (
-      <div className="flex flex-wrap overflow-hidden text-xl select-none h-28 sm:px-10 font-poppins md:text-2xl selection:bg-yellow-300 selection:text-white text-input">
-         {wordList?.map((word, wordIndex) => {
-            const isActive =
-               activeWord === word && typedHistory.length === wordIndex;
-            const typedWord = isActive
-               ? userInput
-               : typedHistory[wordIndex] || '';
+      <div className="relative">
+         <textarea
+            ref={hiddenInputRef}
+            aria-hidden="true"
+            tabIndex={-1}
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
+            // Keep it present+focusable but invisible.
+            className="fixed bottom-0 left-0 w-1 h-1 opacity-0"
+            onKeyDown={(e) => {
+               if (e.nativeEvent.isComposing) return;
 
-            return (
-               <div
-                  key={word + wordIndex}
-                  className="relative mt-0 mx-[7px] mb-1"
-                  ref={isActive ? activeWordRef : null}
-               >
-                  {isActive && (
-                     <span
-                        ref={caretRef}
-                        id="caret"
-                        className="animate-blink rounded-sm flex items-start w-[.08em] h-7 top-1 bg-cursor justify-start text-cursor absolute"
-                        style={{
-                           left: `${caretPosition}ch`,
-                           transform: 'translateZ(0)',
-                        }}
-                     />
-                  )}
-                  {word.split('').map((char, charIndex) => {
-                     const typedChar = typedWord[charIndex];
-                     const isCorrect =
-                        typedChar !== undefined ? char === typedChar : null;
+               if (
+                  (e.key.length === 1 || e.key === 'Backspace') &&
+                  !e.ctrlKey &&
+                  !e.altKey &&
+                  !e.metaKey &&
+                  e.key !== 'Enter' &&
+                  e.key !== 'Tab'
+               ) {
+                  suppressInputRef.current = true;
+                  window.setTimeout(() => {
+                     suppressInputRef.current = false;
+                  }, 0);
 
-                     return (
+                  HandleText(e.key, activeWordRef, run);
+                  e.preventDefault();
+               }
+            }}
+            onBeforeInput={(e) => {
+               if (suppressInputRef.current) return;
+
+               const native = e.nativeEvent as unknown as InputEvent;
+               const inputType = (native as unknown as { inputType?: string })
+                  .inputType;
+               const data = (native as unknown as { data?: string | null })
+                  .data;
+
+               if (inputType === 'deleteContentBackward') {
+                  HandleText('Backspace', activeWordRef, run);
+                  return;
+               }
+
+               if (typeof data === 'string' && data.length > 0) {
+                  for (const ch of data) {
+                     HandleText(ch, activeWordRef, run);
+                  }
+               }
+            }}
+            onInput={(e) => {
+               if (suppressInputRef.current) {
+                  e.currentTarget.value = '';
+                  return;
+               }
+
+               // Fallback for browsers where keydown/beforeinput are unreliable (mobile VK).
+               const value = e.currentTarget.value;
+               if (value) {
+                  for (const ch of value) {
+                     HandleText(ch, activeWordRef, run);
+                  }
+               }
+               e.currentTarget.value = '';
+            }}
+         />
+
+         <div
+            className="flex flex-wrap overflow-hidden text-xl select-none h-28 sm:px-10 font-poppins md:text-2xl selection:bg-yellow-300 selection:text-white text-input"
+            onPointerDown={() => {
+               focusHiddenInput();
+            }}
+            onClick={() => {
+               focusHiddenInput();
+            }}
+         >
+            {wordList?.map((word, wordIndex) => {
+               const isActive =
+                  activeWord === word && typedHistory.length === wordIndex;
+               const typedWord = isActive
+                  ? userInput
+                  : typedHistory[wordIndex] || '';
+
+               return (
+                  <div
+                     key={word + wordIndex}
+                     className="relative mt-0 mx-[7px] mb-1"
+                     ref={isActive ? activeWordRef : null}
+                  >
+                     {isActive && (
                         <span
-                           key={char + charIndex}
-                           className={getCharClass(isCorrect)}
-                        >
-                           {char}
+                           ref={caretRef}
+                           id="caret"
+                           className="animate-blink rounded-sm flex items-start w-[.08em] h-7 top-1 bg-cursor justify-start text-cursor absolute"
+                           style={{
+                              left: `${caretPosition}ch`,
+                              transform: 'translateZ(0)',
+                           }}
+                        />
+                     )}
+                     {word.split('').map((char, charIndex) => {
+                        const typedChar = typedWord[charIndex];
+                        const isCorrect =
+                           typedChar !== undefined ? char === typedChar : null;
+
+                        return (
+                           <span
+                              key={char + charIndex}
+                              className={getCharClass(isCorrect)}
+                           >
+                              {char}
+                           </span>
+                        );
+                     })}
+                     {typedWord.length > word.length && (
+                        <span className="text-wrong_char">
+                           {typedWord.slice(word.length)}
                         </span>
-                     );
-                  })}
-                  {typedWord.length > word.length && (
-                     <span className="text-wrong_char">
-                        {typedWord.slice(word.length)}
-                     </span>
-                  )}
-               </div>
-            );
-         })}
+                     )}
+                  </div>
+               );
+            })}
+         </div>
       </div>
    );
 };

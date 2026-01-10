@@ -5,7 +5,6 @@ import UserSelectPallete from '@/components/user-select-pallete';
 import ResetTestButton from '@/components/reset-test-button';
 import { userConfigStore } from '@/store';
 import { setLanguage } from '@/store/actions/ConfigActions';
-import useKeydownGetter from '@/hooks/useKeydownGetter';
 import { IoIosColorPalette } from 'react-icons/io';
 import useTimer from '@/hooks/useTimer';
 import ThemeChoose from '@/components/expo/theme-choose';
@@ -24,8 +23,6 @@ export default function HomePage() {
    const { time, language, type } = userConfigStore((state) => state);
    const { timer, run, reset } = useTimer(1, time);
    const { sound } = userConfigStore();
-
-   useKeydownGetter({ run, reset });
 
    const handleLanguageChange = (value: string) => {
       setLanguage(value);
@@ -63,7 +60,7 @@ export default function HomePage() {
                </div>
             </div>
          </div>
-         <TextArea sound={sound} />
+         <TextArea sound={sound} run={run} />
          <ResetTestButton reset={reset} />
       </div>
    );
