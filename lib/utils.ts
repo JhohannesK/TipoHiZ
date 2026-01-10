@@ -12,18 +12,20 @@ export const saveToLocalStorage = <T>({
    key: string;
    state: T;
 }) => {
+   if (typeof window === 'undefined') return;
    try {
       // if (localStorage.getItem(key)) return
       const serializedState = JSON.stringify(state);
-      localStorage.setItem(key, serializedState);
+      window.localStorage.setItem(key, serializedState);
    } catch (e) {
       console.log(e);
    }
 };
 
 export const loadFromLocalStorage = ({ key }: { key: string }) => {
+   if (typeof window === 'undefined') return undefined;
    try {
-      const serializedState = localStorage.getItem(key);
+      const serializedState = window.localStorage.getItem(key);
       if (serializedState === null) return false;
       return JSON.parse(serializedState);
    } catch (e) {
@@ -58,14 +60,12 @@ export const calculateAccuracy = (errorCount: number, typedEntries: number) => {
 };
 
 export const formatTime = (time: number) => {
-   if (time === 60) {
-      return '00:60:00';
-   }
+   const totalSeconds = Math.max(0, Math.floor(time));
+   const hours = Math.floor(totalSeconds / 3600);
+   const minutes = Math.floor((totalSeconds % 3600) / 60);
+   const seconds = totalSeconds % 60;
 
-   const minutes = Math.floor(time / 60);
-   const seconds = Math.floor(time % 60);
-   const milliseconds = Math.floor((time % 60) / 1000);
-   return `${minutes.toString().padStart(2, '0')}:${seconds
+   return `${hours.toString().padStart(2, '0')}:${minutes
       .toString()
-      .padStart(2, '0')}:${milliseconds.toString().padStart(2, '0')}`;
+      .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 };
