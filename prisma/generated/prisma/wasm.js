@@ -150,7 +150,7 @@ const config = {
          value: 'prisma-client-js',
       },
       output: {
-         value: 'C:\\Users\\kdomeh\\Vault\\TipoHiZ\\prisma\\generated\\prisma',
+         value: '/workspace/prisma/generated/prisma',
          fromEnvVar: null,
       },
       config: {
@@ -159,13 +159,12 @@ const config = {
       binaryTargets: [
          {
             fromEnvVar: null,
-            value: 'windows',
+            value: 'debian-openssl-3.0.x',
             native: true,
          },
       ],
       previewFeatures: [],
-      sourceFilePath:
-         'C:\\Users\\kdomeh\\Vault\\TipoHiZ\\prisma\\schema.prisma',
+      sourceFilePath: '/workspace/prisma/schema.prisma',
       isCustomOutput: true,
    },
    relativeEnvPaths: {
