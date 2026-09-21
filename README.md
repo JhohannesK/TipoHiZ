@@ -12,14 +12,44 @@ Tipohiz is a sleek and customizable typing test platform designed to enhance you
 -  minimalistic design
 -  live errors, wpm, and accuracy displays
 -  punctuation and numbers modes
--  themes
+-  timed tests: 15 / 30 / 60 / 120 seconds
+-  typing languages: English, Spanish, French (home-page selector; word lists in `modules/TextFiles/`)
+-  themes and optional key sounds
+-  optional accounts (credentials + Google / GitHub / Twitter) via NextAuth v5 + Prisma/MongoDB — typing works without signing in
+-  config persistence in `localStorage` (Zustand persist key `userConfig`)
 
 # Future Features
 
--  a variety of test lengths and languages
--  quotes
--  Real-time typing challenges with other users.
--  Language support.
+-  quotes mode
+-  real-time typing challenges with other users
+-  UI chrome translations (word lists are live; `lib/i18n/translations.ts` is not wired into settings/header yet)
+
+# Local development
+
+Package manager is **pnpm@9.12.0** (`package.json` `packageManager` field). There is no `install-all` / `install-win` script.
+
+```bash
+pnpm install          # postinstall runs prisma generate
+cp .env.example .env  # required only for auth / MongoDB
+pnpm prisma:push      # only if you set MONGODB_URI
+pnpm dev              # http://localhost:3000
+```
+
+Typing tests run with **no env vars**. Auth needs:
+
+| Variable | Required for |
+|----------|----------------|
+| `MONGODB_URI` | Prisma (MongoDB) |
+| `AUTH_SECRET` | NextAuth JWT signing (`NEXTAUTH_SECRET` in `.env.example` is a leftover alias) |
+| `GOOGLE_CLIENT_ID` / `SECRET` | Google OAuth |
+| `GITHUB_CLIENT_ID` / `SECRET` | GitHub OAuth |
+| `TWITTER_CLIENT_ID` / `SECRET` | Twitter/X OAuth |
+
+`middleware.ts` exports NextAuth `auth` but does **not** gate routes. Anonymous use is expected.
+
+Prisma client is generated to `prisma/generated/prisma` (`output` in `prisma/schema.prisma`). `pnpm build` runs `prisma generate && next build`.
+
+Docker (`Dockerfile` + `docker-compose.yaml`) is npm-based and does not inject env or MongoDB — not the recommended local path. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 ![Eslint](https://img.shields.io/badge/eslint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white)

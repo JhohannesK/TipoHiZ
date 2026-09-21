@@ -34,7 +34,7 @@
 **2.** Clone your new fork of the repository in the terminal/CLI on your computer with the following command:
 
 ```bash
-git clone https://github.com/<your-github-username>/TipoiZ
+git clone https://github.com/<your-github-username>/TipoHiZ
 ```
 
 **3.** Navigate to the newly created TipoHiZ project directory:
@@ -76,7 +76,7 @@ git merge upstream/main
 
 **8.** Stage your changes:
 
-⚠️ **Make sure** not to commit `package.json` or `package-lock.json` file. If there is a need to commit them. You would need to seek permission in the discussions first before commiting them.
+⚠️ This repo uses **pnpm** (`pnpm-lock.yaml`). Do not add a `package-lock.json`. If you change `package.json` / `pnpm-lock.yaml`, say why in the PR and add the `dependencies` label (see `.github/pull_request_template.md`).
 
 <!-- ⚠️ **Make sure** not to run the commands `git add .` or `git add *` -->
 
@@ -116,21 +116,31 @@ git push origin YourBranchName
 
 Once you have completed the above steps, you are ready to build and run TipoHiZ.
 
-1. Run `pnpm run install-all` in the project root to install all dependencies.
-   -  If you are on Windows, use `pnpm run install-win`.
-   -  If neither works, you will have to run `pnpm install` in root.
-2. Run `pnpm dev` to start a local dev server on [port 3000](http://localhost:3000). Use <kbd>Ctrl+C</kbd> to kill it.
+1. Run `pnpm install` in the project root (`postinstall` runs `prisma generate`).
+2. Copy `.env.example` to `.env`. Typing works with empty values. For login/register/OAuth set `MONGODB_URI` + `AUTH_SECRET`, then `pnpm prisma:push`.
+3. Run `pnpm dev` to start a local dev server on [port 3000](http://localhost:3000). Use <kbd>Ctrl+C</kbd> to kill it.
+4. Optional: `pnpm ts-check`, `pnpm lint`. Pre-commit (husky) runs both plus Prettier.
 
-### 🐳 Running the application from a Docker image
+### Language word lists
 
-Running the appication as a Docker container makes it easy to have a consistent development environment
+Home-page Globe selector writes `userConfig.language` (`english` | `spanish` | `french`). `TextArea.tsx` dynamically imports `modules/TextFiles/{language}.json` (and `{language}_punctuation.json`). Numbers mode always uses `numbers.json`.
 
--  **Ensure Docker is Running**: Install/Start Docker on the host machine
--  **Open a Terminal**: Open a terminal in the root project directory. (Where the docker-compose.yaml file is located)
--  **Run Compose Command**: Run the docker compose command. 'docker compose up' or 'docker compose up -d' to run the application in daemon mode
--  **Open a browser**: Navigate to the url http://localhost:3000
--  **Enjoy!**: You should be able to navigate the application in your browser!
--  **shut-down**: Remember to shutdown the application container when no longer in use. Run the command 'docker compose down'. You can read on other docker compose commands from [here](https://docs.docker.com/compose/gettingstarted/).
+To add a typing language:
+
+1. Add `{language}.json` (and optionally `{language}_punctuation.json`) under `modules/TextFiles/`.
+2. Extend `Language` + `languageOptions` in `lib/i18n/translations.ts`.
+3. Do not add German unless you also add `german.json` — the settings dialog option is a no-op.
+
+The settings dialog language `<select>` is **not** wired to the store. UI chrome stays English.
+
+### 🐳 Docker (optional, stale)
+
+`Dockerfile` uses **npm**, not pnpm, and compose does not pass env or start MongoDB. Auth will not work. Prefer `pnpm install && pnpm dev` locally.
+
+-  **Ensure Docker is Running**
+-  `docker compose up` (or `-d`) from the repo root
+-  Open http://localhost:3000
+-  `docker compose down` when done. Other commands: [Docker Compose getting started](https://docs.docker.com/compose/gettingstarted/).
 
 **_:🏆🏆🏆: After this, the maintainers will review the PR and will merge it if it helps move the TipoHiZ project forward. Otherwise, it will be given constructive feedback and suggestions for the changes needed to add the PR to the codebase._**
 
