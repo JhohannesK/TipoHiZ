@@ -11,11 +11,12 @@ Tipohiz is a sleek and customizable typing test platform designed to enhance you
 
 -  minimalistic design
 -  live errors, wpm, and accuracy displays
--  punctuation and numbers modes
--  timed tests: 15 / 30 / 60 / 120 seconds
--  typing languages: English, Spanish, French (home-page selector; word lists in `modules/TextFiles/`)
+-  punctuation and numbers modes (`default` \| `punctuation` \| `numbers`)
+-  timed tests: 15 / 30 / 60 / 120 seconds (palette `category: words` is **label-only** — it does not switch to a word-count test)
+-  typing languages: English, Spanish, French (home-page Globe; word lists in `modules/TextFiles/`)
+-  results after the timer hits the 1s bound: `/results` with gross WPM, adjusted WPM, accuracy (`lib/utils.ts`)
 -  themes and optional key sounds
--  optional accounts (credentials + Google / GitHub / Twitter) via NextAuth v5 + Prisma/MongoDB — typing works without signing in
+-  optional accounts (`/login`, `/register`, Google / GitHub / Twitter) via NextAuth v5 + Prisma/MongoDB — typing works without signing in
 -  config persistence in `localStorage` (Zustand persist key `userConfig`)
 
 # Future Features
@@ -45,7 +46,9 @@ Typing tests run with **no env vars**. Auth needs:
 | `GITHUB_CLIENT_ID` / `SECRET` | GitHub OAuth |
 | `TWITTER_CLIENT_ID` / `SECRET` | Twitter/X OAuth |
 
-`middleware.ts` exports NextAuth `auth` but does **not** gate routes. Anonymous use is expected.
+`middleware.ts` exports NextAuth `auth` but does **not** gate routes (no `config.matcher`). Anonymous use is expected. Runtime client is `prisma/generated/prisma/edge` (`lib/db.ts`).
+
+Auth routes: `GET|POST /api/auth/[...nextAuth]` (`handlers` from `auth.ts`). Credentials login min password length 8. Register (`lib/validation/auth.schema.ts`): name ≥3, email, password ≥8 with upper / lower / digit. The “special character” regex is `/^A-Za-z0-9/` — it matches a literal prefix, not a special char; if register fails unexpectedly, look there first.
 
 Prisma client is generated to `prisma/generated/prisma` (`output` in `prisma/schema.prisma`). `pnpm build` runs `prisma generate && next build`.
 

@@ -67,7 +67,7 @@ git fetch upstream
 ```
 
 ```bash
-git merge upstream/main
+git merge upstream/preview
 ```
 
 ### [Github Docs](https://docs.github.com/en/github/collaborating-with-pull-requests/addressing-merge-conflicts/resolving-a-merge-conflict-on-github) for Syncing
@@ -123,7 +123,14 @@ Once you have completed the above steps, you are ready to build and run TipoHiZ.
 
 ### Language word lists
 
-Home-page Globe selector writes `userConfig.language` (`english` | `spanish` | `french`). `TextArea.tsx` dynamically imports `modules/TextFiles/{language}.json` (and `{language}_punctuation.json`). Numbers mode always uses `numbers.json`.
+Home-page Globe selector writes `userConfig.language` (`english` | `spanish` | `french`) and calls `resetTest`. `TextArea.tsx` loads from `modules/TextFiles/` as:
+
+| `language` | `type=default` | `type=punctuation` | `type=numbers` |
+|------------|----------------|--------------------|----------------|
+| `english` | `default.json` | `punctuation.json` | `numbers.json` |
+| `spanish` / `french` | `{lang}.json` | `{lang}_punctuation.json` (fallback `punctuation.json`) | `numbers.json` |
+
+`category` (`time` \| `words`) is stored and shown as the results card label. It does **not** change word loading or the timer. `modules/TextFiles/code.json` is unused (`Constants.options.type` has no `code`; palette removed it).
 
 To add a typing language:
 
@@ -131,7 +138,35 @@ To add a typing language:
 2. Extend `Language` + `languageOptions` in `lib/i18n/translations.ts`.
 3. Do not add German unless you also add `german.json` — the settings dialog option is a no-op.
 
-The settings dialog language `<select>` is **not** wired to the store. UI chrome stays English.
+Three language UIs:
+
+| Surface | Wired? |
+|---------|--------|
+| Home Globe | Yes → `userConfig.language` |
+| Settings `<select>` | No (`onChange` missing; includes German) |
+| Results language `<select>` | Decorative |
+
+`lib/i18n/translations.ts` chrome strings are unused. UI chrome stays English.
+
+### Timer → results
+
+`useTimer(1, time)` on the home test. First printable key via `HandleText` starts the clock (`run()`). When remaining time hits the 1s bound, navigate to `/results`. Metrics in `lib/utils.ts`:
+
+- gross WPM: `((typedEntries / 5) * 60) / time`
+- adjusted WPM: `max(typedEntries - errorCount, 0) / 5 / (time / 60)`
+- accuracy: `max(0, (typedEntries - errorCount) / typedEntries) * 100` (100 if nothing typed)
+
+Mobile: hidden textarea + `onKeyDown` → `HandleText` (composing / modifier / Enter / Tab ignored). If keys do nothing on a phone, the hidden input lost focus.
+
+### Auth (optional)
+
+| Path | Role |
+|------|------|
+| `/login` | Credentials + OAuth entry (`auth.ts` `pages.signIn`) |
+| `/register` | Server action; schema in `lib/validation/auth.schema.ts` |
+| `/api/auth/[...nextAuth]` | NextAuth `GET`/`POST` handlers |
+
+Typing does not require a session. `middleware.ts` re-exports `auth` with no matcher. Register password rule of thumb: ≥8, upper, lower, digit. The special-character regex currently requires the literal prefix `A-Za-z0-9` — treat that as a known trap, not a real complexity rule.
 
 ### 🐳 Docker (optional, stale)
 
