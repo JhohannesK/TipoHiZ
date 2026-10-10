@@ -25,9 +25,11 @@ jobs:
       steps:
          - uses: actions/checkout@v4
 
+         # action-setup@v4 compares `version` to the raw packageManager
+         # string. The corepack integrity hash makes 10.34.6 and
+         # pnpm@10.34.6+sha512... different versions, so the step exits
+         # before install. Omit `version` and use package.json.
          - uses: pnpm/action-setup@v4
-           with:
-              version: 10.34.6
 
          - uses: actions/setup-node@v4
            with:
