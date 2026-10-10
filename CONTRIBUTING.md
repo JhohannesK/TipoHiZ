@@ -166,7 +166,7 @@ Mobile: hidden textarea + `onKeyDown` → `HandleText` (composing / modifier / E
 | `/register`               | Server action; schema in `lib/validation/auth.schema.ts` |
 | `/api/auth/[...nextAuth]` | NextAuth `GET`/`POST` handlers                           |
 
-Typing does not require a session. `middleware.ts` re-exports `auth` with no matcher. Register password rule of thumb: ≥8, upper, lower, digit. The special-character regex currently requires the literal prefix `A-Za-z0-9` — treat that as a known trap, not a real complexity rule.
+Typing does not require a session. `proxy.ts` re-exports `auth` with no matcher. Register password rule of thumb: ≥8, upper, lower, digit. The special-character regex currently requires the literal prefix `A-Za-z0-9` — treat that as a known trap, not a real complexity rule.
 
 ### 🐳 Docker (optional, stale)
 

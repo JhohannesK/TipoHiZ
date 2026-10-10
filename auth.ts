@@ -8,6 +8,8 @@ import Twitter from 'next-auth/providers/twitter';
 import { prisma } from './lib/db';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+   // Generated edge client is not the stock @prisma/client instance type.
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
    adapter: PrismaAdapter(prisma as any),
    session: {
       strategy: 'jwt',

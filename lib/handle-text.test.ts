@@ -3,7 +3,7 @@ import { HandleText } from './handle-text';
 import { wordStore } from '../store';
 import { initialWordState, resetStores } from '../test/utils';
 
-function wordRef(): React.RefObject<HTMLDivElement> {
+function wordRef(): React.RefObject<HTMLDivElement | null> {
    const element = document.createElement('div');
    document.body.appendChild(element);
    return { current: element };

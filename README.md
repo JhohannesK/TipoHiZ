@@ -27,7 +27,7 @@ Tipohiz is a sleek and customizable typing test platform designed to enhance you
 
 # Local development
 
-Package manager is **pnpm@9.12.0** (`package.json` `packageManager` field). There is no `install-all` / `install-win` script.
+Package manager is **pnpm@10.34.6** (`package.json` `packageManager` field). There is no `install-all` / `install-win` script. Node.js 20.9 or newer is required.
 
 ```bash
 pnpm install          # postinstall runs prisma generate
@@ -46,7 +46,7 @@ Typing tests run with **no env vars**. Auth needs:
 | `GITHUB_CLIENT_ID` / `SECRET`  | GitHub OAuth                                                                   |
 | `TWITTER_CLIENT_ID` / `SECRET` | Twitter/X OAuth                                                                |
 
-`middleware.ts` exports NextAuth `auth` but does **not** gate routes (no `config.matcher`). Anonymous use is expected. Runtime client is `prisma/generated/prisma/edge` (`lib/db.ts`).
+`proxy.ts` exports NextAuth `auth` but does **not** gate routes (no `config.matcher`). Anonymous use is expected. Runtime client is `prisma/generated/prisma/edge` (`lib/db.ts`).
 
 Auth routes: `GET|POST /api/auth/[...nextAuth]` (`handlers` from `auth.ts`). Credentials login min password length 8. Register (`lib/validation/auth.schema.ts`): name ≥3, email, password ≥8 with upper / lower / digit. The “special character” regex is `/^A-Za-z0-9/` — it matches a literal prefix, not a special char; if register fails unexpectedly, look there first.
 
