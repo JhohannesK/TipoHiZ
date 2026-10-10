@@ -1,5 +1,8 @@
 # pnpm 10 skips dependency lifecycle scripts unless they are approved.
 # allowBuilds replaces onlyBuiltDependencies (still accepted, deprecated in 10.26+).
+overrides:
+   postcss: 8.5.25
+
 allowBuilds:
    prisma: true
    '@prisma/client': true
