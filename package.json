@@ -63,14 +63,14 @@
       "husky": "9.1.6",
       "jsdom": "^30.1.2",
       "next": "16.4.0",
-      "postcss": "8.5.25",
+      "postcss": "8.5.29",
       "prisma": "^6.19.3",
       "simple-zustand-devtools": "1.1.0",
       "tailwindcss": "3.4.13",
       "ts-node": "10.9.2",
       "typescript": "5.7.3",
       "typescript-eslint": "^8.71.1",
-      "vitest": "^3.2.7"
+      "vitest": "^5.0.3"
    },
    "packageManager": "pnpm@10.34.6+sha512.7e1ae66a83a9143c118cc1944f37cc4f2b8acddeda4b001cfa78908f6e46e45e15292739ca6c9d026426cc757e9318cc98c5551d6a16c165097b0028ba87b4e6",
    "engines": {
