@@ -26,7 +26,7 @@ Tipohiz is a sleek and customizable typing test platform designed to enhance you
 
 # Local development
 
-Package manager is **pnpm@9.12.0** (`package.json` `packageManager` field). There is no `install-all` / `install-win` script.
+Package manager is **pnpm@10.34.6** (`package.json` `packageManager` field). There is no `install-all` / `install-win` script. Node.js 20.9 or newer is required.
 
 ```bash
 pnpm install          # postinstall runs prisma generate
@@ -45,7 +45,7 @@ Typing tests run with **no env vars**. Auth needs:
 | `GITHUB_CLIENT_ID` / `SECRET`  | GitHub OAuth                                                                   |
 | `TWITTER_CLIENT_ID` / `SECRET` | Twitter/X OAuth                                                                |
 
-`middleware.ts` exports NextAuth `auth` but does **not** gate routes. Anonymous use is expected.
+`proxy.ts` exports NextAuth `auth` but does **not** gate routes. Anonymous use is expected.
 
 Prisma client is generated to `prisma/generated/prisma` (`output` in `prisma/schema.prisma`). `pnpm build` runs `prisma generate && next build`.
 

@@ -10,7 +10,7 @@ import {
 
 export const HandleText = (
    key: string,
-   activeWordRef: React.RefObject<HTMLDivElement> | null,
+   activeWordRef: React.RefObject<HTMLDivElement | null> | null,
    run: () => void
 ) => {
    const { userInput, activeWord, typedHistory } = wordStore.getState();

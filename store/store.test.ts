@@ -136,10 +136,10 @@ describe('word store actions', () => {
    it('should update the active word, input, disabled flag, and refs', () => {
       const caretRef = {
          current: document.createElement('span'),
-      } as React.RefObject<HTMLSpanElement>;
+      } as React.RefObject<HTMLSpanElement | null>;
       const activeWordRef = {
          current: document.createElement('div'),
-      } as React.RefObject<HTMLDivElement>;
+      } as React.RefObject<HTMLDivElement | null>;
 
       setActiveWord('typed');
       setUserInput('ty');
