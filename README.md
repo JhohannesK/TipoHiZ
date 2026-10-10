@@ -37,13 +37,13 @@ pnpm dev              # http://localhost:3000
 
 Typing tests run with **no env vars**. Auth needs:
 
-| Variable | Required for |
-|----------|----------------|
-| `MONGODB_URI` | Prisma (MongoDB) |
-| `AUTH_SECRET` | NextAuth JWT signing (`NEXTAUTH_SECRET` in `.env.example` is a leftover alias) |
-| `GOOGLE_CLIENT_ID` / `SECRET` | Google OAuth |
-| `GITHUB_CLIENT_ID` / `SECRET` | GitHub OAuth |
-| `TWITTER_CLIENT_ID` / `SECRET` | Twitter/X OAuth |
+| Variable                       | Required for                                                                   |
+| ------------------------------ | ------------------------------------------------------------------------------ |
+| `MONGODB_URI`                  | Prisma (MongoDB)                                                               |
+| `AUTH_SECRET`                  | NextAuth JWT signing (`NEXTAUTH_SECRET` in `.env.example` is a leftover alias) |
+| `GOOGLE_CLIENT_ID` / `SECRET`  | Google OAuth                                                                   |
+| `GITHUB_CLIENT_ID` / `SECRET`  | GitHub OAuth                                                                   |
+| `TWITTER_CLIENT_ID` / `SECRET` | Twitter/X OAuth                                                                |
 
 `middleware.ts` exports NextAuth `auth` but does **not** gate routes. Anonymous use is expected.
 
