@@ -1,3 +1,4 @@
+import Constants from '../modules/_constants';
 import { userConfigStore, wordStore } from '../store';
 import type { WordState } from '../store/@types.';
 
@@ -20,7 +21,7 @@ export function resetStores(): void {
    localStorage.clear();
    wordStore.setState(initialWordState);
    userConfigStore.setState({
-      time: 60,
+      time: Constants.TimeSec,
       theme: '',
       type: 'default',
       category: 'time',
