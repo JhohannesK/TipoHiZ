@@ -28,6 +28,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# pnpm lockfile uses its own formatting
+pnpm-lock.yaml
+
 
 #github
 .github
