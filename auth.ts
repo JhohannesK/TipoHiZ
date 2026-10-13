@@ -1,4 +1,5 @@
 import { betterAuth } from 'better-auth';
+import { dash } from '@better-auth/infra';
 import { mongodbAdapter } from '@better-auth/mongo-adapter';
 import { nextCookies } from 'better-auth/next-js';
 import { MongoClient } from 'mongodb';
@@ -23,6 +24,8 @@ function createAuth() {
          transaction: mongoTransactionsEnabled(uri),
       }),
       rateLimit: {
+         // Better Auth's rateLimit schema marks `key` unique. The Mongo
+         // adapter creates that unique index on the first write.
          storage: 'database',
       },
       emailAndPassword: {
@@ -65,7 +68,12 @@ function createAuth() {
       onAPIError: {
          errorURL: '/login',
       },
-      plugins: [nextCookies()],
+      plugins: [
+         dash({
+            apiKey: process.env.BETTER_AUTH_API_KEY,
+         }),
+         nextCookies(),
+      ],
    });
 }
 

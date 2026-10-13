@@ -46,15 +46,16 @@ Typing tests run with **no env vars**. Auth needs:
 | ------------------------------ | -------------------------------------------------------------------------------------- |
 | `MONGODB_URI`                  | Better Auth MongoDB adapter                                                            |
 | `BETTER_AUTH_SECRET`           | Session signing                                                                        |
-| `BETTER_AUTH_URL`              | Public origin used for OAuth callbacks                                                 |
+| `BETTER_AUTH_URL`              | Public origin used for OAuth callbacks. A trailing slash is stripped                   |
 | `BETTER_AUTH_TRUSTED_ORIGINS`  | Extra comma-separated origins. `BETTER_AUTH_URL` and `VERCEL_URL` are included as well |
+| `BETTER_AUTH_API_KEY`          | Optional Better Auth dashboard key. Auth still runs when it is unset                   |
 | `GOOGLE_CLIENT_ID` / `SECRET`  | Google OAuth                                                                           |
 | `GITHUB_CLIENT_ID` / `SECRET`  | GitHub OAuth                                                                           |
 | `TWITTER_CLIENT_ID` / `SECRET` | Twitter/X OAuth                                                                        |
 
 `proxy.ts` redirects a signed-in visitor away from `/login` and `/register`. It does not gate the typing test. Anonymous use is expected.
 
-Auth routes: `GET|POST /api/auth/[...all]`. Credentials login min password length 8. Register (`lib/validation/auth.schema.ts`): name ≥3, email, password ≥8 with upper / lower / digit. The “special character” regex is `/^A-Za-z0-9/` — it matches a literal prefix, not a special char; if register fails unexpectedly, look there first. Auth rate limits are stored in MongoDB, not in process memory.
+Auth routes: `GET|POST /api/auth/[...all]`. Credentials login min password length 8. Register (`lib/validation/auth.schema.ts`): name ≥3, email, password ≥8 with upper / lower / digit. The “special character” regex is `/^A-Za-z0-9/` — it matches a literal prefix, not a special char; if register fails unexpectedly, look there first. Auth rate limits are stored in MongoDB, not in process memory. Better Auth marks `rateLimit.key` unique, and the Mongo adapter creates that unique index on the first rate-limit write. `dash()` from `@better-auth/infra` powers the dashboard and reads `BETTER_AUTH_API_KEY`. A missing key does not stop the app.
 
 Prisma client is generated to `prisma/generated/prisma` (`output` in `prisma/schema.prisma`). That tree is **committed** — do not hand-edit it. `pnpm build` runs `prisma generate && next build`.
 

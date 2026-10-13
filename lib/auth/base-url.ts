@@ -18,6 +18,12 @@ function withHttps(host: string | undefined): string | undefined {
    return `https://${trimmed}`;
 }
 
+function normalizeBaseUrl(value: string | undefined): string | undefined {
+   if (!value) return undefined;
+   const trimmed = value.trim().replace(/\/+$/, '');
+   return trimmed.length > 0 ? trimmed : undefined;
+}
+
 /**
  * Prefer an explicit BETTER_AUTH_URL. On Vercel, fall back to the stable
  * branch host so OAuth callbacks stay on the URL registered with providers
@@ -26,7 +32,8 @@ function withHttps(host: string | undefined): string | undefined {
 export function resolveAuthBaseUrl(
    env: AuthEnv = process.env
 ): string | undefined {
-   if (env.BETTER_AUTH_URL) return env.BETTER_AUTH_URL;
+   const explicit = normalizeBaseUrl(env.BETTER_AUTH_URL);
+   if (explicit) return explicit;
 
    if (env.VERCEL_ENV === 'production' && env.VERCEL_PROJECT_PRODUCTION_URL) {
       return withHttps(env.VERCEL_PROJECT_PRODUCTION_URL);
@@ -50,7 +57,7 @@ function listedOrigins(value: string | undefined): string[] {
 export function authTrustedOrigins(env: AuthEnv = process.env): string[] {
    const origins = [
       ...listedOrigins(env.BETTER_AUTH_TRUSTED_ORIGINS),
-      env.BETTER_AUTH_URL?.trim() || undefined,
+      normalizeBaseUrl(env.BETTER_AUTH_URL),
       withHttps(env.VERCEL_URL),
    ].filter((origin): origin is string => Boolean(origin));
 
