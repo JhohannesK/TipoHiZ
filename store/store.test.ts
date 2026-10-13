@@ -22,7 +22,18 @@ import {
    setUserInput,
    setWordList,
 } from './actions/WordActions';
+import Constants from '../modules/_constants';
 import { initialWordState, resetStores } from '../test/utils';
+
+type PersistedUserConfigStore = typeof userConfigStore & {
+   persist: {
+      rehydrate: () => Promise<void> | void;
+   };
+};
+
+function persistedConfig(): PersistedUserConfigStore {
+   return userConfigStore as PersistedUserConfigStore;
+}
 
 describe('word store actions', () => {
    beforeEach(() => {
@@ -182,6 +193,36 @@ describe('config and time actions', () => {
 
       toggleSound();
       expect(userConfigStore.getState().sound).toBe(false);
+   });
+
+   it('should default a fresh config to 30 seconds', () => {
+      expect(Constants.TimeSec).toBe(30);
+      expect(userConfigStore.getInitialState().time).toBe(30);
+   });
+
+   it('should keep a saved time limit when storage is rehydrated', async () => {
+      localStorage.setItem(
+         'userConfig',
+         JSON.stringify({
+            state: {
+               time: 15,
+               theme: '',
+               type: 'default',
+               category: 'time',
+               sound: false,
+               language: 'english',
+            },
+            version: 0,
+         })
+      );
+
+      await persistedConfig().persist.rehydrate();
+
+      expect(userConfigStore.getState().time).toBe(15);
+      const saved = JSON.parse(localStorage.getItem('userConfig') ?? '{}') as {
+         state?: { time?: number };
+      };
+      expect(saved.state?.time).toBe(15);
    });
 
    it('should persist the selected time limit', () => {
