@@ -99,8 +99,10 @@ test('should score every fourth mistyped word from the mistakes that were made',
    await expect(page).toHaveURL(/\/results$/, { timeout: 25_000 });
 
    const duration = clockSeconds(await statText(page, /^time:/i));
-   const reportedWpm = Number.parseFloat(await statText(page, /Average Speed/));
-   const reportedAccuracy = Number.parseFloat(await statText(page, /Accuracy/));
+   const reportedWpm = Number.parseFloat(await statText(page, /^wpm:$/i));
+   const reportedAccuracy = Number.parseFloat(
+      await statText(page, /^accuracy:$/i)
+   );
    const expectedWpm = accurateWPM(
       expected.errors,
       expected.typedEntries,
