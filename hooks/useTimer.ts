@@ -1,5 +1,6 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { persistFinishedTest } from '../lib/stats/persist-client';
 
 // ref: https://stackoverflow.com/questions/63984376/how-can-i-implement-this-countdown-timer-in-react-with-hooks
 const useTimer = (
@@ -56,7 +57,7 @@ const useTimer = (
          if (countDown && millisecond.current <= lowerBound * 1000) {
             if (exitCallback !== null) {
                setIsExited(true);
-               // exitCallback();
+               persistFinishedTest();
                router.push('/results');
             }
             setTimer(lowerBound);
@@ -64,7 +65,7 @@ const useTimer = (
          } else if (!countDown && millisecond.current >= upperBound * 1000) {
             if (exitCallback !== null) {
                setIsExited(true);
-               // exitCallback();
+               persistFinishedTest();
                router.push('/results');
             }
             setTimer(upperBound);
