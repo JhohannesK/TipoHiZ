@@ -1,8 +1,10 @@
 'use client';
 import React from 'react';
-import { StatCard } from '@/components/stat-card';
-import { userConfigStore, wordStore } from '@/store';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { StatCard } from '@/components/stat-card';
+import { useShiftEnterRestart } from '@/hooks/useShiftEnterRestart';
+import { userConfigStore, wordStore } from '@/store';
 import {
    accurateWPM,
    calculateAccuracy,
@@ -22,8 +24,14 @@ const LANGUAGES = ['English', 'Spanish', 'French', 'German'];
 const SHOW_ALL_TIME_STATS = false;
 
 export default function ResultsPage() {
+   const router = useRouter();
    const { typedEntries, errorCount } = wordStore.getState();
    const { time, category } = userConfigStore.getState();
+
+   useShiftEnterRestart(() => {
+      resetStates();
+      router.push('/');
+   });
 
    const rawWpm = grossWPM(typedEntries, time);
    const accurateWpm = accurateWPM(errorCount, typedEntries, time);

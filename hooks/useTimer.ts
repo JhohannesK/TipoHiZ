@@ -16,6 +16,18 @@ const useTimer = (
    const [isRunning, setIsRunning] = useState(runOnStart);
    const [isExited, setIsExited] = useState(false);
    const router = useRouter();
+   const resetBoundsRef = useRef({
+      lowerBound,
+      upperBound,
+      countDown,
+      runOnStart,
+   });
+   resetBoundsRef.current = {
+      lowerBound,
+      upperBound,
+      countDown,
+      runOnStart,
+   };
 
    const run = () => {
       setIsRunning(true);
@@ -26,10 +38,14 @@ const useTimer = (
    };
 
    const reset = () => {
-      millisecond.current = initialTimer * 1000;
+      const bounds = resetBoundsRef.current;
+      const nextTimer = bounds.countDown
+         ? bounds.upperBound
+         : bounds.lowerBound;
+      millisecond.current = nextTimer * 1000;
       previous.current = millisecond.current;
-      setTimer(initialTimer);
-      setIsRunning(runOnStart);
+      setTimer(nextTimer);
+      setIsRunning(bounds.runOnStart);
       setIsExited(false);
    };
 

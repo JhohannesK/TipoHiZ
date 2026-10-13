@@ -140,6 +140,26 @@ describe('useTimer', () => {
       expect(result.current.timer).toBe(15);
    });
 
+   it('should keep the chosen duration when an earlier reset closure runs', () => {
+      const seen: Array<() => void> = [];
+      const { result, rerender } = renderHook(
+         ({ upperBound }) => {
+            const value = useTimer(1, upperBound);
+            seen.push(value.reset);
+            return value;
+         },
+         { initialProps: { upperBound: 60 } }
+      );
+
+      const firstReset = seen[0];
+      rerender({ upperBound: 15 });
+      act(() => {
+         firstReset?.();
+      });
+
+      expect(result.current.timer).toBe(15);
+   });
+
    it('should navigate to results when the countdown reaches its lower bound', () => {
       const { result } = renderHook(() => useTimer(1, 3));
 
