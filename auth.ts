@@ -5,12 +5,15 @@ import { nextCookies } from 'better-auth/next-js';
 import { MongoClient } from 'mongodb';
 import { authTrustedOrigins, resolveAuthBaseUrl } from '@/lib/auth/base-url';
 import { mongoTransactionsEnabled } from '@/lib/auth/mongo';
+import { ensureRateLimitKeyIndex } from '@/lib/auth/rate-limit-index';
 
 function createAuth() {
    const uri = process.env.MONGODB_URI;
    if (!uri) {
       throw new Error('MONGODB_URI is not set');
    }
+
+   ensureRateLimitKeyIndex(uri);
 
    const client = new MongoClient(uri);
    const db = client.db();
@@ -24,8 +27,8 @@ function createAuth() {
          transaction: mongoTransactionsEnabled(uri),
       }),
       rateLimit: {
-         // Better Auth's rateLimit schema marks `key` unique. The Mongo
-         // adapter creates that unique index on the first write.
+         // Stored in MongoDB. ensureRateLimitKeyIndex creates the unique
+         // index on `key` once; a failed attempt is logged and retried later.
          storage: 'database',
       },
       emailAndPassword: {

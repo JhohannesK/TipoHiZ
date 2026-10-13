@@ -27,7 +27,7 @@ Tipohiz is a sleek and customizable typing test platform designed to enhance you
 
 # Local development
 
-Package manager is **pnpm@10.34.6** (`package.json` `packageManager` field). Enable Corepack or install that version. There is no `install-all` / `install-win` script. **`bin/install.sh` is legacy and broken** (`pnpm ci` is unimplemented); **`bin/install.cmd` is unused**. Use `pnpm install`. Node.js **20.9+** locally; CI uses **Node 22**.
+Package manager is **pnpm@10.34.6** (`package.json` `packageManager` field). Enable Corepack or install that version. There is no `install-all` / `install-win` script. **`bin/install.sh` is legacy and broken** (`pnpm ci` is unimplemented); **`bin/install.cmd` is unused**. Use `pnpm install`. Node.js **24+** locally; CI uses **Node 24**.
 
 This is **Next.js 16.4**. `next dev` / `next build` use Turbopack by default. Request interception lives in `proxy.ts` (not `middleware.ts`). Lint is `eslint .` (`pnpm lint`) — there is no `next lint`. Read `AGENTS.md` and `node_modules/next/dist/docs/` before App Router changes.
 
@@ -55,7 +55,7 @@ Typing tests run with **no env vars**. Auth needs:
 
 `proxy.ts` redirects a signed-in visitor away from `/login` and `/register`. It does not gate the typing test. Anonymous use is expected.
 
-Auth routes: `GET|POST /api/auth/[...all]`. Credentials login min password length 8. Register (`lib/validation/auth.schema.ts`): name ≥3, email, password ≥8 with upper / lower / digit. The “special character” regex is `/^A-Za-z0-9/` — it matches a literal prefix, not a special char; if register fails unexpectedly, look there first. Auth rate limits are stored in MongoDB, not in process memory. Better Auth marks `rateLimit.key` unique, and the Mongo adapter creates that unique index on the first rate-limit write. `dash()` from `@better-auth/infra` powers the dashboard and reads `BETTER_AUTH_API_KEY`. A missing key does not stop the app.
+Auth routes: `GET|POST /api/auth/[...all]`. Credentials login min password length 8. Register (`lib/validation/auth.schema.ts`): name ≥3, email, password ≥8 with upper / lower / digit. The “special character” regex is `/^A-Za-z0-9/` — it matches a literal prefix, not a special char; if register fails unexpectedly, look there first. Auth rate limits are stored in MongoDB, not in process memory. The first auth use ensures a unique index on `rateLimit.key`. If MongoDB is unreachable, that check logs the error and the app keeps running. `dash()` from `@better-auth/infra` powers the dashboard and reads `BETTER_AUTH_API_KEY`. A missing key does not stop the app.
 
 Prisma client is generated to `prisma/generated/prisma` (`output` in `prisma/schema.prisma`). That tree is **committed** — do not hand-edit it. `pnpm build` runs `prisma generate && next build`.
 

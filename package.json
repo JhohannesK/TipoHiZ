@@ -43,7 +43,7 @@
       "react-icons": "5.3.0",
       "sonner": "^2.0.1",
       "tailwind-merge": "2.5.3",
-      "zod": "^3.23.8",
+      "zod": "^4.6.7",
       "zustand": "4.5.5"
    },
    "devDependencies": {
@@ -51,7 +51,7 @@
       "@testing-library/jest-dom": "^7.0.1",
       "@testing-library/react": "^16.3.3",
       "@testing-library/user-event": "^14.6.7",
-      "@types/node": "22.20.5",
+      "@types/node": "24.19.2",
       "@types/react": "19.3.0",
       "@types/react-dom": "19.3.0",
       "@vitejs/plugin-react": "^4.7.0",
@@ -73,6 +73,6 @@
    },
    "packageManager": "pnpm@10.34.6+sha512.7e1ae66a83a9143c118cc1944f37cc4f2b8acddeda4b001cfa78908f6e46e45e15292739ca6c9d026426cc757e9318cc98c5551d6a16c165097b0028ba87b4e6",
    "engines": {
-      "node": ">=22"
+      "node": ">=24"
    }
 }

@@ -1,6 +1,11 @@
 // @vitest-environment node
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { getAuth } from '@/auth';
+import { ensureRateLimitKeyIndex } from '@/lib/auth/rate-limit-index';
+
+vi.mock('@/lib/auth/rate-limit-index', () => ({
+   ensureRateLimitKeyIndex: vi.fn(),
+}));
 
 const globalForAuth = globalThis as { tipohizAuth?: unknown };
 
@@ -46,5 +51,8 @@ describe('dash plugin', () => {
       delete globalForAuth.tipohizAuth;
 
       expect(() => getAuth()).not.toThrow();
+      expect(ensureRateLimitKeyIndex).toHaveBeenCalledWith(
+         'mongodb://127.0.0.1:27017/tipohiz'
+      );
    });
 });

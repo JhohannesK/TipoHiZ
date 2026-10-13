@@ -37,7 +37,7 @@ const register = async (formData: FormData): Promise<ActionResponse> => {
       return { success: true };
    } catch (error) {
       if (error instanceof ZodError) {
-         return { error: error.errors[0].message };
+         return { error: error.issues[0].message };
       }
 
       if (error instanceof APIError) {
