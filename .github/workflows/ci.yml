@@ -1,0 +1,59 @@
+name: CI
+
+on:
+   pull_request:
+      branches:
+         - preview
+         - main
+
+jobs:
+   verify:
+      runs-on: ubuntu-latest
+      timeout-minutes: 20
+      env:
+         MONGODB_URI: mongodb://127.0.0.1:27017/tipohiz
+         AUTH_SECRET: ci-test-auth-secret
+         NEXTAUTH_SECRET: ci-test-auth-secret
+         AUTH_URL: http://127.0.0.1:3000
+         AUTH_TRUST_HOST: 'true'
+         NEXTAUTH_URL: http://127.0.0.1:3000
+         GOOGLE_CLIENT_ID: ci-test
+         GOOGLE_CLIENT_SECRET: ci-test
+         GITHUB_CLIENT_ID: ci-test
+         GITHUB_CLIENT_SECRET: ci-test
+         TWITTER_CLIENT_ID: ci-test
+         TWITTER_CLIENT_SECRET: ci-test
+      steps:
+         - uses: actions/checkout@v4
+
+         # action-setup@v4 compares `version` to the raw packageManager
+         # string. The corepack integrity hash makes 10.34.6 and
+         # pnpm@10.34.6+sha512... different versions, so the step exits
+         # before install. Omit `version` and use package.json.
+         - uses: pnpm/action-setup@v4
+
+         - uses: actions/setup-node@v4
+           with:
+              node-version: 22
+              cache: pnpm
+
+         - name: Install
+           run: pnpm install --frozen-lockfile
+
+         - name: Typecheck
+           run: pnpm exec tsc --noEmit
+
+         - name: Lint
+           run: pnpm lint
+
+         - name: Unit tests
+           run: pnpm test:unit
+
+         - name: Build
+           run: pnpm build
+
+         - name: Install Playwright browser
+           run: pnpm exec playwright install --with-deps chromium
+
+         - name: Playwright smoke test
+           run: pnpm test:e2e

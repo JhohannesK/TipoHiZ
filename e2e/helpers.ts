@@ -1,0 +1,56 @@
+import { expect, type Page } from '@playwright/test';
+
+export function timer(page: Page) {
+   return page.locator('div.text-accent').first();
+}
+
+export async function stubAuth(page: Page): Promise<void> {
+   await page.route('**/api/auth/**', async (route) => {
+      await route.fulfill({
+         status: 200,
+         contentType: 'application/json',
+         body: 'null',
+      });
+   });
+}
+
+export async function readWords(page: Page): Promise<string[]> {
+   const words = await page
+      .locator('div.h-28 > div')
+      .evaluateAll((nodes) =>
+         nodes.map((node) => (node.textContent ?? '').trim())
+      );
+
+   return words.filter((word) => word.length > 0);
+}
+
+export async function openHome(page: Page): Promise<void> {
+   await stubAuth(page);
+   await page.goto('/');
+   await expect
+      .poll(async () => (await readWords(page)).length)
+      .toBeGreaterThan(8);
+}
+
+export async function selectTime(page: Page, seconds: number): Promise<void> {
+   await page
+      .locator('div.time')
+      .locator(`button[value="${seconds}"]`)
+      .locator('visible=true')
+      .click();
+}
+
+export async function focusTyping(page: Page): Promise<void> {
+   await page.locator('div.h-28').click();
+}
+
+export async function statText(page: Page, label: RegExp): Promise<string> {
+   const heading = page.getByRole('heading', { name: label });
+   const card = heading.locator('..');
+   return (await card.locator('p').innerText()).trim();
+}
+
+export function clockSeconds(value: string): number {
+   const [hours = 0, minutes = 0, seconds = 0] = value.split(':').map(Number);
+   return hours * 3600 + minutes * 60 + seconds;
+}

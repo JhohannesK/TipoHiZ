@@ -7,11 +7,12 @@ import { mountStoreDevtool } from 'simple-zustand-devtools';
 export const userConfigStore = create<IuserConfig>()(
    (persist as unknown as MyPersist)(
       () => ({
-         time: Constants.TimeSec, // default: 60
+         time: Constants.TimeSec, // default: 30
          theme: '',
          type: 'default', // 'punctuation', 'numbers', 'code'
          category: 'time', // 'time', 'words'
          sound: false,
+         language: 'english', // default language
       }),
       {
          name: 'userConfig',

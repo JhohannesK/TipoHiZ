@@ -7,8 +7,8 @@ export interface WordState {
    userInput: string;
    nextChar: string;
    wordList: string[];
-   caretRef: React.RefObject<HTMLSpanElement> | null;
-   activeWordRef: React.RefObject<HTMLDivElement> | null;
+   caretRef: React.RefObject<HTMLSpanElement | null> | null;
+   activeWordRef: React.RefObject<HTMLDivElement | null> | null;
    typedHistory: string[];
    nextIndex: number;
    nextCharIdx: number;
@@ -28,6 +28,7 @@ export interface IuserConfig {
    type: string;
    category: string;
    sound: boolean;
+   language: string;
 }
 
 export type MyPersist = (

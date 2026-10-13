@@ -39,7 +39,7 @@ function Header() {
          </div>
 
          <div className="flex items-center justify-between gap-3 font-semibold">
-            <p className="text-input">Hi, {username}</p>
+            {isAuthenticated && <p className="text-input">Hi, {username}</p>}
             {!isAuthenticated ? (
                <>
                   <Link
