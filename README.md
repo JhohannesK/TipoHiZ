@@ -16,7 +16,7 @@ Tipohiz is a sleek and customizable typing test platform designed to enhance you
 -  typing languages: English, Spanish, French (home-page Globe; word lists in `modules/TextFiles/`)
 -  results after the timer hits the 1s bound: `/results` with gross WPM, adjusted WPM, accuracy (`lib/utils.ts`)
 -  themes and optional key sounds
--  optional accounts (`/login`, `/register`, Google / GitHub / Twitter) via NextAuth v5 + Prisma/MongoDB — typing works without signing in
+-  optional accounts (`/login`, `/register`, Google / GitHub / Twitter) via Better Auth + MongoDB — typing works without signing in
 -  config persistence in `localStorage` (Zustand persist key `userConfig`)
 
 # Future Features
@@ -32,23 +32,26 @@ Package manager is **pnpm@10.34.6** (`package.json` `packageManager` field). The
 ```bash
 pnpm install          # postinstall runs prisma generate
 cp .env.example .env  # required only for auth / MongoDB
-pnpm prisma:push      # only if you set MONGODB_URI
+pnpm prisma:push      # optional; legacy Prisma models only. Better Auth creates its own collections
 pnpm dev              # http://localhost:3000
 ```
 
 Typing tests run with **no env vars**. Auth needs:
 
-| Variable                       | Required for                                                                   |
-| ------------------------------ | ------------------------------------------------------------------------------ |
-| `MONGODB_URI`                  | Prisma (MongoDB)                                                               |
-| `AUTH_SECRET`                  | NextAuth JWT signing (`NEXTAUTH_SECRET` in `.env.example` is a leftover alias) |
-| `GOOGLE_CLIENT_ID` / `SECRET`  | Google OAuth                                                                   |
-| `GITHUB_CLIENT_ID` / `SECRET`  | GitHub OAuth                                                                   |
-| `TWITTER_CLIENT_ID` / `SECRET` | Twitter/X OAuth                                                                |
+| Variable                       | Required for                                                        |
+| ------------------------------ | ------------------------------------------------------------------- |
+| `MONGODB_URI`                  | Better Auth MongoDB adapter and `scripts/migrate-to-better-auth.ts` |
+| `BETTER_AUTH_SECRET`           | Session signing                                                     |
+| `BETTER_AUTH_URL`              | Public origin used for OAuth callbacks                              |
+| `GOOGLE_CLIENT_ID` / `SECRET`  | Google OAuth                                                        |
+| `GITHUB_CLIENT_ID` / `SECRET`  | GitHub OAuth                                                        |
+| `TWITTER_CLIENT_ID` / `SECRET` | Twitter/X OAuth                                                     |
 
-`proxy.ts` exports NextAuth `auth` but does **not** gate routes (no `config.matcher`). Anonymous use is expected. Runtime client is `prisma/generated/prisma/edge` (`lib/db.ts`).
+`proxy.ts` redirects a signed-in visitor away from `/login` and `/register`. It does not gate the typing test. Anonymous use is expected.
 
-Auth routes: `GET|POST /api/auth/[...nextAuth]` (`handlers` from `auth.ts`). Credentials login min password length 8. Register (`lib/validation/auth.schema.ts`): name ≥3, email, password ≥8 with upper / lower / digit. The “special character” regex is `/^A-Za-z0-9/` — it matches a literal prefix, not a special char; if register fails unexpectedly, look there first.
+Auth routes: `GET|POST /api/auth/[...all]`. Credentials login min password length 8. Register (`lib/validation/auth.schema.ts`): name ≥3, email, password ≥8 with upper / lower / digit. The “special character” regex is `/^A-Za-z0-9/` — it matches a literal prefix, not a special char; if register fails unexpectedly, look there first.
+
+Existing NextAuth users move with `pnpm exec tsx scripts/migrate-to-better-auth.ts` (`--dry-run` by default, `--apply` to write). The script does not delete the old `User` and `Account` collections. Every existing session is signed out once the app starts using Better Auth cookies.
 
 Prisma client is generated to `prisma/generated/prisma` (`output` in `prisma/schema.prisma`). `pnpm build` runs `prisma generate && next build`.
 

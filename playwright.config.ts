@@ -2,11 +2,8 @@ import { defineConfig, devices } from '@playwright/test';
 
 const testEnv: Record<string, string> = {
    MONGODB_URI: 'mongodb://127.0.0.1:27017/tipohiz',
-   AUTH_SECRET: 'ci-test-auth-secret',
-   NEXTAUTH_SECRET: 'ci-test-auth-secret',
-   AUTH_URL: 'http://127.0.0.1:3000',
-   AUTH_TRUST_HOST: 'true',
-   NEXTAUTH_URL: 'http://127.0.0.1:3000',
+   BETTER_AUTH_SECRET: 'ci-test-auth-secret-ci-test-auth-secret',
+   BETTER_AUTH_URL: 'http://127.0.0.1:3000',
    GOOGLE_CLIENT_ID: 'ci-test',
    GOOGLE_CLIENT_SECRET: 'ci-test',
    GITHUB_CLIENT_ID: 'ci-test',
