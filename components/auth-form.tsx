@@ -13,7 +13,7 @@ import {
 import { Label } from './ui/label';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
-import { ArrowRight, Loader2 } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { OAuthButtons } from './oauth-buttons';
@@ -27,14 +27,26 @@ interface AuthFormProps {
 
 const AuthForm = ({ mode, action, error }: AuthFormProps) => {
    const [loading, setLoading] = React.useState(false);
+   const [name, setName] = React.useState('');
+   const [email, setEmail] = React.useState('');
+   const [password, setPassword] = React.useState('');
+   const [showPassword, setShowPassword] = React.useState(false);
    const router = useRouter();
 
    async function onSubmit(formData: FormData) {
+      const nextName = String(formData.get('name') ?? '');
+      const nextEmail = String(formData.get('email') ?? '');
+
       try {
          setLoading(true);
          const response = await action(formData);
 
          if (response.error) {
+            // React 19 resets uncontrolled fields after a form action.
+            // Keep name/email; clear password only.
+            if (mode === 'register') setName(nextName);
+            setEmail(nextEmail);
+            setPassword('');
             toast.error(response.error);
             return;
          }
@@ -46,7 +58,10 @@ const AuthForm = ({ mode, action, error }: AuthFormProps) => {
          }
          // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
-         toast.error('Someting went wrong. Please try again.');
+         if (mode === 'register') setName(nextName);
+         setEmail(nextEmail);
+         setPassword('');
+         toast.error('Something went wrong. Please try again.');
       } finally {
          setLoading(false);
       }
@@ -83,21 +98,61 @@ const AuthForm = ({ mode, action, error }: AuthFormProps) => {
                {mode === 'register' && (
                   <div>
                      <Label htmlFor="name">Name</Label>
-                     <Input id="name" name="name" required />
+                     <Input
+                        id="name"
+                        name="name"
+                        required
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        autoComplete="name"
+                     />
                   </div>
                )}
                <div className="space-y-2">
                   <Label htmlFor="email">Email Address</Label>
-                  <Input id="email" name="email" type="email" required />
+                  <Input
+                     id="email"
+                     name="email"
+                     type="email"
+                     required
+                     value={email}
+                     onChange={(e) => setEmail(e.target.value)}
+                     autoComplete="email"
+                  />
                </div>
                <div>
                   <Label htmlFor="password">Password</Label>
-                  <Input
-                     id="password"
-                     name="password"
-                     type="password"
-                     required
-                  />
+                  <div className="relative">
+                     <Input
+                        id="password"
+                        name="password"
+                        type={showPassword ? 'text' : 'password'}
+                        required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        autoComplete={
+                           mode === 'login'
+                              ? 'current-password'
+                              : 'new-password'
+                        }
+                        className="pr-10"
+                     />
+                     <button
+                        type="button"
+                        onClick={() => setShowPassword((v) => !v)}
+                        className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground"
+                        aria-label={
+                           showPassword ? 'Hide password' : 'Show password'
+                        }
+                        tabIndex={0}
+                     >
+                        {showPassword ? (
+                           <EyeOff className="h-4 w-4" aria-hidden />
+                        ) : (
+                           <Eye className="h-4 w-4" aria-hidden />
+                        )}
+                     </button>
+                  </div>
                </div>
                <Button
                   type="submit"
