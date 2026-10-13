@@ -55,6 +55,10 @@ describe('word store actions', () => {
       expect(state.activeWord).toBe('alpha');
       expect(state.userInput).toBe('');
       expect(state.typedHistory).toEqual([]);
+      expect(state.keystrokeLog).toEqual([]);
+      expect(state.nextIndex).toBe(0);
+      expect(state.errorCount).toBe(0);
+      expect(state.typedEntries).toBe(0);
    });
 
    it('should split phrases into words when any entry contains a space', () => {
@@ -261,6 +265,7 @@ describe('config and time actions', () => {
          nextIndex: 0,
          typedEntries: 0,
          errorCount: 0,
+         keystrokeLog: [],
       });
       expect(userConfigStore.getState().time).toBe(15);
    });

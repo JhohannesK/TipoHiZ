@@ -67,9 +67,7 @@ describe('typing accuracy', () => {
       expect(state.errorCount).toBe(0);
    });
 
-   // P0: calculateErrors adds every not-yet-typed letter on the active word
-   // to errorCount. Those letters are not mistakes.
-   it.fails('should ignore letters the user has not typed yet', () => {
+   it('should ignore letters the user has not typed yet', () => {
       mountPassage(['abcde', 'fghij']);
 
       typeSequence('ab');
@@ -78,70 +76,54 @@ describe('typing accuracy', () => {
       expect(wordStore.getState().errorCount).toBe(0);
    });
 
-   // P0: errorCount is replaced on every keystroke with only the active word,
-   // so a finished mistype disappears once the next word is typed.
-   it.fails(
-      'should keep a mistyped word after the user moves to the next word',
-      () => {
-         mountPassage(['abcde', 'fghij']);
+   it('should keep a mistyped word after the user moves to the next word', () => {
+      mountPassage(['abcde', 'fghij']);
 
-         typeSequence('abxde ');
-         typeSequence('fghij');
+      typeSequence('abxde ');
+      typeSequence('fghij');
 
-         expect(wordStore.getState().typedHistory).toEqual(['abxde']);
-         expect(wordStore.getState().userInput).toBe('fghij');
-         expect(wordStore.getState().errorCount).toBe(
-            mismatches('abcde', 'abxde', true)
-         );
-      }
-   );
+      expect(wordStore.getState().typedHistory).toEqual(['abxde']);
+      expect(wordStore.getState().userInput).toBe('fghij');
+      expect(wordStore.getState().errorCount).toBe(
+         mismatches('abcde', 'abxde', true)
+      );
+   });
 
-   // P0: a run that mistypes every 4th word currently scores about 233 WPM.
-   // Finished mistakes are dropped, so the results page bills the run as clean.
-   // 49 words of 5 letters plus the spaces between them is 293 entries over the
-   // 15s limit: gross speed is 234.4 WPM, and the live error count stays 0.
-   it.fails(
-      'should lower wpm for a run that mistypes every fourth word',
-      () => {
-         const words = Array.from({ length: 49 }, () => 'abcde');
-         const completed: string[] = [];
-         let current = '';
+   it('should lower wpm for a run that mistypes every fourth word', () => {
+      const words = Array.from({ length: 49 }, () => 'abcde');
+      const completed: string[] = [];
+      let current = '';
 
-         mountPassage(words);
+      mountPassage(words);
 
-         words.forEach((word, index) => {
-            const mistype = (index + 1) % 4 === 0;
-            const typed = mistype ? garble(word) : word;
-            const isLast = index === words.length - 1;
+      words.forEach((word, index) => {
+         const mistype = (index + 1) % 4 === 0;
+         const typed = mistype ? garble(word) : word;
+         const isLast = index === words.length - 1;
 
-            typeSequence(typed);
-            if (isLast) {
-               current = typed;
-               return;
-            }
+         typeSequence(typed);
+         if (isLast) {
+            current = typed;
+            return;
+         }
 
-            press(' ');
-            completed.push(typed);
-         });
+         press(' ');
+         completed.push(typed);
+      });
 
-         const expected = scoreTypedRun({ words, completed, current });
-         const state = wordStore.getState();
-         const reportedWpm = accurateWPM(
-            state.errorCount,
-            state.typedEntries,
-            15
-         );
-         const expectedWpm = accurateWPM(
-            expected.errors,
-            expected.typedEntries,
-            15
-         );
+      const expected = scoreTypedRun({ words, completed, current });
+      const state = wordStore.getState();
+      const reportedWpm = accurateWPM(state.errorCount, state.typedEntries, 15);
+      const expectedWpm = accurateWPM(
+         expected.errors,
+         expected.typedEntries,
+         15
+      );
 
-         expect(state.typedEntries).toBe(expected.typedEntries);
-         expect(expected.errors).toBeGreaterThan(0);
-         expect(state.errorCount).toBe(expected.errors);
-         expect(reportedWpm).toBeCloseTo(expectedWpm, 5);
-         expect(reportedWpm).toBeLessThan(grossWPM(expected.typedEntries, 15));
-      }
-   );
+      expect(state.typedEntries).toBe(expected.typedEntries);
+      expect(expected.errors).toBeGreaterThan(0);
+      expect(state.errorCount).toBe(expected.errors);
+      expect(reportedWpm).toBeCloseTo(expectedWpm, 5);
+      expect(reportedWpm).toBeLessThan(grossWPM(expected.typedEntries, 15));
+   });
 });

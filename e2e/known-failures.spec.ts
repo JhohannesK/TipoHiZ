@@ -56,70 +56,63 @@ test.fail(
    }
 );
 
-// P0: mistyping every 4th word still reports a clean run. On a 15s test the
-// results page shows 100% accuracy and about 230 to 245 WPM, with average
-// speed equal to total speed. That is the same inflation reported as ~233 WPM.
-// Completed mistakes are discarded, and untyped letters are treated as errors.
-test.fail(
-   'should score every fourth mistyped word from the mistakes that were made',
-   async ({ page }) => {
-      await openHome(page);
-      await selectTime(page, 15);
-      await expect(timer(page)).toHaveText('15');
+// Mistyping every 4th word has to lower average speed below raw speed.
+// Stats come from the keystroke log, including finished mistakes.
+test('should score every fourth mistyped word from the mistakes that were made', async ({
+   page,
+}) => {
+   await openHome(page);
+   await selectTime(page, 15);
+   await expect(timer(page)).toHaveText('15');
 
-      const words = await readWords(page);
-      const completed: string[] = [];
-      let current = '';
+   const words = await readWords(page);
+   const completed: string[] = [];
+   let current = '';
 
-      await focusTyping(page);
+   await focusTyping(page);
 
-      for (let index = 0; index < words.length; index += 1) {
-         const target = words[index] ?? '';
-         const mistype = (index + 1) % 4 === 0;
-         const typed = mistype ? garble(target) : target;
+   for (let index = 0; index < words.length; index += 1) {
+      const target = words[index] ?? '';
+      const mistype = (index + 1) % 4 === 0;
+      const typed = mistype ? garble(target) : target;
 
-         await page.keyboard.type(typed, { delay: 0 });
-         current = typed;
+      await page.keyboard.type(typed, { delay: 0 });
+      current = typed;
 
-         const projected = scoreTypedRun({
-            words,
-            completed,
-            current,
-         }).typedEntries;
+      const projected = scoreTypedRun({
+         words,
+         completed,
+         current,
+      }).typedEntries;
 
-         if (projected >= 291 && !mistype) break;
+      if (projected >= 291 && !mistype) break;
 
-         await page.keyboard.press('Space');
-         completed.push(typed);
-         current = '';
-      }
-
-      const expected = scoreTypedRun({ words, completed, current });
-      expect(expected.errors).toBeGreaterThan(0);
-      expect(expected.typedEntries).toBeGreaterThan(250);
-
-      await expect(page).toHaveURL(/\/results$/, { timeout: 25_000 });
-
-      const duration = clockSeconds(await statText(page, /^time:/i));
-      const reportedWpm = Number.parseFloat(
-         await statText(page, /Average Speed/)
-      );
-      const reportedAccuracy = Number.parseFloat(
-         await statText(page, /Accuracy/)
-      );
-      const expectedWpm = accurateWPM(
-         expected.errors,
-         expected.typedEntries,
-         duration
-      );
-      const cleanWpm = grossWPM(expected.typedEntries, duration);
-
-      expect(duration).toBe(15);
-      expect(reportedWpm).toBeCloseTo(expectedWpm, 0);
-      expect(reportedWpm).toBeLessThan(cleanWpm - 20);
-      expect(reportedAccuracy).toBeCloseTo(
-         calculateAccuracy(expected.errors, expected.typedEntries),
-         0
-      );
+      await page.keyboard.press('Space');
+      completed.push(typed);
+      current = '';
    }
-);
+
+   const expected = scoreTypedRun({ words, completed, current });
+   expect(expected.errors).toBeGreaterThan(0);
+   expect(expected.typedEntries).toBeGreaterThan(250);
+
+   await expect(page).toHaveURL(/\/results$/, { timeout: 25_000 });
+
+   const duration = clockSeconds(await statText(page, /^time:/i));
+   const reportedWpm = Number.parseFloat(await statText(page, /Average Speed/));
+   const reportedAccuracy = Number.parseFloat(await statText(page, /Accuracy/));
+   const expectedWpm = accurateWPM(
+      expected.errors,
+      expected.typedEntries,
+      duration
+   );
+   const cleanWpm = grossWPM(expected.typedEntries, duration);
+
+   expect(duration).toBe(15);
+   expect(reportedWpm).toBeCloseTo(expectedWpm, 0);
+   expect(reportedWpm).toBeLessThan(cleanWpm - 20);
+   expect(reportedAccuracy).toBeCloseTo(
+      calculateAccuracy(expected.errors, expected.typedEntries),
+      0
+   );
+});

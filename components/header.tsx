@@ -41,6 +41,9 @@ function Header() {
          </div>
 
          <div className="flex items-center justify-between gap-3 font-semibold">
+            <Link href="/dashboard" className="text-sm text-input">
+               Stats
+            </Link>
             {isAuthenticated && <p className="text-input">Hi, {username}</p>}
             {!isAuthenticated ? (
                <>
