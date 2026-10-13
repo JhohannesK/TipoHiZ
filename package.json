@@ -19,6 +19,7 @@
       "migrate:auth": "tsx scripts/migrate-to-better-auth.ts"
    },
    "dependencies": {
+      "@better-auth/infra": "^0.4.18",
       "@better-auth/mongo-adapter": "^1.7.7",
       "@hookform/resolvers": "^4.1.0",
       "@prisma/client": "^6.19.3",
