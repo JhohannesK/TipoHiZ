@@ -1,8 +1,8 @@
 'use server';
 
 import { headers } from 'next/headers';
-import { APIError } from 'better-auth/api';
 import { getAuth } from '@/auth';
+import { mapBetterAuthError } from '@/lib/auth/error-messages';
 import { loginSchema, registerSchema } from '@/lib/validation/auth.schema';
 import { ZodError } from 'zod';
 
@@ -10,15 +10,6 @@ export type ActionResponse = {
    error?: string;
    success?: boolean;
 };
-
-function authErrorCode(error: APIError): string | undefined {
-   const body = error.body;
-   if (body && typeof body === 'object' && 'code' in body) {
-      const code = body.code;
-      return typeof code === 'string' ? code : undefined;
-   }
-   return undefined;
-}
 
 const register = async (formData: FormData): Promise<ActionResponse> => {
    try {
@@ -40,17 +31,10 @@ const register = async (formData: FormData): Promise<ActionResponse> => {
          return { error: error.issues[0].message };
       }
 
-      if (error instanceof APIError) {
-         const code = authErrorCode(error);
-         if (
-            code === 'USER_ALREADY_EXISTS' ||
-            code === 'USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL'
-         ) {
-            return { error: 'User already exists with this email' };
-         }
-      }
+      const mapped = mapBetterAuthError(error);
+      if (mapped) return { error: mapped };
 
-      return { error: 'An unexpected error occured' };
+      return { error: 'Something went wrong. Please try again.' };
    }
 };
 
@@ -70,17 +54,15 @@ const login = async (formData: FormData): Promise<ActionResponse> => {
       return { success: true };
    } catch (error) {
       if (error instanceof ZodError) {
-         return { error: 'Authentication failed' };
+         return {
+            error: error.issues[0]?.message ?? 'Invalid email or password.',
+         };
       }
 
-      if (error instanceof APIError) {
-         const code = authErrorCode(error);
-         if (code === 'INVALID_EMAIL_OR_PASSWORD') {
-            return { error: 'Invalid credentials' };
-         }
-      }
+      const mapped = mapBetterAuthError(error);
+      if (mapped) return { error: mapped };
 
-      return { error: 'An unexpected error occured' };
+      return { error: 'Something went wrong. Please try again.' };
    }
 };
 
