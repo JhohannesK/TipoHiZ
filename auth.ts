@@ -1,16 +1,19 @@
 import { betterAuth } from 'better-auth';
+import { dash } from '@better-auth/infra';
 import { mongodbAdapter } from '@better-auth/mongo-adapter';
 import { nextCookies } from 'better-auth/next-js';
 import { MongoClient } from 'mongodb';
 import { authTrustedOrigins, resolveAuthBaseUrl } from '@/lib/auth/base-url';
 import { mongoTransactionsEnabled } from '@/lib/auth/mongo';
-import { verifyStoredPassword } from '@/lib/auth/password';
+import { ensureRateLimitKeyIndex } from '@/lib/auth/rate-limit-index';
 
 function createAuth() {
    const uri = process.env.MONGODB_URI;
    if (!uri) {
       throw new Error('MONGODB_URI is not set');
    }
+
+   ensureRateLimitKeyIndex(uri);
 
    const client = new MongoClient(uri);
    const db = client.db();
@@ -23,13 +26,15 @@ function createAuth() {
          client,
          transaction: mongoTransactionsEnabled(uri),
       }),
+      rateLimit: {
+         // Stored in MongoDB. ensureRateLimitKeyIndex creates the unique
+         // index on `key` once; a failed attempt is logged and retried later.
+         storage: 'database',
+      },
       emailAndPassword: {
          enabled: true,
          // Register still sends the user to /login. A session is created on sign-in.
          autoSignIn: false,
-         password: {
-            verify: verifyStoredPassword,
-         },
       },
       socialProviders: {
          google: {
@@ -66,7 +71,12 @@ function createAuth() {
       onAPIError: {
          errorURL: '/login',
       },
-      plugins: [nextCookies()],
+      plugins: [
+         dash({
+            apiKey: process.env.BETTER_AUTH_API_KEY,
+         }),
+         nextCookies(),
+      ],
    });
 }
 

@@ -6,6 +6,7 @@ settings:
 
 overrides:
   postcss: 8.5.25
+  zod: 4.6.7
 
 importers:
 
@@ -13,7 +14,7 @@ importers:
     dependencies:
       '@better-auth/infra':
         specifier: ^0.4.18
-        version: 0.4.18(@better-auth/core@1.7.7(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)(better-call@1.4.0(zod@4.6.7))(jose@6.2.9)(kysely@0.29.6)(nanostores@1.5.5))(better-auth@1.7.7(@prisma/client@6.19.3(prisma@6.19.3(typescript@5.7.3))(typescript@5.7.3))(mongodb@6.9.0)(next@16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@22.20.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(prisma@6.19.3(typescript@5.7.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@3.2.7(@types/node@22.20.5)(jiti@2.6.1)(jsdom@30.1.2(@noble/hashes@2.4.0))(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1)))(zod@3.23.8)
+        version: 0.4.18(@better-auth/core@1.7.7(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)(better-call@1.4.0(zod@4.6.7))(jose@6.2.9)(kysely@0.29.6)(nanostores@1.5.5))(better-auth@1.7.7(@prisma/client@6.19.3(prisma@6.19.3(typescript@5.7.3))(typescript@5.7.3))(mongodb@6.9.0)(next@16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(prisma@6.19.3(typescript@5.7.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@3.2.7(@types/node@24.19.2)(jiti@2.6.1)(jsdom@30.1.2(@noble/hashes@2.4.0))(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1)))(zod@4.6.7)
       '@better-auth/mongo-adapter':
         specifier: ^1.7.7
         version: 1.7.7(@better-auth/core@1.7.7(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)(better-call@1.4.0(zod@4.6.7))(jose@6.2.9)(kysely@0.29.6)(nanostores@1.5.5))(@better-auth/utils@0.4.2)(mongodb@6.9.0)
@@ -43,13 +44,10 @@ importers:
         version: 1.2.6(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@vercel/analytics':
         specifier: 1.3.1
-        version: 1.3.1(next@16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@22.20.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
-      bcryptjs:
-        specifier: 2.4.3
-        version: 2.4.3
+        version: 1.3.1(next@16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
       better-auth:
         specifier: ^1.7.7
-        version: 1.7.7(@prisma/client@6.19.3(prisma@6.19.3(typescript@5.7.3))(typescript@5.7.3))(mongodb@6.9.0)(next@16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@22.20.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(prisma@6.19.3(typescript@5.7.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@3.2.7(@types/node@22.20.5)(jiti@2.6.1)(jsdom@30.1.2(@noble/hashes@2.4.0))(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1))
+        version: 1.7.7(@prisma/client@6.19.3(prisma@6.19.3(typescript@5.7.3))(typescript@5.7.3))(mongodb@6.9.0)(next@16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(prisma@6.19.3(typescript@5.7.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@3.2.7(@types/node@24.19.2)(jiti@2.6.1)(jsdom@30.1.2(@noble/hashes@2.4.0))(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1))
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -64,7 +62,7 @@ importers:
         version: 6.9.0
       next-themes:
         specifier: 0.2.1
-        version: 0.2.1(next@16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@22.20.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        version: 0.2.1(next@16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       prettier:
         specifier: 2.8.8
         version: 2.8.8
@@ -90,8 +88,8 @@ importers:
         specifier: 2.5.3
         version: 2.5.3
       zod:
-        specifier: ^3.23.8
-        version: 3.23.8
+        specifier: 4.6.7
+        version: 4.6.7
       zustand:
         specifier: 4.5.5
         version: 4.5.5(@types/react@19.3.0)(react@19.3.0)
@@ -101,19 +99,16 @@ importers:
         version: 1.64.0
       '@testing-library/jest-dom':
         specifier: ^7.0.1
-        version: 7.0.1(@testing-library/dom@10.4.2)(vitest@3.2.7(@types/node@22.20.5)(jiti@2.6.1)(jsdom@30.1.2(@noble/hashes@2.4.0))(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1))
+        version: 7.0.1(@testing-library/dom@10.4.2)(vitest@3.2.7(@types/node@24.19.2)(jiti@2.6.1)(jsdom@30.1.2(@noble/hashes@2.4.0))(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1))
       '@testing-library/react':
         specifier: ^16.3.3
         version: 16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@testing-library/user-event':
         specifier: ^14.6.7
         version: 14.6.7(@testing-library/dom@10.4.2)
-      '@types/bcryptjs':
-        specifier: 2.4.6
-        version: 2.4.6
       '@types/node':
-        specifier: 22.20.5
-        version: 22.20.5
+        specifier: 24.19.2
+        version: 24.19.2
       '@types/react':
         specifier: 19.3.0
         version: 19.3.0
@@ -122,7 +117,7 @@ importers:
         version: 19.3.0(@types/react@19.3.0)
       '@vitejs/plugin-react':
         specifier: ^4.7.0
-        version: 4.7.0(vite@7.3.7(@types/node@22.20.5)(jiti@2.6.1)(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1))
+        version: 4.7.0(vite@7.3.7(@types/node@24.19.2)(jiti@2.6.1)(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1))
       autoprefixer:
         specifier: 10.4.20
         version: 10.4.20(postcss@8.5.25)
@@ -143,7 +138,7 @@ importers:
         version: 30.1.2(@noble/hashes@2.4.0)
       next:
         specifier: 16.4.0
-        version: 16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@22.20.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        version: 16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       postcss:
         specifier: 8.5.25
         version: 8.5.25
@@ -155,13 +150,10 @@ importers:
         version: 1.1.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zustand@4.5.5(@types/react@19.3.0)(react@19.3.0))
       tailwindcss:
         specifier: 3.4.13
-        version: 3.4.13(ts-node@10.9.2(@types/node@22.20.5)(typescript@5.7.3))
+        version: 3.4.13(ts-node@10.9.2(@types/node@24.19.2)(typescript@5.7.3))
       ts-node:
         specifier: 10.9.2
-        version: 10.9.2(@types/node@22.20.5)(typescript@5.7.3)
-      tsx:
-        specifier: ^4.23.15
-        version: 4.23.15
+        version: 10.9.2(@types/node@24.19.2)(typescript@5.7.3)
       typescript:
         specifier: 5.7.3
         version: 5.7.3
@@ -170,7 +162,7 @@ importers:
         version: 8.71.1(eslint@10.12.0(jiti@2.6.1))(typescript@5.7.3)
       vitest:
         specifier: ^3.2.7
-        version: 3.2.7(@types/node@22.20.5)(jiti@2.6.1)(jsdom@30.1.2(@noble/hashes@2.4.0))(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1)
+        version: 3.2.7(@types/node@24.19.2)(jiti@2.6.1)(jsdom@30.1.2(@noble/hashes@2.4.0))(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1)
 
 packages:
 
@@ -310,7 +302,7 @@ packages:
       expo-crypto: '>=13.0.0'
       expo-device: '>=6.0.0'
       react-native: '>=0.74.0'
-      zod: '>=4.1.12'
+      zod: 4.6.7
     peerDependenciesMeta:
       '@react-native-async-storage/async-storage':
         optional: true
@@ -1700,9 +1692,6 @@ packages:
   '@types/babel__traverse@7.28.0':
     resolution: {integrity: sha512-8PvcXf70gTDZBgt9ptxJ8elBeBjcLOAcOtoO/mPJjtji1+CdGbHgm77om1GrsPxsiE+uXIpNSK64UYaIwQXd4Q==}
 
-  '@types/bcryptjs@2.4.6':
-    resolution: {integrity: sha512-9xlo6R2qDs5uixm0bcIqCeMCE6HiQsIyel9KQySStiyqNl2tnj2mP3DX1Nf56MD6KMenNNlBBsy3LJ7gUEQPXQ==}
-
   '@types/chai@5.2.3':
     resolution: {integrity: sha512-Mw558oeA9fFbv65/y4mHtXDs9bPnFMZAL/jxdPFUpOHHIXX91mcgEHbS5Lahr+pwZFR8A7GQleRWeI6cGFC2UA==}
 
@@ -1721,8 +1710,8 @@ packages:
   '@types/json5@0.0.29':
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
 
-  '@types/node@22.20.5':
-    resolution: {integrity: sha512-U2+DNr+wSjpsTS/wZGYHq7GcwfuSmKiKvoPvK22zwTlRhU91yOniN4qRR5KhIjvif7ysw/dz/hKmfDH0Ris4aA==}
+  '@types/node@24.19.2':
+    resolution: {integrity: sha512-93d49wCWJkCyN87MxLpNN6KXPCwFw7bVUg79mGUV1OS40JGWwVCr8n61DXCSqz7CV6/VfPkb7xec7uP2M+QHWQ==}
 
   '@types/react-dom@19.3.0':
     resolution: {integrity: sha512-ZI7bU42mZXXKHn/qNLEw2IrbiINU7X5+vfgdixBHkCNpYWXjKgfQ/P+uyGb5CjOLB9UcnTeg3rylQtV2hym44Q==}
@@ -2003,9 +1992,6 @@ packages:
     engines: {node: '>=6.0.0'}
     hasBin: true
 
-  bcryptjs@2.4.3:
-    resolution: {integrity: sha512-V/Hy/X9Vt7f3BbPJEi8BdVFMByHi+jNXrYkW3huaybV/kQ0KJg0Y6PkEMbn+zeT+i+SiKZ/HMqJGIIt4LZDqNQ==}
-
   better-auth@1.7.7:
     resolution: {integrity: sha512-Zhgxi/c5ylmfB/sX+nwnBbsFf/j6k0L8DvL6CJXZSrXgxc5pPMC/e7j812zNd4L4B4ELmdURCPw3X8nAOUdcjw==}
     peerDependencies:
@@ -2068,7 +2054,7 @@ packages:
   better-call@1.4.0:
     resolution: {integrity: sha512-bBKOT4vv1kZLDgxVePdilk/Jwkn+dtRRsmi3DzHcDP+WnswyVl6dR59l2HEeP/0cB+bDoopASAesWDPIdd/zZA==}
     peerDependencies:
-      zod: ^4.0.0
+      zod: 4.6.7
     peerDependenciesMeta:
       zod:
         optional: true
@@ -4040,8 +4026,8 @@ packages:
     resolution: {integrity: sha512-nWJ91DjeOkej/TA8pXQ3myruKpKEYgqvpw9lz4OPHj/NWFNluYrjbz9j01CJ8yKQd2g4jFoOkINCTW2I5LEEyw==}
     engines: {node: '>= 0.4'}
 
-  undici-types@6.21.0:
-    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
+  undici-types@7.24.6:
+    resolution: {integrity: sha512-WRNW+sJgj5OBN4/0JpHFqtqzhpbnV0GuB+OozA9gCL7a993SmU+1JBZCzLNxYsbMfIeDL+lTsphD5jN5N+n0zg==}
 
   undici@8.11.2:
     resolution: {integrity: sha512-u4UB2/IrKdU6lFxumHmmo1a3fCQO5tzQllRorfoRS63txhrB7xTpSn1PftwC4qEHkOaqP95fCWW4lJzwErwzhQ==}
@@ -4286,13 +4272,7 @@ packages:
     resolution: {integrity: sha512-Q6/nZLe6jxuU80qb/4uJ4t5v2VEZ44lzQjPDhYJNztRQ4wyWc6VF3D3Kb/fAuPetZQnhS3hnajCf9CsWesghLQ==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
-      zod: ^3.25.0 || ^4.0.0
-
-  zod@3.23.8:
-    resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
-
-  zod@3.25.76:
-    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
+      zod: 4.6.7
 
   zod@4.6.7:
     resolution: {integrity: sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==}
@@ -4453,7 +4433,7 @@ snapshots:
       '@better-fetch/fetch': 1.3.2
       '@opentelemetry/semantic-conventions': 1.43.0
       '@standard-schema/spec': 1.1.0
-      better-call: 1.4.0(zod@3.23.8)
+      better-call: 1.4.0(zod@4.6.7)
       jose: 6.2.9
       kysely: 0.29.6
       nanostores: 1.5.5
@@ -4464,18 +4444,18 @@ snapshots:
       '@better-auth/core': 1.7.7(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)(better-call@1.4.0(zod@4.6.7))(jose@6.2.9)(kysely@0.29.6)(nanostores@1.5.5)
       '@better-auth/utils': 0.4.2
 
-  '@better-auth/infra@0.4.18(@better-auth/core@1.7.7(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)(better-call@1.4.0(zod@4.6.7))(jose@6.2.9)(kysely@0.29.6)(nanostores@1.5.5))(better-auth@1.7.7(@prisma/client@6.19.3(prisma@6.19.3(typescript@5.7.3))(typescript@5.7.3))(mongodb@6.9.0)(next@16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@22.20.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(prisma@6.19.3(typescript@5.7.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@3.2.7(@types/node@22.20.5)(jiti@2.6.1)(jsdom@30.1.2(@noble/hashes@2.4.0))(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1)))(zod@3.23.8)':
+  '@better-auth/infra@0.4.18(@better-auth/core@1.7.7(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)(better-call@1.4.0(zod@4.6.7))(jose@6.2.9)(kysely@0.29.6)(nanostores@1.5.5))(better-auth@1.7.7(@prisma/client@6.19.3(prisma@6.19.3(typescript@5.7.3))(typescript@5.7.3))(mongodb@6.9.0)(next@16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(prisma@6.19.3(typescript@5.7.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@3.2.7(@types/node@24.19.2)(jiti@2.6.1)(jsdom@30.1.2(@noble/hashes@2.4.0))(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1)))(zod@4.6.7)':
     dependencies:
       '@better-auth/core': 1.7.7(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)(better-call@1.4.0(zod@4.6.7))(jose@6.2.9)(kysely@0.29.6)(nanostores@1.5.5)
       '@better-auth/utils': 0.4.2
       '@better-fetch/fetch': 1.3.2
       '@noble/hashes': 2.4.0
       '@xmldom/xmldom': 0.9.12
-      better-auth: 1.7.7(@prisma/client@6.19.3(prisma@6.19.3(typescript@5.7.3))(typescript@5.7.3))(mongodb@6.9.0)(next@16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@22.20.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(prisma@6.19.3(typescript@5.7.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@3.2.7(@types/node@22.20.5)(jiti@2.6.1)(jsdom@30.1.2(@noble/hashes@2.4.0))(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1))
-      better-call: 1.4.0(zod@3.23.8)
+      better-auth: 1.7.7(@prisma/client@6.19.3(prisma@6.19.3(typescript@5.7.3))(typescript@5.7.3))(mongodb@6.9.0)(next@16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(prisma@6.19.3(typescript@5.7.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@3.2.7(@types/node@24.19.2)(jiti@2.6.1)(jsdom@30.1.2(@noble/hashes@2.4.0))(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1))
+      better-call: 1.4.0(zod@4.6.7)
       jose: 6.2.12
       libphonenumber-js: 1.13.15
-      zod: 3.23.8
+      zod: 4.6.7
 
   '@better-auth/kysely-adapter@1.7.7(@better-auth/core@1.7.7(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)(better-call@1.4.0(zod@4.6.7))(jose@6.2.9)(kysely@0.29.6)(nanostores@1.5.5))(@better-auth/utils@0.4.2)(kysely@0.29.6)':
     dependencies:
@@ -5529,7 +5509,7 @@ snapshots:
       picocolors: 1.1.1
       pretty-format: 27.5.1
 
-  '@testing-library/jest-dom@7.0.1(@testing-library/dom@10.4.2)(vitest@3.2.7(@types/node@22.20.5)(jiti@2.6.1)(jsdom@30.1.2(@noble/hashes@2.4.0))(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1))':
+  '@testing-library/jest-dom@7.0.1(@testing-library/dom@10.4.2)(vitest@3.2.7(@types/node@24.19.2)(jiti@2.6.1)(jsdom@30.1.2(@noble/hashes@2.4.0))(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1))':
     dependencies:
       '@adobe/css-tools': 4.5.0
       '@testing-library/dom': 10.4.2
@@ -5539,7 +5519,7 @@ snapshots:
       picocolors: 1.1.1
       redent: 3.0.0
     optionalDependencies:
-      vitest: 3.2.7(@types/node@22.20.5)(jiti@2.6.1)(jsdom@30.1.2(@noble/hashes@2.4.0))(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1)
+      vitest: 3.2.7(@types/node@24.19.2)(jiti@2.6.1)(jsdom@30.1.2(@noble/hashes@2.4.0))(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1)
 
   '@testing-library/react@16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)':
     dependencies:
@@ -5586,8 +5566,6 @@ snapshots:
     dependencies:
       '@babel/types': 7.29.8
 
-  '@types/bcryptjs@2.4.6': {}
-
   '@types/chai@5.2.3':
     dependencies:
       '@types/deep-eql': 4.0.2
@@ -5603,9 +5581,9 @@ snapshots:
 
   '@types/json5@0.0.29': {}
 
-  '@types/node@22.20.5':
+  '@types/node@24.19.2':
     dependencies:
-      undici-types: 6.21.0
+      undici-types: 7.24.6
 
   '@types/react-dom@19.3.0(@types/react@19.3.0)':
     dependencies:
@@ -5712,14 +5690,14 @@ snapshots:
       '@typescript-eslint/types': 8.71.1
       eslint-visitor-keys: 5.0.1
 
-  '@vercel/analytics@1.3.1(next@16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@22.20.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)':
+  '@vercel/analytics@1.3.1(next@16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)':
     dependencies:
       server-only: 0.0.1
     optionalDependencies:
-      next: 16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@22.20.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      next: 16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       react: 19.3.0
 
-  '@vitejs/plugin-react@4.7.0(vite@7.3.7(@types/node@22.20.5)(jiti@2.6.1)(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1))':
+  '@vitejs/plugin-react@4.7.0(vite@7.3.7(@types/node@24.19.2)(jiti@2.6.1)(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1))':
     dependencies:
       '@babel/core': 7.29.7
       '@babel/plugin-transform-react-jsx-self': 7.29.7(@babel/core@7.29.7)
@@ -5727,7 +5705,7 @@ snapshots:
       '@rolldown/pluginutils': 1.0.0-beta.27
       '@types/babel__core': 7.20.5
       react-refresh: 0.17.0
-      vite: 7.3.7(@types/node@22.20.5)(jiti@2.6.1)(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1)
+      vite: 7.3.7(@types/node@24.19.2)(jiti@2.6.1)(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -5739,13 +5717,13 @@ snapshots:
       chai: 5.3.3
       tinyrainbow: 2.0.0
 
-  '@vitest/mocker@3.2.7(vite@7.3.7(@types/node@22.20.5)(jiti@2.6.1)(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1))':
+  '@vitest/mocker@3.2.7(vite@7.3.7(@types/node@24.19.2)(jiti@2.6.1)(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1))':
     dependencies:
       '@vitest/spy': 3.2.7
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 7.3.7(@types/node@22.20.5)(jiti@2.6.1)(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1)
+      vite: 7.3.7(@types/node@24.19.2)(jiti@2.6.1)(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1)
 
   '@vitest/pretty-format@3.2.7':
     dependencies:
@@ -5961,9 +5939,7 @@ snapshots:
 
   baseline-browser-mapping@2.11.14: {}
 
-  bcryptjs@2.4.3: {}
-
-  better-auth@1.7.7(@prisma/client@6.19.3(prisma@6.19.3(typescript@5.7.3))(typescript@5.7.3))(mongodb@6.9.0)(next@16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@22.20.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(prisma@6.19.3(typescript@5.7.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@3.2.7(@types/node@22.20.5)(jiti@2.6.1)(jsdom@30.1.2(@noble/hashes@2.4.0))(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1)):
+  better-auth@1.7.7(@prisma/client@6.19.3(prisma@6.19.3(typescript@5.7.3))(typescript@5.7.3))(mongodb@6.9.0)(next@16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(prisma@6.19.3(typescript@5.7.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@3.2.7(@types/node@24.19.2)(jiti@2.6.1)(jsdom@30.1.2(@noble/hashes@2.4.0))(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1)):
     dependencies:
       '@better-auth/core': 1.7.7(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)(better-call@1.4.0(zod@4.6.7))(jose@6.2.9)(kysely@0.29.6)(nanostores@1.5.5)
       '@better-auth/drizzle-adapter': 1.7.7(@better-auth/core@1.7.7(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)(better-call@1.4.0(zod@4.6.7))(jose@6.2.9)(kysely@0.29.6)(nanostores@1.5.5))(@better-auth/utils@0.4.2)
@@ -5976,7 +5952,7 @@ snapshots:
       '@better-fetch/fetch': 1.3.2
       '@noble/ciphers': 2.4.0
       '@noble/hashes': 2.4.0
-      better-call: 1.4.0(zod@3.23.8)
+      better-call: 1.4.0(zod@4.6.7)
       defu: 6.1.4
       jose: 6.2.9
       kysely: 0.29.6
@@ -5985,22 +5961,22 @@ snapshots:
     optionalDependencies:
       '@prisma/client': 6.19.3(prisma@6.19.3(typescript@5.7.3))(typescript@5.7.3)
       mongodb: 6.9.0
-      next: 16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@22.20.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      next: 16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       prisma: 6.19.3(typescript@5.7.3)
       react: 19.3.0
       react-dom: 19.3.0(react@19.3.0)
-      vitest: 3.2.7(@types/node@22.20.5)(jiti@2.6.1)(jsdom@30.1.2(@noble/hashes@2.4.0))(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1)
+      vitest: 3.2.7(@types/node@24.19.2)(jiti@2.6.1)(jsdom@30.1.2(@noble/hashes@2.4.0))(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1)
     transitivePeerDependencies:
       - '@opentelemetry/api'
 
-  better-call@1.4.0(zod@3.23.8):
+  better-call@1.4.0(zod@4.6.7):
     dependencies:
       '@better-auth/utils': 0.5.0
       '@better-fetch/fetch': 1.3.2
       rou3: 0.9.2
       set-cookie-parser: 3.1.3
     optionalDependencies:
-      zod: 3.23.8
+      zod: 4.6.7
 
   bidi-js@1.1.0:
     dependencies:
@@ -6650,8 +6626,8 @@ snapshots:
       '@babel/parser': 7.29.9
       eslint: 10.12.0(jiti@2.6.1)
       hermes-parser: 0.25.1
-      zod: 3.25.76
-      zod-validation-error: 4.0.2(zod@3.25.76)
+      zod: 4.6.7
+      zod-validation-error: 4.0.2(zod@4.6.7)
     transitivePeerDependencies:
       - supports-color
 
@@ -7370,13 +7346,13 @@ snapshots:
 
   natural-compare@1.4.0: {}
 
-  next-themes@0.2.1(next@16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@22.20.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
+  next-themes@0.2.1(next@16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
     dependencies:
-      next: 16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@22.20.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      next: 16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       react: 19.3.0
       react-dom: 19.3.0(react@19.3.0)
 
-  next@16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@22.20.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
+  next@16.4.0(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
     dependencies:
       '@next/env': 16.4.0
       '@swc/helpers': 0.5.23
@@ -7396,7 +7372,7 @@ snapshots:
       '@next/swc-win32-arm64-msvc': 16.4.0
       '@next/swc-win32-x64-msvc': 16.4.0
       '@playwright/test': 1.64.0
-      sharp: 0.35.5(@types/node@22.20.5)
+      sharp: 0.35.5(@types/node@24.19.2)
     transitivePeerDependencies:
       - '@babel/core'
       - '@types/node'
@@ -7567,13 +7543,13 @@ snapshots:
       camelcase-css: 2.0.1
       postcss: 8.5.25
 
-  postcss-load-config@4.0.2(postcss@8.5.25)(ts-node@10.9.2(@types/node@22.20.5)(typescript@5.7.3)):
+  postcss-load-config@4.0.2(postcss@8.5.25)(ts-node@10.9.2(@types/node@24.19.2)(typescript@5.7.3)):
     dependencies:
       lilconfig: 3.1.2
       yaml: 2.5.1
     optionalDependencies:
       postcss: 8.5.25
-      ts-node: 10.9.2(@types/node@22.20.5)(typescript@5.7.3)
+      ts-node: 10.9.2(@types/node@24.19.2)(typescript@5.7.3)
 
   postcss-nested@6.2.0(postcss@8.5.25):
     dependencies:
@@ -7890,7 +7866,7 @@ snapshots:
       es-errors: 1.3.0
       es-object-atoms: 1.1.2
 
-  sharp@0.35.5(@types/node@22.20.5):
+  sharp@0.35.5(@types/node@24.19.2):
     dependencies:
       '@img/colour': 1.1.0
       detect-libc: 2.1.2
@@ -7921,7 +7897,7 @@ snapshots:
       '@img/sharp-win32-arm64': 0.35.5
       '@img/sharp-win32-ia32': 0.35.5
       '@img/sharp-win32-x64': 0.35.5
-      '@types/node': 22.20.5
+      '@types/node': 24.19.2
     optional: true
 
   shebang-command@2.0.0:
@@ -8114,7 +8090,7 @@ snapshots:
 
   tailwind-merge@2.5.3: {}
 
-  tailwindcss@3.4.13(ts-node@10.9.2(@types/node@22.20.5)(typescript@5.7.3)):
+  tailwindcss@3.4.13(ts-node@10.9.2(@types/node@24.19.2)(typescript@5.7.3)):
     dependencies:
       '@alloc/quick-lru': 5.2.0
       arg: 5.0.2
@@ -8133,7 +8109,7 @@ snapshots:
       postcss: 8.5.25
       postcss-import: 15.1.0(postcss@8.5.25)
       postcss-js: 4.0.1(postcss@8.5.25)
-      postcss-load-config: 4.0.2(postcss@8.5.25)(ts-node@10.9.2(@types/node@22.20.5)(typescript@5.7.3))
+      postcss-load-config: 4.0.2(postcss@8.5.25)(ts-node@10.9.2(@types/node@24.19.2)(typescript@5.7.3))
       postcss-nested: 6.2.0(postcss@8.5.25)
       postcss-selector-parser: 6.1.2
       resolve: 1.22.8
@@ -8204,14 +8180,14 @@ snapshots:
 
   ts-interface-checker@0.1.13: {}
 
-  ts-node@10.9.2(@types/node@22.20.5)(typescript@5.7.3):
+  ts-node@10.9.2(@types/node@24.19.2)(typescript@5.7.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.11
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 22.20.5
+      '@types/node': 24.19.2
       acorn: 8.12.1
       acorn-walk: 8.3.4
       arg: 4.1.3
@@ -8236,6 +8212,7 @@ snapshots:
       esbuild: 0.28.2
     optionalDependencies:
       fsevents: 2.3.3
+    optional: true
 
   type-check@0.4.0:
     dependencies:
@@ -8332,7 +8309,7 @@ snapshots:
       has-symbols: 1.1.0
       which-boxed-primitive: 1.1.1
 
-  undici-types@6.21.0: {}
+  undici-types@7.24.6: {}
 
   undici@8.11.2: {}
 
@@ -8390,13 +8367,13 @@ snapshots:
 
   v8-compile-cache-lib@3.0.1: {}
 
-  vite-node@3.2.4(@types/node@22.20.5)(jiti@2.6.1)(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1):
+  vite-node@3.2.4(@types/node@24.19.2)(jiti@2.6.1)(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1):
     dependencies:
       cac: 6.7.14
       debug: 4.4.3
       es-module-lexer: 1.7.0
       pathe: 2.0.3
-      vite: 7.3.7(@types/node@22.20.5)(jiti@2.6.1)(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1)
+      vite: 7.3.7(@types/node@24.19.2)(jiti@2.6.1)(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1)
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -8411,7 +8388,7 @@ snapshots:
       - tsx
       - yaml
 
-  vite@7.3.7(@types/node@22.20.5)(jiti@2.6.1)(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1):
+  vite@7.3.7(@types/node@24.19.2)(jiti@2.6.1)(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1):
     dependencies:
       esbuild: 0.28.2
       fdir: 6.5.0(picomatch@4.0.7)
@@ -8420,18 +8397,18 @@ snapshots:
       rollup: 4.64.4
       tinyglobby: 0.2.17
     optionalDependencies:
-      '@types/node': 22.20.5
+      '@types/node': 24.19.2
       fsevents: 2.3.3
       jiti: 2.6.1
       terser: 5.50.0
       tsx: 4.23.15
       yaml: 2.5.1
 
-  vitest@3.2.7(@types/node@22.20.5)(jiti@2.6.1)(jsdom@30.1.2(@noble/hashes@2.4.0))(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1):
+  vitest@3.2.7(@types/node@24.19.2)(jiti@2.6.1)(jsdom@30.1.2(@noble/hashes@2.4.0))(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1):
     dependencies:
       '@types/chai': 5.2.3
       '@vitest/expect': 3.2.7
-      '@vitest/mocker': 3.2.7(vite@7.3.7(@types/node@22.20.5)(jiti@2.6.1)(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1))
+      '@vitest/mocker': 3.2.7(vite@7.3.7(@types/node@24.19.2)(jiti@2.6.1)(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1))
       '@vitest/pretty-format': 3.2.7
       '@vitest/runner': 3.2.7
       '@vitest/snapshot': 3.2.7
@@ -8449,11 +8426,11 @@ snapshots:
       tinyglobby: 0.2.17
       tinypool: 1.1.1
       tinyrainbow: 2.0.0
-      vite: 7.3.7(@types/node@22.20.5)(jiti@2.6.1)(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1)
-      vite-node: 3.2.4(@types/node@22.20.5)(jiti@2.6.1)(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1)
+      vite: 7.3.7(@types/node@24.19.2)(jiti@2.6.1)(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1)
+      vite-node: 3.2.4(@types/node@24.19.2)(jiti@2.6.1)(terser@5.50.0)(tsx@4.23.15)(yaml@2.5.1)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 22.20.5
+      '@types/node': 24.19.2
       jsdom: 30.1.2(@noble/hashes@2.4.0)
     transitivePeerDependencies:
       - jiti
@@ -8599,13 +8576,9 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
-  zod-validation-error@4.0.2(zod@3.25.76):
+  zod-validation-error@4.0.2(zod@4.6.7):
     dependencies:
-      zod: 3.25.76
-
-  zod@3.23.8: {}
-
-  zod@3.25.76: {}
+      zod: 4.6.7
 
   zod@4.6.7: {}
 

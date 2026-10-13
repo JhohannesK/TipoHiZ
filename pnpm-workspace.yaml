@@ -2,6 +2,7 @@
 # allowBuilds replaces onlyBuiltDependencies (still accepted, deprecated in 10.26+).
 overrides:
    postcss: 8.5.25
+   zod: 4.6.7
 
 allowBuilds:
    prisma: true
