@@ -7,7 +7,7 @@
 
 ### Contribute in framework
 
--  [Nextjs](<[https://graphql.org/](https://nextjs.org/docs)>)
+-  [Next.js 16](https://nextjs.org/docs) — also read [`AGENTS.md`](AGENTS.md) and `node_modules/next/dist/docs/` before App Router changes (`proxy.ts`, no `next lint`)
 
 ### Contribute in state-management
 
@@ -119,7 +119,16 @@ Once you have completed the above steps, you are ready to build and run TipoHiZ.
 1. Run `pnpm install` in the project root (`postinstall` runs `prisma generate`).
 2. Copy `.env.example` to `.env`. Typing works with empty values. For login/register/OAuth set `MONGODB_URI`, `BETTER_AUTH_SECRET`, and `BETTER_AUTH_URL`.
 3. Run `pnpm dev` to start a local dev server on [port 3000](http://localhost:3000). Use <kbd>Ctrl+C</kbd> to kill it.
-4. Optional: `pnpm ts-check`, `pnpm lint`. Pre-commit (husky) runs both plus Prettier.
+4. Optional: `pnpm ts-check`, `pnpm lint`. Pre-commit (husky) runs both plus Prettier (`npx prettier --write .` then `git add .`). CI does **not** run Prettier. Do not use `bin/install.sh` (`pnpm ci` is unimplemented).
+5. Tests (same order as `.github/workflows/ci.yml` on PRs to `preview`):
+
+```bash
+pnpm test:unit              # Vitest, no env
+pnpm exec playwright install chromium   # first e2e only
+pnpm build && CI=true pnpm test:e2e     # production server; auth stubbed
+```
+
+`e2e/known-failures.spec.ts` uses `test.fail` — those cases passing as expected-fail does **not** mean the product bugs are fixed. See README **Testing**.
 
 ### Language word lists
 
@@ -166,7 +175,7 @@ Mobile: hidden textarea + `onKeyDown` → `HandleText` (composing / modifier / E
 | `/register`          | Server action; schema in `lib/validation/auth.schema.ts` |
 | `/api/auth/[...all]` | Better Auth `GET`/`POST` handlers                        |
 
-Typing does not require a session. `proxy.ts` only redirects signed-in visitors away from `/login` and `/register`. Register password rule of thumb: ≥8, upper, lower, digit. The special-character regex currently requires the literal prefix `A-Za-z0-9` — treat that as a known trap, not a real complexity rule.
+Typing does not require a session. `proxy.ts` only redirects signed-in visitors away from `/login` and `/register`. Register password rule of thumb: ≥8, upper, lower, digit. The special-character regex currently requires the literal prefix `A-Za-z0-9` — treat that as a known trap, not a real complexity rule. Trusted origins come from `BETTER_AUTH_TRUSTED_ORIGINS` (comma-separated) plus `BETTER_AUTH_URL` and `VERCEL_URL`. A trailing slash on `BETTER_AUTH_URL` is stripped. Rate limits use the database. The first auth use ensures a unique index on `rateLimit.key`, and a MongoDB outage is logged without stopping startup. The dashboard plugin is `dash()` and uses optional `BETTER_AUTH_API_KEY`.
 
 ### 🐳 Docker (optional, stale)
 
