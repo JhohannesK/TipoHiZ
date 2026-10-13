@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { resetTest } from '@/lib/reset';
+import { trackTestRestarted, type RestartHow } from '@/lib/usage-events';
 import { userConfigStore } from '@/store';
 import { setCaretRef, setUserInput } from '@/store/actions/WordActions';
 import { BsArrowRepeat } from 'react-icons/bs';
@@ -8,6 +9,15 @@ import { resetStates } from '@/store/actions/TimeActions';
 export default function ResetTestButton({ reset }: { reset: () => void }) {
    const { type } = userConfigStore((state) => state);
    const previousKeyRef = React.useRef('');
+
+   const restart = (how: RestartHow) => {
+      trackTestRestarted(how);
+      resetTest(type, reset);
+      reset();
+      resetStates();
+      setUserInput('');
+      setCaretRef(null);
+   };
 
    useEffect(() => {
       function handleKeydown(e: KeyboardEvent) {
@@ -20,12 +30,7 @@ export default function ResetTestButton({ reset }: { reset: () => void }) {
          if (e.key === 'Enter' && previousKeyRef.current === 'Tab') {
             e.preventDefault();
             previousKeyRef.current = '';
-
-            resetTest(type, reset);
-            reset();
-            resetStates();
-            setUserInput('');
-            setCaretRef(null);
+            restart('shortcut');
             return;
          }
 
@@ -44,12 +49,7 @@ export default function ResetTestButton({ reset }: { reset: () => void }) {
          className="flex items-center justify-center gap-4 px-3 pt-8 pb-2 mx-auto text-input"
          aria-label="button to restart test"
          onClick={(e) => {
-            // setDefaultTime(time);
-            resetTest(type, reset);
-            reset();
-            resetStates();
-            setUserInput('');
-            setCaretRef(null);
+            restart('button');
             e.preventDefault();
          }}
       >

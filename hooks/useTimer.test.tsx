@@ -154,6 +154,38 @@ describe('useTimer', () => {
       expect(push).toHaveBeenCalledWith('/results');
    });
 
+   it('should call the exit callback once before opening results', () => {
+      const onExit = vi.fn();
+      const { result } = renderHook(() => useTimer(1, 2, true, false, onExit));
+
+      act(() => {
+         result.current.run();
+      });
+      advance(0);
+      advance(1000);
+
+      expect(onExit).toHaveBeenCalledTimes(1);
+      expect(push).toHaveBeenCalledWith('/results');
+   });
+
+   it('should not call the exit callback when the timer is reset first', () => {
+      const onExit = vi.fn();
+      const { result } = renderHook(() => useTimer(1, 5, true, false, onExit));
+
+      act(() => {
+         result.current.run();
+      });
+      advance(0);
+      advance(1000);
+      act(() => {
+         result.current.reset();
+      });
+      advance(5000);
+
+      expect(onExit).not.toHaveBeenCalled();
+      expect(push).not.toHaveBeenCalled();
+   });
+
    it('should reach zero and navigate when the lower bound is zero', () => {
       const { result } = renderHook(() => useTimer(0, 2));
 
