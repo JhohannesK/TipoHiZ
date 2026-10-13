@@ -4,7 +4,6 @@ import { nextCookies } from 'better-auth/next-js';
 import { MongoClient } from 'mongodb';
 import { authTrustedOrigins, resolveAuthBaseUrl } from '@/lib/auth/base-url';
 import { mongoTransactionsEnabled } from '@/lib/auth/mongo';
-import { verifyStoredPassword } from '@/lib/auth/password';
 
 function createAuth() {
    const uri = process.env.MONGODB_URI;
@@ -23,13 +22,13 @@ function createAuth() {
          client,
          transaction: mongoTransactionsEnabled(uri),
       }),
+      rateLimit: {
+         storage: 'database',
+      },
       emailAndPassword: {
          enabled: true,
          // Register still sends the user to /login. A session is created on sign-in.
          autoSignIn: false,
-         password: {
-            verify: verifyStoredPassword,
-         },
       },
       socialProviders: {
          google: {

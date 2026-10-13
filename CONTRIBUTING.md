@@ -175,7 +175,7 @@ Mobile: hidden textarea + `onKeyDown` → `HandleText` (composing / modifier / E
 | `/register`          | Server action; schema in `lib/validation/auth.schema.ts` |
 | `/api/auth/[...all]` | Better Auth `GET`/`POST` handlers                        |
 
-Typing does not require a session. `proxy.ts` only redirects signed-in visitors away from `/login` and `/register`. Register password rule of thumb: ≥8, upper, lower, digit. The special-character regex currently requires the literal prefix `A-Za-z0-9` — treat that as a known trap, not a real complexity rule.
+Typing does not require a session. `proxy.ts` only redirects signed-in visitors away from `/login` and `/register`. Register password rule of thumb: ≥8, upper, lower, digit. The special-character regex currently requires the literal prefix `A-Za-z0-9` — treat that as a known trap, not a real complexity rule. Trusted origins come from `BETTER_AUTH_TRUSTED_ORIGINS` (comma-separated) plus `BETTER_AUTH_URL` and `VERCEL_URL`. Rate limits use the database.
 
 ### 🐳 Docker (optional, stale)
 

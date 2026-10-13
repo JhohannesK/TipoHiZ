@@ -42,20 +42,19 @@ pnpm 10 skips dependency lifecycle scripts unless they are in `pnpm-workspace.ya
 
 Typing tests run with **no env vars**. Auth needs:
 
-| Variable                       | Required for                                                        |
-| ------------------------------ | ------------------------------------------------------------------- |
-| `MONGODB_URI`                  | Better Auth MongoDB adapter and `scripts/migrate-to-better-auth.ts` |
-| `BETTER_AUTH_SECRET`           | Session signing                                                     |
-| `BETTER_AUTH_URL`              | Public origin used for OAuth callbacks                              |
-| `GOOGLE_CLIENT_ID` / `SECRET`  | Google OAuth                                                        |
-| `GITHUB_CLIENT_ID` / `SECRET`  | GitHub OAuth                                                        |
-| `TWITTER_CLIENT_ID` / `SECRET` | Twitter/X OAuth                                                     |
+| Variable                       | Required for                                                                           |
+| ------------------------------ | -------------------------------------------------------------------------------------- |
+| `MONGODB_URI`                  | Better Auth MongoDB adapter                                                            |
+| `BETTER_AUTH_SECRET`           | Session signing                                                                        |
+| `BETTER_AUTH_URL`              | Public origin used for OAuth callbacks                                                 |
+| `BETTER_AUTH_TRUSTED_ORIGINS`  | Extra comma-separated origins. `BETTER_AUTH_URL` and `VERCEL_URL` are included as well |
+| `GOOGLE_CLIENT_ID` / `SECRET`  | Google OAuth                                                                           |
+| `GITHUB_CLIENT_ID` / `SECRET`  | GitHub OAuth                                                                           |
+| `TWITTER_CLIENT_ID` / `SECRET` | Twitter/X OAuth                                                                        |
 
 `proxy.ts` redirects a signed-in visitor away from `/login` and `/register`. It does not gate the typing test. Anonymous use is expected.
 
-Auth routes: `GET|POST /api/auth/[...all]`. Credentials login min password length 8. Register (`lib/validation/auth.schema.ts`): name ≥3, email, password ≥8 with upper / lower / digit. The “special character” regex is `/^A-Za-z0-9/` — it matches a literal prefix, not a special char; if register fails unexpectedly, look there first.
-
-Existing NextAuth users move with `pnpm exec tsx scripts/migrate-to-better-auth.ts` (`--dry-run` by default, `--apply` to write). The script does not delete the old `User` and `Account` collections. Every existing session is signed out once the app starts using Better Auth cookies.
+Auth routes: `GET|POST /api/auth/[...all]`. Credentials login min password length 8. Register (`lib/validation/auth.schema.ts`): name ≥3, email, password ≥8 with upper / lower / digit. The “special character” regex is `/^A-Za-z0-9/` — it matches a literal prefix, not a special char; if register fails unexpectedly, look there first. Auth rate limits are stored in MongoDB, not in process memory.
 
 Prisma client is generated to `prisma/generated/prisma` (`output` in `prisma/schema.prisma`). That tree is **committed** — do not hand-edit it. `pnpm build` runs `prisma generate && next build`.
 
