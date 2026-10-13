@@ -117,7 +117,7 @@ git push origin YourBranchName
 Once you have completed the above steps, you are ready to build and run TipoHiZ.
 
 1. Run `pnpm install` in the project root (`postinstall` runs `prisma generate`).
-2. Copy `.env.example` to `.env`. Typing works with empty values. For login/register/OAuth set `MONGODB_URI` + `AUTH_SECRET`, then `pnpm prisma:push`.
+2. Copy `.env.example` to `.env`. Typing works with empty values. For login/register/OAuth set `MONGODB_URI`, `BETTER_AUTH_SECRET`, and `BETTER_AUTH_URL`.
 3. Run `pnpm dev` to start a local dev server on [port 3000](http://localhost:3000). Use <kbd>Ctrl+C</kbd> to kill it.
 4. Optional: `pnpm ts-check`, `pnpm lint`. Pre-commit (husky) runs both plus Prettier.
 
@@ -160,13 +160,13 @@ Mobile: hidden textarea + `onKeyDown` → `HandleText` (composing / modifier / E
 
 ### Auth (optional)
 
-| Path                      | Role                                                     |
-| ------------------------- | -------------------------------------------------------- |
-| `/login`                  | Credentials + OAuth entry (`auth.ts` `pages.signIn`)     |
-| `/register`               | Server action; schema in `lib/validation/auth.schema.ts` |
-| `/api/auth/[...nextAuth]` | NextAuth `GET`/`POST` handlers                           |
+| Path                 | Role                                                     |
+| -------------------- | -------------------------------------------------------- |
+| `/login`             | Credentials + OAuth entry. Provider errors land here.    |
+| `/register`          | Server action; schema in `lib/validation/auth.schema.ts` |
+| `/api/auth/[...all]` | Better Auth `GET`/`POST` handlers                        |
 
-Typing does not require a session. `proxy.ts` re-exports `auth` with no matcher. Register password rule of thumb: ≥8, upper, lower, digit. The special-character regex currently requires the literal prefix `A-Za-z0-9` — treat that as a known trap, not a real complexity rule.
+Typing does not require a session. `proxy.ts` only redirects signed-in visitors away from `/login` and `/register`. Register password rule of thumb: ≥8, upper, lower, digit. The special-character regex currently requires the literal prefix `A-Za-z0-9` — treat that as a known trap, not a real complexity rule.
 
 ### 🐳 Docker (optional, stale)
 

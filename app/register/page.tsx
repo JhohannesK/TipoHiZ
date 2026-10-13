@@ -2,10 +2,12 @@ import React from 'react';
 import { register } from '@/actions/user';
 import AuthForm from '@/components/auth-form';
 import { redirect } from 'next/navigation';
-import { auth } from '@/auth';
+import { getServerSession } from '@/lib/auth/session';
 
-async function Login() {
-   const session = await auth();
+export const dynamic = 'force-dynamic';
+
+async function RegisterPage() {
+   const session = await getServerSession();
 
    if (session) {
       redirect('/');
@@ -18,4 +20,4 @@ async function Login() {
    );
 }
 
-export default Login;
+export default RegisterPage;

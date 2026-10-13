@@ -1,75 +1,82 @@
-import NextAuth, { CredentialsSignin } from 'next-auth';
-import Credentials from 'next-auth/providers/credentials';
-import { compare } from 'bcryptjs';
-import { PrismaAdapter } from '@auth/prisma-adapter';
-import Google from 'next-auth/providers/google';
-import GitHub from 'next-auth/providers/github';
-import Twitter from 'next-auth/providers/twitter';
-import { prisma } from './lib/db';
+import { betterAuth } from 'better-auth';
+import { mongodbAdapter } from '@better-auth/mongo-adapter';
+import { nextCookies } from 'better-auth/next-js';
+import { MongoClient } from 'mongodb';
+import { authTrustedOrigins, resolveAuthBaseUrl } from '@/lib/auth/base-url';
+import { mongoTransactionsEnabled } from '@/lib/auth/mongo';
+import { verifyStoredPassword } from '@/lib/auth/password';
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
-   // Generated edge client is not the stock @prisma/client instance type.
-   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   adapter: PrismaAdapter(prisma as any),
-   session: {
-      strategy: 'jwt',
-   },
-   providers: [
-      Google({
-         clientId: process.env.GOOGLE_CLIENT_ID,
-         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+function createAuth() {
+   const uri = process.env.MONGODB_URI;
+   if (!uri) {
+      throw new Error('MONGODB_URI is not set');
+   }
+
+   const client = new MongoClient(uri);
+   const db = client.db();
+
+   return betterAuth({
+      secret: process.env.BETTER_AUTH_SECRET,
+      baseURL: resolveAuthBaseUrl(),
+      trustedOrigins: authTrustedOrigins(),
+      database: mongodbAdapter(db, {
+         client,
+         transaction: mongoTransactionsEnabled(uri),
       }),
-      GitHub({
-         clientId: process.env.GITHUB_CLIENT_ID,
-         clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      }),
-      Twitter({
-         clientId: process.env.TWITTER_CLIENT_ID,
-         clientSecret: process.env.TWITTER_CLIENT_SECRET,
-      }),
-      Credentials({
-         name: 'credentials',
-         credentials: {
-            email: { label: 'email', type: 'email' },
-            password: { label: 'password', type: 'password' },
+      emailAndPassword: {
+         enabled: true,
+         // Register still sends the user to /login. A session is created on sign-in.
+         autoSignIn: false,
+         password: {
+            verify: verifyStoredPassword,
          },
-         authorize: async (credentials) => {
-            const email = credentials.email as string | undefined;
-            const password = credentials.password as string | undefined;
-
-            if (!email || !password)
-               throw new CredentialsSignin(
-                  'Please provide both email and password.'
-               );
-
-            const user = await prisma.user.findFirst({
-               where: {
-                  email,
-               },
-            });
-
-            if (!user) throw new Error('Invalid credentials.');
-
-            if (!user.password)
-               throw new Error('Please try another login method.');
-
-            const isMatch = await compare(password, user.password);
-
-            if (!isMatch) throw new Error('Invalid credentials.');
-
-            const userData = {
-               name: user.name,
-               email: user.email,
-               id: user.id,
-            };
-
-            return userData;
+      },
+      socialProviders: {
+         google: {
+            clientId: process.env.GOOGLE_CLIENT_ID ?? '',
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
          },
-      }),
-   ],
+         github: {
+            clientId: process.env.GITHUB_CLIENT_ID ?? '',
+            clientSecret: process.env.GITHUB_CLIENT_SECRET ?? '',
+         },
+         twitter: {
+            clientId: process.env.TWITTER_CLIENT_ID ?? '',
+            clientSecret: process.env.TWITTER_CLIENT_SECRET ?? '',
+         },
+      },
+      account: {
+         accountLinking: {
+            enabled: true,
+            allowDifferentEmails: false,
+            requireLocalEmailVerified: true,
+            /**
+             * Google and GitHub are the providers we trust, and only when
+             * they report a verified email. `trustedProviders` also links
+             * when the email is missing or unverified, so the list stays
+             * empty and the verified-email path is the only way in.
+             * Twitter is omitted on purpose. X often returns no email
+             * (Better Auth then stores an unverified placeholder). Those
+             * accounts stay separate unless X returns a verified
+             * confirmed_email.
+             */
+            trustedProviders: [],
+         },
+      },
+      onAPIError: {
+         errorURL: '/login',
+      },
+      plugins: [nextCookies()],
+   });
+}
 
-   pages: {
-      signIn: '/login',
-      error: '/login',
-   },
-});
+type Auth = ReturnType<typeof createAuth>;
+
+const globalForAuth = globalThis as unknown as { tipohizAuth?: Auth };
+
+export function getAuth(): Auth {
+   if (!globalForAuth.tipohizAuth) {
+      globalForAuth.tipohizAuth = createAuth();
+   }
+   return globalForAuth.tipohizAuth;
+}
