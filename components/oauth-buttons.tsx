@@ -1,37 +1,39 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
-import { signIn } from 'next-auth/react';
+import { authClient } from '@/lib/auth-client';
 import { BsGoogle } from 'react-icons/bs';
 import { FaGithub, FaXTwitter } from 'react-icons/fa6';
+
+const providers = [
+   { id: 'google', label: 'Continue with Google', icon: BsGoogle },
+   { id: 'github', label: 'Continue with GitHub', icon: FaGithub },
+   { id: 'twitter', label: 'Continue with X', icon: FaXTwitter },
+] as const;
 
 export function OAuthButtons() {
    return (
       <div className="grid grid-cols-1 gap-3">
-         <Button
-            variant="outline"
-            onClick={() => signIn('google', { callbackUrl: '/' })}
-            className="w-full"
-         >
-            <BsGoogle />
-            Continue with Google
-         </Button>
-
-         <Button
-            variant="outline"
-            onClick={() => signIn('github', { callbackUrl: '/' })}
-            className="w-full"
-         >
-            <FaGithub className="mr-2 h-5 w-5" />
-            Continue with GitHub
-         </Button>
-
-         <Button
-            variant="outline"
-            onClick={() => signIn('twitter', { callbackUrl: '/' })}
-            className="w-full"
-         >
-            <FaXTwitter className="mr-2 h-5 w-5" />
-            Continue with X
-         </Button>
+         {providers.map((provider) => {
+            const Icon = provider.icon;
+            return (
+               <Button
+                  key={provider.id}
+                  variant="outline"
+                  onClick={() =>
+                     authClient.signIn.social({
+                        provider: provider.id,
+                        callbackURL: '/',
+                        errorCallbackURL: '/login',
+                     })
+                  }
+                  className="w-full"
+               >
+                  <Icon className="mr-2 h-5 w-5" />
+                  {provider.label}
+               </Button>
+            );
+         })}
 
          <div className="relative">
             <div className="absolute inset-0 flex items-center">

@@ -22,9 +22,10 @@ import { SvgRender } from './SvgRender';
 interface AuthFormProps {
    mode: 'login' | 'register';
    action: (formData: FormData) => Promise<ActionResponse>;
+   error?: string;
 }
 
-const AuthForm = ({ mode, action }: AuthFormProps) => {
+const AuthForm = ({ mode, action, error }: AuthFormProps) => {
    const [loading, setLoading] = React.useState(false);
    const router = useRouter();
 
@@ -41,6 +42,7 @@ const AuthForm = ({ mode, action }: AuthFormProps) => {
          if (response.success) {
             toast('Success!');
             router.push(mode === 'login' ? '/' : '/login');
+            router.refresh();
          }
          // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
@@ -71,6 +73,11 @@ const AuthForm = ({ mode, action }: AuthFormProps) => {
             </CardDescription>
          </CardHeader>
          <CardContent>
+            {error ? (
+               <p role="alert" className="mb-3 text-sm text-wrong_char">
+                  {error}
+               </p>
+            ) : null}
             <OAuthButtons />
             <form action={onSubmit} className="flex flex-col gap-3">
                {mode === 'register' && (

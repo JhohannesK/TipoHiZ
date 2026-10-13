@@ -4,15 +4,17 @@ import React, { useState } from 'react';
 import { LuUser, LuMenu, LuX } from 'react-icons/lu';
 import { SvgRender } from './SvgRender';
 import Settings from './settings';
-import { signOut, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { LogOut } from 'lucide-react';
 import { Button } from './ui/button';
+import { authClient } from '@/lib/auth-client';
 
 function Header() {
    const [menuOpen, setMenuOpen] = useState(false);
-   const session = useSession();
+   const router = useRouter();
+   const session = authClient.useSession();
    const username = session.data?.user?.name;
-   const isAuthenticated = session.status === 'authenticated';
+   const isAuthenticated = Boolean(session.data?.user);
 
    const toggleMenu = () => {
       setMenuOpen(!menuOpen);
@@ -61,7 +63,16 @@ function Header() {
                </>
             ) : (
                <Button
-                  onClick={() => signOut({ redirectTo: '/login' })}
+                  onClick={() => {
+                     void authClient.signOut({
+                        fetchOptions: {
+                           onSuccess: () => {
+                              router.push('/login');
+                              router.refresh();
+                           },
+                        },
+                     });
+                  }}
                   className="flex items-center justify-center gap-3 p-2 cursor-pointer rounded-xl text-foreground bg-input"
                >
                   <p className="text-sm tracking-wide text-background">
