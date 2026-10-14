@@ -31,6 +31,9 @@ yarn-error.log*
 # pnpm lockfile uses its own formatting
 pnpm-lock.yaml
 
+# generated client; do not reformat on commit
+/prisma/generated
+
 
 #github
 .github
