@@ -14,6 +14,8 @@ const useTimer = (
    const millisecond = useRef(initialTimer * 1000);
    const previous = useRef(millisecond.current);
    const [timer, setTimer] = useState(initialTimer);
+   const bounds = useRef({ lowerBound, upperBound, countDown, runOnStart });
+   bounds.current = { lowerBound, upperBound, countDown, runOnStart };
    const [isRunning, setIsRunning] = useState(runOnStart);
    const [isExited, setIsExited] = useState(false);
    const router = useRouter();
@@ -27,10 +29,12 @@ const useTimer = (
    };
 
    const reset = () => {
-      millisecond.current = initialTimer * 1000;
+      const current = bounds.current;
+      const next = current.countDown ? current.upperBound : current.lowerBound;
+      millisecond.current = next * 1000;
       previous.current = millisecond.current;
-      setTimer(initialTimer);
-      setIsRunning(runOnStart);
+      setTimer(next);
+      setIsRunning(current.runOnStart);
       setIsExited(false);
    };
 
