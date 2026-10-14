@@ -1,5 +1,6 @@
 import { StateCreator } from 'zustand';
 import { PersistOptions } from 'zustand/middleware';
+import type { Keystroke } from '../lib/stats/types';
 
 export interface WordState {
    disabled: boolean;
@@ -11,9 +12,11 @@ export interface WordState {
    activeWordRef: React.RefObject<HTMLDivElement | null> | null;
    typedHistory: string[];
    nextIndex: number;
+   caretPos: number;
    nextCharIdx: number;
    typedEntries: number;
    errorCount: number;
+   keystrokeLog: Keystroke[];
 }
 
 export interface TimeState {

@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
-import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
+import { useThemePreview } from '@/hooks/useThemePreview';
 
 import { THEMES, THEME_COLORS } from './theme.constant';
 import {
@@ -14,7 +14,8 @@ import {
 } from '../ui/dialog';
 
 export default function ThemeChoose() {
-   const { setTheme, theme, resolvedTheme } = useTheme();
+   const { theme, resolvedTheme, bindTheme, dismissPreview } =
+      useThemePreview();
 
    // 'unmounted' - component just rendered;
    // 'mounted' - component has mounted and has been hydrated, and is dialog closed state;
@@ -32,12 +33,23 @@ export default function ThemeChoose() {
    return (
       <Dialog
          open={status === 'dialogOpen'}
-         onOpenChange={(open) => setStatus(open ? 'dialogOpen' : 'mounted')}
+         onOpenChange={(open) => {
+            if (!open) dismissPreview();
+            setStatus(open ? 'dialogOpen' : 'mounted');
+         }}
       >
          <DialogTrigger className="text-input">
             {theme || resolvedTheme}
          </DialogTrigger>
-         <DialogContent className="max-w-[400px] rounded-xl shadow-lg p-6 bg-background border border-gray-300 h-[600px] overflow-y-auto">
+         <DialogContent
+            className="max-w-[400px] rounded-xl shadow-lg p-6 bg-background border border-gray-300 h-[600px] overflow-y-auto"
+            onOpenAutoFocus={(event) => {
+               event.preventDefault();
+               if (event.target instanceof HTMLElement) {
+                  event.target.focus({ preventScroll: true });
+               }
+            }}
+         >
             <DialogHeader>
                <DialogTitle className="mb-4 text-xl font-semibold text-center text-input">
                   Choose a Theme
@@ -57,10 +69,7 @@ export default function ThemeChoose() {
                               : 'bg-background text-input border border-input hover:bg-accent hover:text-destructive transition duration-150 ease-in-out'
                         }`}
                         key={currtheme}
-                        onClick={() => {
-                           setTheme(currtheme);
-                           setStatus('mounted');
-                        }}
+                        {...bindTheme(currtheme, () => setStatus('mounted'))}
                      >
                         {currtheme}
                         <div className="flex gap-1 px-3 py-1 rounded-full bg-foreground">

@@ -1,8 +1,8 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { LuSettings, LuVolume2, LuVolumeX } from 'react-icons/lu';
-import { useTheme } from 'next-themes';
 import { userConfigStore } from '@/store';
+import { useThemePreview } from '@/hooks/useThemePreview';
 import { toggleSound } from '@/store/actions/ConfigActions';
 import { THEMES } from '@/components/expo/theme.constant';
 import {
@@ -17,7 +17,7 @@ import {
 export default function Settings() {
    const [mounted, setMounted] = useState(false); //tracking whether the component is mounted or not
    const { sound } = userConfigStore();
-   const { setTheme, theme } = useTheme();
+   const { theme, bindTheme, dismissPreview } = useThemePreview();
 
    const handleSound = () => {
       const typingSound = new Audio('/modules/AudioFiles/type.mp3');
@@ -33,8 +33,15 @@ export default function Settings() {
    if (!mounted) return null;
 
    return (
-      <Dialog>
-         <DialogTrigger className="flex items-center justify-center gap-3 p-2 cursor-pointer rounded-xl text-background bg-input">
+      <Dialog
+         onOpenChange={(open) => {
+            if (!open) dismissPreview();
+         }}
+      >
+         <DialogTrigger
+            aria-label="Settings"
+            className="flex items-center justify-center gap-3 p-2 cursor-pointer rounded-xl text-background bg-input"
+         >
             <LuSettings />
          </DialogTrigger>
          <DialogContent className="max-w-[400px] rounded-xl shadow-lg p-6 bg-background border border-gray-300 h-[600px] overflow-y-auto">
@@ -74,7 +81,7 @@ export default function Settings() {
                               : 'bg-background text-input border border-input hover:bg-accent hover:text-destructive transition duration-150 ease-in-out'
                         }`}
                         key={currtheme}
-                        onClick={() => setTheme(currtheme)}
+                        {...bindTheme(currtheme)}
                      >
                         {currtheme}
                      </button>

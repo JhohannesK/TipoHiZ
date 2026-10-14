@@ -2,7 +2,9 @@ import { z } from 'zod';
 
 export const loginSchema = z.object({
    email: z.email({ error: 'Invalid email address' }),
-   password: z.string().min(8),
+   password: z
+      .string()
+      .min(8, { error: 'Password must be at least 8 characters long' }),
 });
 
 export const registerSchema = z.object({
@@ -20,7 +22,7 @@ export const registerSchema = z.object({
          error: 'Password must contain at least one lowercase letter',
       })
       .regex(/[0-9]/, { error: 'Password must contain at least one number' })
-      .regex(/^A-Za-z0-9/, {
+      .regex(/[^A-Za-z0-9]/, {
          error: 'Password must contain at least one special character',
       }),
 });
