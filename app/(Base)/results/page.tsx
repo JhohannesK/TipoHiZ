@@ -1,16 +1,18 @@
 'use client';
 import React, { useEffect } from 'react';
-import { StatCard } from '@/components/stat-card';
-import { PersonalBests } from '@/components/personal-bests';
-import { ResultsChart } from '@/components/results-chart';
-import { userConfigStore, wordStore } from '@/store';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { formatTime } from '@/lib/utils';
+import { PersonalBests } from '@/components/personal-bests';
+import { ResultsChart } from '@/components/results-chart';
+import { StatCard } from '@/components/stat-card';
+import { useShiftEnterRestart } from '@/hooks/useShiftEnterRestart';
+import { useSavedResults } from '@/hooks/useSavedResults';
 import { displayedResult, formatTestMode } from '@/lib/results/display';
 import { isRestartBlockedTarget, tabRestarts } from '@/lib/results/restart-key';
+import { formatTime } from '@/lib/utils';
+import { trackTestRestarted } from '@/lib/usage-events';
+import { userConfigStore, wordStore } from '@/store';
 import { resetStates } from '@/store/actions/TimeActions';
-import { useSavedResults } from '@/hooks/useSavedResults';
 
 function wpmText(value: number): string {
    return `${value.toFixed(2)}wpm`;
@@ -40,6 +42,12 @@ export default function ResultsPage() {
       saved: saved[0] ?? null,
    });
    const { stats } = display;
+
+   useShiftEnterRestart(() => {
+      trackTestRestarted('shortcut');
+      resetStates();
+      router.push('/');
+   });
 
    useEffect(() => {
       function onKeyDown(event: KeyboardEvent) {
