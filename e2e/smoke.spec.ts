@@ -20,10 +20,10 @@ test('should show wpm and accuracy after a timed test finishes', async ({
    await expect(
       page.getByRole('heading', { name: 'Game Results page' })
    ).toBeAttached();
+   await expect(page.getByRole('heading', { name: /^wpm:$/i })).toBeVisible();
    await expect(
-      page.getByRole('heading', { name: /Average Speed/ })
+      page.getByRole('heading', { name: /^accuracy:$/i })
    ).toBeVisible();
-   await expect(page.getByRole('heading', { name: /Accuracy/ })).toBeVisible();
    await expect(page.getByText(/\d+\.\d+wpm/).first()).toBeVisible();
    await expect(page.getByText(/\d+\.\d+%/).first()).toBeVisible();
 });
