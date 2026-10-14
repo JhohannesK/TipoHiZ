@@ -1,43 +1,36 @@
+import { resetStates } from '../store/actions/TimeActions';
 import { setWordList } from '../store/actions/WordActions';
 import { userConfigStore } from '../store';
 
-export const resetTest = async (type: string, reset: () => void) => {
-   document
-      .querySelectorAll('.wrong, .right')
-      .forEach((el) => el.classList.remove('wrong', 'right'));
-
-   const { language } = userConfigStore.getState();
-
+async function loadWords(language: string, type: string): Promise<string[]> {
    try {
       if (language !== 'english') {
          if (type === 'default') {
             const wordModule = await import(
                `../modules/TextFiles/${language}.json`
             );
-            setWordList(wordModule.default);
-         } else if (type === 'punctuation') {
+            return wordModule.default;
+         }
+         if (type === 'punctuation') {
             try {
                const wordModule = await import(
                   `../modules/TextFiles/${language}_punctuation.json`
                );
-               setWordList(wordModule.default);
+               return wordModule.default;
             } catch (error) {
                console.log(error);
                const wordModule = await import(
                   `../modules/TextFiles/punctuation.json`
                );
-               setWordList(wordModule.default);
+               return wordModule.default;
             }
-         } else {
-            const wordModule = await import(
-               `../modules/TextFiles/${type}.json`
-            );
-            setWordList(wordModule.default);
          }
-      } else {
          const wordModule = await import(`../modules/TextFiles/${type}.json`);
-         setWordList(wordModule.default);
+         return wordModule.default;
       }
+
+      const wordModule = await import(`../modules/TextFiles/${type}.json`);
+      return wordModule.default;
    } catch (error) {
       // Fallback to default if any file doesn't exist
       console.error(
@@ -45,12 +38,26 @@ export const resetTest = async (type: string, reset: () => void) => {
          error
       );
       const wordModule = await import(`../modules/TextFiles/default.json`);
-      setWordList(wordModule.default);
+      return wordModule.default;
    }
+}
+
+export const resetTest = async (type: string, reset: () => void) => {
+   document
+      .querySelectorAll('.wrong, .right')
+      .forEach((el) => el.classList.remove('wrong', 'right'));
+
+   const { language } = userConfigStore.getState();
+   const words = await loadWords(language, type);
+
+   // resetStates clears the word list. Apply the fresh list after that,
+   // or the passage disappears once scrollIntoView no longer throws.
+   reset();
+   resetStates();
+   setWordList(words);
 
    const startView = document.querySelector('.startView');
    if (startView) {
       startView.scrollIntoView();
    }
-   reset();
 };

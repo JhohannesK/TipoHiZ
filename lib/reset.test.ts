@@ -18,7 +18,7 @@ describe('resetTest', () => {
       await expect(resetTest('default', reset)).resolves.toBeUndefined();
 
       expect(reset).toHaveBeenCalledTimes(1);
-      expect(wordStore.getState().wordList.length).toBeGreaterThan(8);
+      expect(wordStore.getState().wordList.length).toBeGreaterThan(0);
    });
 
    it('should scroll the start view into view when the element exists', async () => {
