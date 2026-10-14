@@ -20,10 +20,10 @@ export const HandleText = (
    const { userInput, activeWord, typedHistory, nextIndex, wordList } =
       wordStore.getState();
 
-   // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-   const currWordEl = activeWordRef?.current!;
-
-   currWordEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+   const currWordEl = activeWordRef?.current;
+   if (currWordEl) {
+      currWordEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+   }
 
    let inputWithShift = '';
    if (key.startsWith('Shift')) {

@@ -1,40 +1,51 @@
-import React, { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import { BsArrowRepeat } from 'react-icons/bs';
 import { resetTest } from '@/lib/reset';
+import { isShiftEnter, isTypingInOtherField } from '@/lib/restart-shortcut';
 import { trackTestRestarted, type RestartHow } from '@/lib/usage-events';
 import { userConfigStore } from '@/store';
-import { setCaretRef, setUserInput } from '@/store/actions/WordActions';
-import { BsArrowRepeat } from 'react-icons/bs';
 import { resetStates } from '@/store/actions/TimeActions';
+import { setCaretRef, setUserInput } from '@/store/actions/WordActions';
+
+function restartFromStore(reset: () => void, how: RestartHow) {
+   trackTestRestarted(how);
+   const { type } = userConfigStore.getState();
+   resetTest(type, reset);
+   reset();
+   resetStates();
+   setUserInput('');
+   setCaretRef(null);
+}
 
 export default function ResetTestButton({ reset }: { reset: () => void }) {
-   const { type } = userConfigStore((state) => state);
-   const previousKeyRef = React.useRef('');
-
-   const restart = (how: RestartHow) => {
-      trackTestRestarted(how);
-      resetTest(type, reset);
-      reset();
-      resetStates();
-      setUserInput('');
-      setCaretRef(null);
-   };
+   const resetRef = useRef(reset);
+   resetRef.current = reset;
+   const previousKeyRef = useRef('');
 
    useEffect(() => {
-      function handleKeydown(e: KeyboardEvent) {
-         if (e.key === 'Tab') {
-            e.preventDefault();
-            previousKeyRef.current = e.key;
-            return;
-         }
-
-         if (e.key === 'Enter' && previousKeyRef.current === 'Tab') {
-            e.preventDefault();
+      function handleKeydown(event: KeyboardEvent) {
+         if (event.isComposing || isTypingInOtherField(event.target)) {
             previousKeyRef.current = '';
-            restart('shortcut');
             return;
          }
 
+         if (event.key === 'Tab') {
+            event.preventDefault();
+            previousKeyRef.current = event.key;
+            return;
+         }
+
+         const tabThenEnter =
+            event.key === 'Enter' && previousKeyRef.current === 'Tab';
+
+         if (!tabThenEnter && !isShiftEnter(event)) {
+            previousKeyRef.current = '';
+            return;
+         }
+
+         event.preventDefault();
          previousKeyRef.current = '';
+         restartFromStore(resetRef.current, 'shortcut');
       }
 
       document.addEventListener('keydown', handleKeydown);
@@ -48,9 +59,9 @@ export default function ResetTestButton({ reset }: { reset: () => void }) {
       <button
          className="flex items-center justify-center gap-4 px-3 pt-8 pb-2 mx-auto text-input"
          aria-label="button to restart test"
-         onClick={(e) => {
-            restart('button');
-            e.preventDefault();
+         onClick={(event) => {
+            restartFromStore(resetRef.current, 'button');
+            event.preventDefault();
          }}
       >
          <BsArrowRepeat
