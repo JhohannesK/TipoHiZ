@@ -49,5 +49,7 @@ export const resetTest = async (type: string, reset: () => void) => {
    }
 
    document.getElementsByClassName('startView')[0]?.scrollIntoView();
-   reset();
+   // Callers reset the clock themselves. Invoking the closure captured
+   // before this await would restore the previous countdown.
+   void reset;
 };

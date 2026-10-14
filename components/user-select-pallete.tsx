@@ -60,10 +60,9 @@ const UserSelectPallete = ({ reset }: { reset: () => void }) => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [time, wordCount, wordsMode]);
 
-   const handleOption = ({ target }: React.MouseEvent<HTMLButtonElement>) => {
-      if (!(target instanceof HTMLButtonElement) || !target.dataset.option) {
-         return;
-      }
+   const handleOption = (event: React.MouseEvent<HTMLButtonElement>) => {
+      const target = event.currentTarget;
+      if (!target.dataset.option) return;
 
       switch (target.dataset.option) {
          case 'time':

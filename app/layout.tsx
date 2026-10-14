@@ -7,6 +7,7 @@ import { ThemeProvider } from '@/lib/providers/theme-provider';
 import Head from 'next/head';
 import { THEMES } from '@/components/expo/theme.constant';
 import { Toaster } from '@/components/ui/toaster';
+import StoreDevtools from '@/components/store-devtools';
 
 const font = Inconsolata({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
             className={`min-h-screen bg-background text-foreground font-sans antialiased ${font.variable}`}
          >
             <Toaster />
+            {process.env.NODE_ENV === 'development' ? <StoreDevtools /> : null}
             <ThemeProvider
                attribute="class"
                defaultTheme="dark-gray"
