@@ -1,3 +1,4 @@
+import { resetKeystrokeClock } from '../../lib/stats/clock';
 import { wordStore } from '..';
 
 export const setActiveWord = (activeWord: string) =>
@@ -18,7 +19,13 @@ export const setWordList = (wordList: string[]) => {
       activeWord: shuffledList[0],
       userInput: '',
       typedHistory: [],
+      keystrokeLog: [],
+      nextIndex: 0,
+      nextCharIdx: 0,
+      typedEntries: 0,
+      errorCount: 0,
    }));
+   resetKeystrokeClock();
 };
 
 export const setCaretRef = (

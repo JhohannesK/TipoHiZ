@@ -1,9 +1,14 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { track } from '@vercel/analytics';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { userConfigStore, wordStore } from '@/store';
 import { resetStores } from '@/test/utils';
 import ResultsPage from './page';
+
+vi.mock('@vercel/analytics', () => ({
+   track: vi.fn(),
+}));
 
 const { push } = vi.hoisted(() => ({
    push: vi.fn(),
@@ -65,7 +70,9 @@ describe('results restart shortcut', () => {
       await user.keyboard('{Shift>}{Enter}{/Shift}');
 
       expect(push).toHaveBeenCalledWith('/');
+      expect(track).toHaveBeenCalledWith('test_restarted', { how: 'shortcut' });
       expect(wordStore.getState().typedEntries).toBe(0);
+      expect(wordStore.getState().keystrokeLog).toEqual([]);
       expect(userConfigStore.getState()).toMatchObject({
          time: 15,
          category: 'words',
@@ -91,13 +98,13 @@ describe('results restart shortcut', () => {
       expect(userConfigStore.getState().time).toBe(15);
    });
 
-   it('should leave tab then enter alone on the results page', async () => {
+   it('should retake on tab without changing the saved mode or duration', async () => {
       const user = userEvent.setup();
       render(<ResultsPage />);
 
-      await user.keyboard('{Tab}{Enter}');
+      await user.keyboard('{Tab}');
 
-      expect(push).not.toHaveBeenCalled();
+      expect(push).toHaveBeenCalledWith('/');
       expect(userConfigStore.getState()).toMatchObject({
          time: 15,
          category: 'words',

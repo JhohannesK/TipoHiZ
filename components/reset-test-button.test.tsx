@@ -1,8 +1,10 @@
-import { act, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { track } from '@vercel/analytics';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import useTimer from '@/hooks/useTimer';
 import { resetTest } from '@/lib/reset';
+import { abandonTest } from '@/lib/usage-events';
 import { userConfigStore } from '@/store';
 import { setCategory, setType } from '@/store/actions/ConfigActions';
 import { setDefaultTime } from '@/store/actions/TimeActions';
@@ -18,6 +20,10 @@ vi.mock('next/navigation', () => ({
       forward: vi.fn(),
       refresh: vi.fn(),
    }),
+}));
+
+vi.mock('@vercel/analytics', () => ({
+   track: vi.fn(),
 }));
 
 vi.mock('@/lib/reset', () => ({
@@ -51,6 +57,7 @@ function savedConfig(): {
 describe('ResetTestButton', () => {
    beforeEach(() => {
       resetStores();
+      abandonTest();
       userConfigStore.setState({
          time: 60,
          category: 'time',
@@ -95,6 +102,7 @@ describe('ResetTestButton', () => {
          'punctuation',
          expect.any(Function)
       );
+      expect(track).toHaveBeenCalledWith('test_restarted', { how: 'shortcut' });
    });
 
    it('should keep the chosen duration when tab then enter restarts', async () => {
@@ -116,6 +124,7 @@ describe('ResetTestButton', () => {
          'punctuation',
          expect.any(Function)
       );
+      expect(track).toHaveBeenCalledWith('test_restarted', { how: 'shortcut' });
    });
 
    it('should keep the saved config when the restart button is clicked', async () => {
@@ -132,6 +141,7 @@ describe('ResetTestButton', () => {
          category: 'words',
          type: 'punctuation',
       });
+      expect(track).toHaveBeenCalledWith('test_restarted', { how: 'button' });
    });
 
    it('should ignore shift+enter when another input is focused', async () => {
@@ -148,6 +158,7 @@ describe('ResetTestButton', () => {
       await user.keyboard('{Shift>}{Enter}{/Shift}');
 
       expect(resetTest).not.toHaveBeenCalled();
+      expect(track).not.toHaveBeenCalled();
       expect(screen.getByText('60')).toBeInTheDocument();
       expect(savedConfig()).toMatchObject({
          time: 15,
@@ -174,6 +185,7 @@ describe('ResetTestButton', () => {
          'punctuation',
          expect.any(Function)
       );
+      expect(track).toHaveBeenCalledWith('test_restarted', { how: 'shortcut' });
    });
 
    it('should ignore enter when tab was not pressed first', async () => {
@@ -184,6 +196,65 @@ describe('ResetTestButton', () => {
       await user.keyboard('{Control>}{Shift>}{Enter}{/Shift}{/Control}');
 
       expect(resetTest).not.toHaveBeenCalled();
+      expect(track).not.toHaveBeenCalled();
       expect(screen.getByText('60')).toBeInTheDocument();
+   });
+});
+
+describe('ResetTestButton usage events', () => {
+   const reset = vi.fn();
+
+   beforeEach(() => {
+      resetStores();
+      abandonTest();
+      reset.mockClear();
+   });
+
+   it('should track a button restart', () => {
+      render(<ResetTestButton reset={reset} />);
+
+      fireEvent.click(screen.getByRole('button', { name: /restart test/i }));
+
+      expect(track).toHaveBeenCalledWith('test_restarted', { how: 'button' });
+      expect(resetTest).toHaveBeenCalledTimes(1);
+      expect(reset).toHaveBeenCalledTimes(1);
+   });
+
+   it('should track a tab then enter shortcut restart', () => {
+      render(<ResetTestButton reset={reset} />);
+
+      fireEvent.keyDown(document, { key: 'Tab' });
+      fireEvent.keyDown(document, { key: 'Enter' });
+
+      expect(track).toHaveBeenCalledTimes(1);
+      expect(track).toHaveBeenCalledWith('test_restarted', {
+         how: 'shortcut',
+      });
+      expect(reset).toHaveBeenCalledTimes(1);
+   });
+
+   it('should track shift+enter as a shortcut restart', () => {
+      render(<ResetTestButton reset={reset} />);
+
+      fireEvent.keyDown(document, {
+         key: 'Enter',
+         shiftKey: true,
+      });
+
+      expect(track).toHaveBeenCalledTimes(1);
+      expect(track).toHaveBeenCalledWith('test_restarted', {
+         how: 'shortcut',
+      });
+      expect(reset).toHaveBeenCalledTimes(1);
+   });
+
+   it('should not track enter without a preceding tab', () => {
+      render(<ResetTestButton reset={reset} />);
+
+      fireEvent.keyDown(document, { key: 'Enter' });
+      fireEvent.keyDown(document, { key: 'Enter' });
+
+      expect(track).not.toHaveBeenCalled();
+      expect(reset).not.toHaveBeenCalled();
    });
 });

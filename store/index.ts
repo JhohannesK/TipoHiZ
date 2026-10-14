@@ -2,7 +2,6 @@ import { persist } from 'zustand/middleware';
 import Constants from '../modules/_constants';
 import { IuserConfig, MyPersist, WordState } from './@types.';
 import { create } from 'zustand';
-import { mountStoreDevtool } from 'simple-zustand-devtools';
 
 export const userConfigStore = create<IuserConfig>()(
    (persist as unknown as MyPersist)(
@@ -34,6 +33,7 @@ export const wordStore = create<WordState>(() => ({
    nextCharIdx: 0,
    typedEntries: 0,
    errorCount: 0,
+   keystrokeLog: [],
 }));
 
 // export const timeStore = create<TimeState>(() => ({
@@ -41,8 +41,3 @@ export const wordStore = create<WordState>(() => ({
 //    isRunning: false,
 //    timer: 120
 // }))
-
-if (process.env.NODE_ENV === 'development') {
-   mountStoreDevtool('userStore', userConfigStore);
-   mountStoreDevtool('wordStore', wordStore);
-}

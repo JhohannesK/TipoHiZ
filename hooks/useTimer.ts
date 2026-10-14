@@ -1,5 +1,6 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { persistFinishedTest } from '../lib/stats/persist-client';
 
 // ref: https://stackoverflow.com/questions/63984376/how-can-i-implement-this-countdown-timer-in-react-with-hooks
 const useTimer = (
@@ -13,21 +14,11 @@ const useTimer = (
    const millisecond = useRef(initialTimer * 1000);
    const previous = useRef(millisecond.current);
    const [timer, setTimer] = useState(initialTimer);
+   const bounds = useRef({ lowerBound, upperBound, countDown, runOnStart });
+   bounds.current = { lowerBound, upperBound, countDown, runOnStart };
    const [isRunning, setIsRunning] = useState(runOnStart);
    const [isExited, setIsExited] = useState(false);
    const router = useRouter();
-   const resetBoundsRef = useRef({
-      lowerBound,
-      upperBound,
-      countDown,
-      runOnStart,
-   });
-   resetBoundsRef.current = {
-      lowerBound,
-      upperBound,
-      countDown,
-      runOnStart,
-   };
 
    const run = () => {
       setIsRunning(true);
@@ -38,14 +29,12 @@ const useTimer = (
    };
 
    const reset = () => {
-      const bounds = resetBoundsRef.current;
-      const nextTimer = bounds.countDown
-         ? bounds.upperBound
-         : bounds.lowerBound;
-      millisecond.current = nextTimer * 1000;
+      const current = bounds.current;
+      const next = current.countDown ? current.upperBound : current.lowerBound;
+      millisecond.current = next * 1000;
       previous.current = millisecond.current;
-      setTimer(nextTimer);
-      setIsRunning(bounds.runOnStart);
+      setTimer(next);
+      setIsRunning(current.runOnStart);
       setIsExited(false);
    };
 
@@ -72,7 +61,8 @@ const useTimer = (
          if (countDown && millisecond.current <= lowerBound * 1000) {
             if (exitCallback !== null) {
                setIsExited(true);
-               // exitCallback();
+               if (typeof exitCallback === 'function') exitCallback();
+               persistFinishedTest();
                router.push('/results');
             }
             setTimer(lowerBound);
@@ -80,7 +70,8 @@ const useTimer = (
          } else if (!countDown && millisecond.current >= upperBound * 1000) {
             if (exitCallback !== null) {
                setIsExited(true);
-               // exitCallback();
+               if (typeof exitCallback === 'function') exitCallback();
+               persistFinishedTest();
                router.push('/results');
             }
             setTimer(upperBound);

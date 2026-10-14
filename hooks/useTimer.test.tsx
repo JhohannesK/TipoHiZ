@@ -126,6 +126,22 @@ describe('useTimer', () => {
       expect(result.current.isExited).toBe(false);
    });
 
+   it('should reset to the latest upper bound from a stale reset callback', () => {
+      const { result, rerender } = renderHook(
+         ({ upperBound }) => useTimer(1, upperBound),
+         { initialProps: { upperBound: 30 } }
+      );
+      const staleReset = result.current.reset;
+
+      rerender({ upperBound: 15 });
+      act(() => {
+         staleReset();
+      });
+
+      expect(result.current.timer).toBe(15);
+      expect(result.current.isRunning).toBe(false);
+   });
+
    it('should use the latest upper bound when reset runs after a rerender', () => {
       const { result, rerender } = renderHook(
          ({ upperBound }) => useTimer(1, upperBound),
@@ -172,6 +188,38 @@ describe('useTimer', () => {
       expect(result.current.timer).toBe(1);
       expect(result.current.isExited).toBe(true);
       expect(push).toHaveBeenCalledWith('/results');
+   });
+
+   it('should call the exit callback once before opening results', () => {
+      const onExit = vi.fn();
+      const { result } = renderHook(() => useTimer(1, 2, true, false, onExit));
+
+      act(() => {
+         result.current.run();
+      });
+      advance(0);
+      advance(1000);
+
+      expect(onExit).toHaveBeenCalledTimes(1);
+      expect(push).toHaveBeenCalledWith('/results');
+   });
+
+   it('should not call the exit callback when the timer is reset first', () => {
+      const onExit = vi.fn();
+      const { result } = renderHook(() => useTimer(1, 5, true, false, onExit));
+
+      act(() => {
+         result.current.run();
+      });
+      advance(0);
+      advance(1000);
+      act(() => {
+         result.current.reset();
+      });
+      advance(5000);
+
+      expect(onExit).not.toHaveBeenCalled();
+      expect(push).not.toHaveBeenCalled();
    });
 
    it('should reach zero and navigate when the lower bound is zero', () => {

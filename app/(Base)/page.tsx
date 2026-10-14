@@ -18,20 +18,41 @@ import {
 } from '@/components/ui/select';
 import { languageOptions } from '@/lib/i18n';
 import { resetTest } from '@/lib/reset';
+import {
+   abandonTest,
+   trackTestFinished,
+   trackTestStarted,
+} from '@/lib/usage-events';
 
 export default function HomePage() {
    const { time, language, type } = userConfigStore((state) => state);
-   const { timer, run, reset } = useTimer(1, time);
+   const { timer, run, reset } = useTimer(
+      1,
+      time,
+      true,
+      false,
+      trackTestFinished
+   );
    const { sound } = userConfigStore();
+
+   const beginTest = () => {
+      trackTestStarted();
+      run();
+   };
+
+   const resetTimer = () => {
+      abandonTest();
+      reset();
+   };
 
    const handleLanguageChange = (value: string) => {
       setLanguage(value);
-      resetTest(type, reset);
+      resetTest(type, resetTimer);
    };
 
    return (
       <div>
-         <UserSelectPallete reset={reset} />
+         <UserSelectPallete reset={resetTimer} />
          <div className="flex items-center justify-between mt-16 sm:px-10">
             <div className="flex-wrap text-xl font-medium font-poppins text-accent">
                <div className="mb-2">{timer}</div>
@@ -60,8 +81,8 @@ export default function HomePage() {
                </div>
             </div>
          </div>
-         <TextArea sound={sound} run={run} />
-         <ResetTestButton reset={reset} />
+         <TextArea sound={sound} run={beginTest} />
+         <ResetTestButton reset={resetTimer} />
       </div>
    );
 }
