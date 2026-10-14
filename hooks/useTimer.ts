@@ -61,6 +61,7 @@ const useTimer = (
          if (countDown && millisecond.current <= lowerBound * 1000) {
             if (exitCallback !== null) {
                setIsExited(true);
+               if (typeof exitCallback === 'function') exitCallback();
                persistFinishedTest();
                router.push('/results');
             }
@@ -69,6 +70,7 @@ const useTimer = (
          } else if (!countDown && millisecond.current >= upperBound * 1000) {
             if (exitCallback !== null) {
                setIsExited(true);
+               if (typeof exitCallback === 'function') exitCallback();
                persistFinishedTest();
                router.push('/results');
             }
