@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { formatTime } from '@/lib/utils';
 import { calculateStats } from '@/lib/stats/calculate';
 import { statsFromResult } from '@/lib/stats/aggregate';
+import { testDuration } from '@/lib/stats/record';
 import {
    Select,
    SelectContent,
@@ -36,13 +37,14 @@ export default function ResultsPage() {
    const nextIndex = wordStore((state) => state.nextIndex);
    const saved = useSavedResults();
 
+   const timing = testDuration(keystrokeLog, category, time);
    const liveStats: TestStats | null =
       keystrokeLog.length === 0
          ? null
          : calculateStats({
               log: keystrokeLog,
               words: wordList.slice(0, nextIndex + 1),
-              durationMs: time * 1000,
+              durationMs: timing.durationMs,
            });
    const savedCurrent = saved[0] ?? null;
    const stats =
@@ -52,9 +54,11 @@ export default function ResultsPage() {
          : calculateStats({
               log: [],
               words: [],
-              durationMs: time * 1000,
+              durationMs: timing.durationMs,
            }));
-   const duration = liveStats ? time : savedCurrent?.durationSeconds ?? time;
+   const duration = liveStats
+      ? timing.durationSeconds
+      : savedCurrent?.durationSeconds ?? time;
 
    return (
       <div className="pb-8 text-input">
@@ -109,6 +113,7 @@ export default function ResultsPage() {
                         {stats.samples.map((sample) => (
                            <div
                               key={sample.second}
+                              data-testid="speed-sample"
                               className="min-w-14 rounded-lg border border-input/30 px-2 py-2 text-center"
                            >
                               <p className="text-xs text-input/50">

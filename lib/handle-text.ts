@@ -1,8 +1,9 @@
 import React from 'react';
-import { wordStore } from '../store';
+import { userConfigStore, wordStore } from '../store';
 import {
    afterPressingSpace,
    setChar,
+   setDisabled,
    setNextChar,
    setPrevChar,
 } from '../store/actions/WordActions';
@@ -11,12 +12,36 @@ import {
    classifyTypedKey,
    syncKeystrokeStats,
 } from './stats/record';
+import { wordsTestFinished } from './words';
+
+function finishWordsTest(onFinish?: () => void): void {
+   const state = wordStore.getState();
+   const { category, wordCount } = userConfigStore.getState();
+   if (
+      !wordsTestFinished({
+         category,
+         wordCount,
+         wordListLength: state.wordList.length,
+         nextIndex: state.nextIndex,
+         activeWord: state.activeWord ?? '',
+         userInput: state.userInput,
+      })
+   ) {
+      return;
+   }
+
+   setDisabled(true);
+   onFinish?.();
+}
 
 export const HandleText = (
    key: string,
    activeWordRef: React.RefObject<HTMLDivElement | null> | null,
-   run: () => void
+   run: () => void,
+   onFinish?: () => void
 ) => {
+   if (wordStore.getState().disabled) return;
+
    const { userInput, activeWord, typedHistory, nextIndex, wordList } =
       wordStore.getState();
 
@@ -90,6 +115,7 @@ export const HandleText = (
             userInput: state.userInput + char,
          }));
          syncKeystrokeStats();
+         finishWordsTest(onFinish);
          break;
       }
       case ' ':
@@ -105,6 +131,7 @@ export const HandleText = (
          });
          afterPressingSpace();
          syncKeystrokeStats();
+         finishWordsTest(onFinish);
          break;
       default: {
          const decision = classifyTypedKey(activeWord, userInput, key);
@@ -119,6 +146,7 @@ export const HandleText = (
          setChar(key);
          syncKeystrokeStats();
          run();
+         finishWordsTest(onFinish);
          break;
       }
    }

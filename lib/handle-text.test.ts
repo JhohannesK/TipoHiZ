@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { HandleText } from './handle-text';
-import { wordStore } from '../store';
+import { userConfigStore, wordStore } from '../store';
 import { initialWordState, resetStores } from '../test/utils';
 
 function wordRef(): React.RefObject<HTMLDivElement | null> {
@@ -174,5 +174,72 @@ describe('HandleText', () => {
    it('should type when the active word element is missing', () => {
       expect(() => HandleText('z', null, run)).not.toThrow();
       expect(wordStore.getState().userInput).toBe('z');
+   });
+
+   it('should finish a words test when the last word is typed', () => {
+      const onFinish = vi.fn();
+      userConfigStore.setState({ category: 'words', wordCount: 10 });
+      wordStore.setState({
+         ...initialWordState,
+         wordList: ['cat', 'dog'],
+         activeWord: 'cat',
+      });
+      const ref = wordRef();
+
+      HandleText('c', ref, run, onFinish);
+      HandleText('a', ref, run, onFinish);
+      HandleText('t', ref, run, onFinish);
+      HandleText(' ', ref, run, onFinish);
+
+      expect(onFinish).not.toHaveBeenCalled();
+
+      HandleText('d', ref, run, onFinish);
+      HandleText('o', ref, run, onFinish);
+      HandleText('g', ref, run, onFinish);
+
+      expect(onFinish).toHaveBeenCalledTimes(1);
+      expect(wordStore.getState().disabled).toBe(true);
+      expect(wordStore.getState().userInput).toBe('dog');
+      expect(wordStore.getState().nextIndex).toBe(1);
+
+      HandleText('x', ref, run, onFinish);
+
+      expect(wordStore.getState().userInput).toBe('dog');
+      expect(onFinish).toHaveBeenCalledTimes(1);
+   });
+
+   it('should finish a words test when space submits the last word', () => {
+      const onFinish = vi.fn();
+      userConfigStore.setState({ category: 'words', wordCount: 10 });
+      wordStore.setState({
+         ...initialWordState,
+         wordList: ['cat'],
+         activeWord: 'cat',
+         userInput: 'ca',
+         nextIndex: 0,
+      });
+
+      HandleText(' ', wordRef(), run, onFinish);
+
+      expect(onFinish).toHaveBeenCalledTimes(1);
+      expect(wordStore.getState().nextIndex).toBe(1);
+      expect(wordStore.getState().disabled).toBe(true);
+   });
+
+   it('should keep a timed test open after the last word is typed', () => {
+      const onFinish = vi.fn();
+      const ref = wordRef();
+
+      HandleText('c', ref, run, onFinish);
+      HandleText('a', ref, run, onFinish);
+      HandleText('t', ref, run, onFinish);
+      HandleText(' ', ref, run, onFinish);
+      HandleText('d', ref, run, onFinish);
+      HandleText('o', ref, run, onFinish);
+      HandleText('g', ref, run, onFinish);
+
+      expect(onFinish).not.toHaveBeenCalled();
+      expect(wordStore.getState().disabled).toBe(false);
+      expect(wordStore.getState().userInput).toBe('dog');
    });
 });

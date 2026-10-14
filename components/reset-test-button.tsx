@@ -8,6 +8,10 @@ import { resetStates } from '@/store/actions/TimeActions';
 export default function ResetTestButton({ reset }: { reset: () => void }) {
    const { type } = userConfigStore((state) => state);
    const previousKeyRef = React.useRef('');
+   const resetRef = React.useRef(reset);
+   const typeRef = React.useRef(type);
+   resetRef.current = reset;
+   typeRef.current = type;
 
    useEffect(() => {
       function handleKeydown(e: KeyboardEvent) {
@@ -21,8 +25,9 @@ export default function ResetTestButton({ reset }: { reset: () => void }) {
             e.preventDefault();
             previousKeyRef.current = '';
 
-            resetTest(type, reset);
-            reset();
+            const restart = () => resetRef.current();
+            resetTest(typeRef.current, restart);
+            restart();
             resetStates();
             setUserInput('');
             setCaretRef(null);

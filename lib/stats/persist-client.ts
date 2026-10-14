@@ -1,4 +1,5 @@
 import { buildFinishedResult } from './record';
+import { trackTestFinished } from './usage';
 import {
    clearGuestResults,
    loadGuestResults,
@@ -40,6 +41,7 @@ export function persistFinishedTest(): SavedTestResult | null {
    const result = buildFinishedResult();
    if (!result) return null;
 
+   trackTestFinished(result.wordCount);
    rememberLastResult(result);
    if (mode === 'account') {
       void postResults('/api/results', { result: submissionOf(result) }).then(

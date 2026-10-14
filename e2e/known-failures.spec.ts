@@ -11,10 +11,7 @@ import {
    timer,
 } from './helpers';
 
-// P0: Tab then Enter keeps the reset handler from the first render, whose
-// countdown was captured at the default duration (30s). Selecting 15s must
-// survive restart. This still snaps back to that first-render value.
-test.fail('should restart a 15 second test at 15 seconds', async ({ page }) => {
+test('should restart a 15 second test at 15 seconds', async ({ page }) => {
    await openHome(page);
    await selectTime(page, 15);
    await expect(timer(page)).toHaveText('15');

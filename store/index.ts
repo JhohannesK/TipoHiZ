@@ -8,6 +8,7 @@ export const userConfigStore = create<IuserConfig>()(
    (persist as unknown as MyPersist)(
       () => ({
          time: Constants.TimeSec, // default: 30
+         wordCount: Constants.WordCount,
          theme: '',
          type: 'default', // 'punctuation', 'numbers', 'code'
          category: 'time', // 'time', 'words'

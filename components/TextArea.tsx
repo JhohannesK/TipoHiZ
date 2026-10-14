@@ -10,10 +10,13 @@ interface keyObj {
 interface soundProps {
    sound: boolean;
    run: () => void;
+   onFinish?: () => void;
 }
 
-const TextArea: React.FC<soundProps> = ({ sound, run }) => {
-   const { type, language } = userConfigStore((state) => state);
+const TextArea: React.FC<soundProps> = ({ sound, run, onFinish }) => {
+   const { type, language, category, wordCount } = userConfigStore(
+      (state) => state
+   );
    const { wordList, activeWord, userInput, typedHistory } = wordStore(
       (state) => state
    );
@@ -130,6 +133,7 @@ const TextArea: React.FC<soundProps> = ({ sound, run }) => {
       let cancelled = false;
 
       const loadWords = async () => {
+         if (category === 'words' && !Number.isFinite(wordCount)) return;
          try {
             if (language !== 'english') {
                if (type === 'default') {
@@ -179,7 +183,7 @@ const TextArea: React.FC<soundProps> = ({ sound, run }) => {
       return () => {
          cancelled = true;
       };
-   }, [type, language]);
+   }, [type, language, category, wordCount]);
 
    const getCharClass = (isCorrect: boolean | null) => {
       if (isCorrect === null) return '';
@@ -213,7 +217,7 @@ const TextArea: React.FC<soundProps> = ({ sound, run }) => {
                      suppressInputRef.current = false;
                   }, 0);
 
-                  HandleText(e.key, activeWordRef, run);
+                  HandleText(e.key, activeWordRef, run, onFinish);
                   e.preventDefault();
                }
             }}
@@ -227,13 +231,13 @@ const TextArea: React.FC<soundProps> = ({ sound, run }) => {
                   .data;
 
                if (inputType === 'deleteContentBackward') {
-                  HandleText('Backspace', activeWordRef, run);
+                  HandleText('Backspace', activeWordRef, run, onFinish);
                   return;
                }
 
                if (typeof data === 'string' && data.length > 0) {
                   for (const ch of data) {
-                     HandleText(ch, activeWordRef, run);
+                     HandleText(ch, activeWordRef, run, onFinish);
                   }
                }
             }}
@@ -247,7 +251,7 @@ const TextArea: React.FC<soundProps> = ({ sound, run }) => {
                const value = e.currentTarget.value;
                if (value) {
                   for (const ch of value) {
-                     HandleText(ch, activeWordRef, run);
+                     HandleText(ch, activeWordRef, run, onFinish);
                   }
                }
                e.currentTarget.value = '';

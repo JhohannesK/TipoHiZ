@@ -46,6 +46,26 @@ export function appendKeystroke(entry: Omit<Keystroke, 'timestampMs'>): void {
    }));
 }
 
+export function testDuration(
+   log: readonly Keystroke[],
+   category: string,
+   configuredSeconds: number
+): { durationMs: number; durationSeconds: number } {
+   if (category !== 'words') {
+      return {
+         durationMs: configuredSeconds * 1000,
+         durationSeconds: configuredSeconds,
+      };
+   }
+
+   let elapsed = 0;
+   for (const event of log) {
+      if (event.timestampMs > elapsed) elapsed = event.timestampMs;
+   }
+   const durationMs = Math.max(elapsed, 1);
+   return { durationMs, durationSeconds: durationMs / 1000 };
+}
+
 export function syncKeystrokeStats(): void {
    const { keystrokeLog, wordList } = wordStore.getState();
    const stats = calculateStats({
@@ -68,11 +88,15 @@ export function buildFinishedResult(): SavedTestResult | null {
    const current = replayed.typedWords[replayed.activeIndex] ?? '';
    const wordCount = replayed.activeIndex + (current.length > 0 ? 1 : 0);
    const { time, type, category, language } = userConfigStore.getState();
-   const durationSeconds = time;
+   const { durationMs, durationSeconds } = testDuration(
+      keystrokeLog,
+      category,
+      time
+   );
    const stats = calculateStats({
       log: keystrokeLog,
       words,
-      durationMs: durationSeconds * 1000,
+      durationMs,
    });
 
    return {
