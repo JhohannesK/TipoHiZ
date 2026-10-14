@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { wordStore } from '../store';
 import { resetStores } from '../test/utils';
 import { resetTest } from './reset';
 
@@ -17,6 +18,7 @@ describe('resetTest', () => {
       await expect(resetTest('default', reset)).resolves.toBeUndefined();
 
       expect(reset).toHaveBeenCalledTimes(1);
+      expect(wordStore.getState().wordList.length).toBeGreaterThan(8);
    });
 
    it('should scroll the start view into view when the element exists', async () => {

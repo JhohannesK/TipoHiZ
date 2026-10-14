@@ -1,4 +1,3 @@
-import { resetStates } from '../store/actions/TimeActions';
 import { setWordList } from '../store/actions/WordActions';
 import { userConfigStore } from '../store';
 
@@ -54,5 +53,4 @@ export const resetTest = async (type: string, reset: () => void) => {
       startView.scrollIntoView();
    }
    reset();
-   resetStates();
 };
