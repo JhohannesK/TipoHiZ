@@ -172,7 +172,11 @@ describe('HandleText', () => {
    });
 
    it('should type when the active word element is missing', () => {
+      const scrollIntoView = vi.spyOn(Element.prototype, 'scrollIntoView');
+
       expect(() => HandleText('z', null, run)).not.toThrow();
+
       expect(wordStore.getState().userInput).toBe('z');
+      expect(scrollIntoView).not.toHaveBeenCalled();
    });
 });

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import Constants from '../modules/_constants';
 import { userConfigStore } from '../store';
 import { setCategory, setType } from '../store/actions/ConfigActions';
@@ -73,9 +73,8 @@ const UserSelectPallete = ({ reset }: { reset: () => void }) => {
          <div className="items-center justify-center hidden px-3 py-2 space-x-2 rounded-md sm:flex bg-foreground text-input ">
             {Object.entries(options).map(
                ([option, choices], optionIndex, entries) => (
-                  <>
+                  <Fragment key={option}>
                      <div
-                        key={option}
                         className={`${option} flex items-center justify-center space-x-2`}
                      >
                         {choices.map((choice, index) => {
@@ -95,7 +94,7 @@ const UserSelectPallete = ({ reset }: { reset: () => void }) => {
                      {optionIndex < entries.length - 1 && (
                         <span className="text-[2rem]">|</span>
                      )}
-                  </>
+                  </Fragment>
                )
             )}
          </div>

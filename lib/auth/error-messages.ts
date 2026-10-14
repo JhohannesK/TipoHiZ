@@ -1,25 +1,47 @@
 import { isAPIError } from 'better-auth/api';
 
-const INVALID_CREDENTIALS =
-   'Invalid email or password. Check your credentials and try again.';
+/**
+ * One copy for every credential failure. Unknown emails, wrong passwords,
+ * and missing credential accounts must not be distinguishable.
+ */
+export const INVALID_CREDENTIALS_MESSAGE = 'Invalid email or password';
+
+/**
+ * Sign-up duplicate. Does not confirm that the email is registered.
+ * The register action still returns success for these codes so the
+ * response shape matches a new account.
+ */
+const SIGN_UP_GENERIC =
+   'Unable to create an account with those details. Try again.';
+
+const CREDENTIAL_FAILURE_CODES = [
+   'INVALID_EMAIL_OR_PASSWORD',
+   'INVALID_PASSWORD',
+   'USER_NOT_FOUND',
+   'INVALID_USER',
+   'USER_EMAIL_NOT_FOUND',
+   'CREDENTIAL_ACCOUNT_NOT_FOUND',
+   'ACCOUNT_NOT_FOUND',
+] as const;
 
 /** Better Auth / OAuth codes → user-facing copy. */
 const AUTH_ERROR_BY_CODE: Record<string, string> = {
-   INVALID_EMAIL_OR_PASSWORD: INVALID_CREDENTIALS,
-   INVALID_PASSWORD: INVALID_CREDENTIALS,
+   ...Object.fromEntries(
+      CREDENTIAL_FAILURE_CODES.map((code) => [
+         code,
+         INVALID_CREDENTIALS_MESSAGE,
+      ])
+   ),
    INVALID_EMAIL: 'Enter a valid email address.',
-   USER_NOT_FOUND:
-      'No account found for that email. Check the email or sign up.',
    EMAIL_NOT_VERIFIED: 'Verify your email before signing in.',
-   USER_ALREADY_EXISTS: 'An account with this email already exists.',
-   USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL:
-      'An account with this email already exists. Try another email.',
-   CREDENTIAL_ACCOUNT_NOT_FOUND: INVALID_CREDENTIALS,
+   USER_ALREADY_EXISTS: SIGN_UP_GENERIC,
+   USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL: SIGN_UP_GENERIC,
    PASSWORD_TOO_SHORT: 'Password is too short.',
    PASSWORD_TOO_LONG: 'Password is too long.',
-   ACCOUNT_NOT_FOUND: 'No account found. Try another sign-in method.',
    SESSION_EXPIRED: 'Your session expired. Sign in again.',
    TOO_MANY_REQUESTS: 'Too many attempts. Try again later.',
+   INVALID_TOKEN: 'This link is invalid or has expired.',
+   TOKEN_EXPIRED: 'This link is invalid or has expired.',
    unable_to_link_account:
       'This sign-in could not be linked. Use the original login method.',
    email_does_not_match: 'The provider email does not match this account.',
@@ -30,16 +52,31 @@ const AUTH_ERROR_BY_CODE: Record<string, string> = {
    access_denied: 'Sign-in was cancelled.',
 };
 
+const DUPLICATE_SIGN_UP_CODES = new Set([
+   'USER_ALREADY_EXISTS',
+   'USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL',
+]);
+
 const AUTH_ERROR_BY_MESSAGE: Record<string, string> = {
-   'user not found': AUTH_ERROR_BY_CODE.USER_NOT_FOUND,
-   'invalid email or password': INVALID_CREDENTIALS,
-   'invalid password': INVALID_CREDENTIALS,
+   'user not found': INVALID_CREDENTIALS_MESSAGE,
+   'invalid user': INVALID_CREDENTIALS_MESSAGE,
+   'user email not found': INVALID_CREDENTIALS_MESSAGE,
+   'invalid email or password': INVALID_CREDENTIALS_MESSAGE,
+   'invalid password': INVALID_CREDENTIALS_MESSAGE,
+   'credential account not found': INVALID_CREDENTIALS_MESSAGE,
+   'account not found': INVALID_CREDENTIALS_MESSAGE,
    'invalid email': AUTH_ERROR_BY_CODE.INVALID_EMAIL,
    'email not verified': AUTH_ERROR_BY_CODE.EMAIL_NOT_VERIFIED,
-   'user already exists.': AUTH_ERROR_BY_CODE.USER_ALREADY_EXISTS,
-   'user already exists. use another email.':
-      AUTH_ERROR_BY_CODE.USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL,
+   'user already exists.': SIGN_UP_GENERIC,
+   'user already exists. use another email.': SIGN_UP_GENERIC,
+   'invalid token': AUTH_ERROR_BY_CODE.INVALID_TOKEN,
+   'token expired': AUTH_ERROR_BY_CODE.TOKEN_EXPIRED,
 };
+
+const DUPLICATE_SIGN_UP_MESSAGES = new Set([
+   'user already exists.',
+   'user already exists. use another email.',
+]);
 
 function lookupAuthError(value: string): string | undefined {
    const trimmed = value.trim();
@@ -104,4 +141,45 @@ export function mapBetterAuthError(error: unknown): string | undefined {
    if (fromMessage) return fromMessage;
 
    return 'Something went wrong. Please try again.';
+}
+
+function normalizedCode(code: string): string {
+   return code.trim().toUpperCase();
+}
+
+function normalizedMessage(message: string): string {
+   return message.trim().toLowerCase();
+}
+
+/**
+ * True when Better Auth rejected sign-up because the email is taken.
+ * With `autoSignIn: false` the API usually returns a synthetic success
+ * instead of throwing. This still catches the explicit duplicate codes.
+ */
+export function isDuplicateSignUpError(error: unknown): boolean {
+   if (!isAPIError(error)) return false;
+
+   const code = authErrorCode(error);
+   if (code && DUPLICATE_SIGN_UP_CODES.has(normalizedCode(code))) return true;
+
+   const message = authErrorMessage(error);
+   if (!message) return false;
+   const normalized = normalizedMessage(message);
+   if (DUPLICATE_SIGN_UP_MESSAGES.has(normalized)) return true;
+   return normalized.replace(/[.!\s]+$/g, '').startsWith('user already exists');
+}
+
+/**
+ * Sign-up failures that would confirm the email is registered are
+ * reported as success. The password is not updated in that case.
+ */
+export function resolveRegisterAuthFailure(
+   error: unknown
+): { success: true } | { error: string } {
+   if (isDuplicateSignUpError(error)) return { success: true };
+
+   return {
+      error:
+         mapBetterAuthError(error) ?? 'Something went wrong. Please try again.',
+   };
 }
