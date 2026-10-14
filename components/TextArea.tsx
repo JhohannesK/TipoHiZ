@@ -1,12 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { userConfigStore, wordStore } from '../store';
 import { HandleText } from '../lib/handle-text';
-import {
-   setCaretRef,
-   setErrorCount,
-   setRef,
-   setWordList,
-} from '../store/actions/WordActions';
+import { setCaretRef, setRef, setWordList } from '../store/actions/WordActions';
 
 interface keyObj {
    key: string;
@@ -101,26 +96,6 @@ const TextArea: React.FC<soundProps> = ({ sound, run }) => {
       }
    };
 
-   const calculateErrors = () => {
-      let count = 0;
-      const activeWordLength = activeWord.length;
-      const userInputLength = userInput.length;
-
-      for (let i = 0; i < Math.min(activeWordLength, userInputLength); i++) {
-         if (userInput[i] !== activeWord[i]) {
-            count++;
-         }
-      }
-
-      if (userInputLength > activeWordLength) {
-         count += userInputLength - activeWordLength;
-      } else if (userInputLength < activeWordLength) {
-         count += activeWordLength - userInputLength;
-      }
-
-      setErrorCount(count);
-   };
-
    // Update caret position with requestAnimationFrame
    useEffect(() => {
       // Cancel any existing animation frame
@@ -140,10 +115,6 @@ const TextArea: React.FC<soundProps> = ({ sound, run }) => {
          }
       };
    }, [userInput]);
-
-   useEffect(() => {
-      calculateErrors();
-   }, [userInput, activeWord]);
 
    useEffect(() => {
       setRef(activeWordRef);

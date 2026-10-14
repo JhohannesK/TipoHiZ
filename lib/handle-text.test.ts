@@ -70,8 +70,11 @@ describe('HandleText', () => {
 
    it('should commit a matching word and advance when space is pressed', () => {
       const ref = wordRef();
-      wordStore.setState({ userInput: 'cat', typedEntries: 3, nextCharIdx: 3 });
 
+      HandleText('c', ref, run);
+      HandleText('a', ref, run);
+      HandleText('t', ref, run);
+      run.mockClear();
       HandleText(' ', ref, run);
 
       const state = wordStore.getState();
@@ -82,6 +85,18 @@ describe('HandleText', () => {
       expect(state.nextIndex).toBe(1);
       expect(state.nextCharIdx).toBe(0);
       expect(state.typedEntries).toBe(4);
+      expect(state.keystrokeLog.map((entry) => entry.key)).toEqual([
+         'c',
+         'a',
+         't',
+         ' ',
+      ]);
+      expect(state.keystrokeLog[0]).toMatchObject({
+         expected: 'c',
+         kind: 'correct',
+         timestampMs: 0,
+         wordIndex: 0,
+      });
       expect(run).not.toHaveBeenCalled();
    });
 
@@ -132,6 +147,28 @@ describe('HandleText', () => {
 
       expect(wordStore.getState().userInput).toBe('T');
       expect(run).not.toHaveBeenCalled();
+   });
+
+   it('should stop accepting letters after ten extras on a word', () => {
+      const ref = wordRef();
+      wordStore.setState({
+         wordList: ['hi'],
+         activeWord: 'hi',
+      });
+
+      HandleText('h', ref, run);
+      HandleText('i', ref, run);
+      for (let count = 0; count < 11; count += 1) {
+         HandleText('x', ref, run);
+      }
+
+      const state = wordStore.getState();
+      expect(state.userInput).toBe(`hi${'x'.repeat(10)}`);
+      expect(
+         state.keystrokeLog.filter((entry) => entry.kind === 'extra')
+      ).toHaveLength(10);
+      expect(state.errorCount).toBe(10);
+      expect(state.typedEntries).toBe(12);
    });
 
    it('should type when the active word element is missing', () => {

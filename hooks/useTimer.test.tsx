@@ -126,6 +126,22 @@ describe('useTimer', () => {
       expect(result.current.isExited).toBe(false);
    });
 
+   it('should reset to the latest upper bound from a stale reset callback', () => {
+      const { result, rerender } = renderHook(
+         ({ upperBound }) => useTimer(1, upperBound),
+         { initialProps: { upperBound: 30 } }
+      );
+      const staleReset = result.current.reset;
+
+      rerender({ upperBound: 15 });
+      act(() => {
+         staleReset();
+      });
+
+      expect(result.current.timer).toBe(15);
+      expect(result.current.isRunning).toBe(false);
+   });
+
    it('should use the latest upper bound when reset runs after a rerender', () => {
       const { result, rerender } = renderHook(
          ({ upperBound }) => useTimer(1, upperBound),
