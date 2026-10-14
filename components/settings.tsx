@@ -38,7 +38,10 @@ export default function Settings() {
             if (!open) dismissPreview();
          }}
       >
-         <DialogTrigger className="flex items-center justify-center gap-3 p-2 cursor-pointer rounded-xl text-background bg-input">
+         <DialogTrigger
+            aria-label="Settings"
+            className="flex items-center justify-center gap-3 p-2 cursor-pointer rounded-xl text-background bg-input"
+         >
             <LuSettings />
          </DialogTrigger>
          <DialogContent className="max-w-[400px] rounded-xl shadow-lg p-6 bg-background border border-gray-300 h-[600px] overflow-y-auto">

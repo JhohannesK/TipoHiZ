@@ -49,7 +49,10 @@ export const resetTest = async (type: string, reset: () => void) => {
       setWordList(wordModule.default);
    }
 
-   document.getElementsByClassName('startView')[0].scrollIntoView();
+   const startView = document.querySelector('.startView');
+   if (startView) {
+      startView.scrollIntoView();
+   }
    reset();
    resetStates();
 };

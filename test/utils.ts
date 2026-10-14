@@ -13,6 +13,7 @@ export const initialWordState: WordState = {
    activeWordRef: null,
    typedHistory: [],
    nextIndex: 0,
+   caretPos: 0,
    nextCharIdx: 0,
    typedEntries: 0,
    errorCount: 0,
