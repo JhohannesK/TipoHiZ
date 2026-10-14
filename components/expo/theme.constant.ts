@@ -14,6 +14,12 @@ export const THEMES = [
    'hacktoberfest',
    'cyberpunk',
    'chrismas',
+   'serika-dark',
+   'nord',
+   'dracula',
+   'carbon',
+   'botanical',
+   'olivia',
 ];
 
 export const THEME_COLORS: Record<string, string[]> = {
@@ -32,4 +38,10 @@ export const THEME_COLORS: Record<string, string[]> = {
    hacktoberfest: ['#52db4d', '#b300b3'],
    cyberpunk: ['#ae00ff', '#191d24'],
    chrismas: ['#940505', '#1e2420'],
+   'serika-dark': ['#323437', '#e2b714'],
+   nord: ['#242933', '#88c0d0'],
+   dracula: ['#282a36', '#bd93f9'],
+   carbon: ['#313131', '#f66e0d'],
+   botanical: ['#1d3431', '#7ec8b3'],
+   olivia: ['#1c1b1d', '#deaf9d'],
 };
