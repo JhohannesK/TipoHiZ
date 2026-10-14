@@ -30,12 +30,12 @@
    .light-green {
       --background: 0 0% 100%;
       --foreground: 240, 23%, 91%;
-      --input: 142.1 76.2% 36.3%;
+      --input: 142.1 76.2% 29%;
       --destructive: 0 84.2% 60.2%;
       --accent: 303, 15%, 50%;
       --cursor: 240, 74%, 77%;
       --radius: 0.5rem;
-      --correct_char: 120, 100%, 20%;
+      --correct_char: 120, 100%, 14%;
       --wrong_char: 9, 100%, 64%;
    }
 
@@ -66,7 +66,7 @@
    .light-orange {
       --background: 0 0% 100%;
       --foreground: 20, 14%, 4%, 0.068;
-      --input: 24.6 95% 53.1%;
+      --input: 24.6 95% 38%;
       --accent: 24, 56%, 52%;
       --destructive: 0 84.2% 60.2%;
       --cursor: 24 9.8% 10%;
@@ -124,11 +124,11 @@
 
    .retro {
       --background: 245 0% 22%;
-      --cursor: 0 0% 80%;
+      --cursor: 0 0% 96%;
       --foreground: 0 0% 0%;
       --destructive: 298 49% 0%;
       --accent: 0 100% 100%;
-      --input: 0 0% 50%;
+      --input: 0 0% 65%;
       --radius: 0.5rem;
       --correct_char: 160, 51%, 60%;
       --wrong_char: 0, 68%, 42%;
@@ -161,7 +161,7 @@
    .cyberpunk {
       --background: 219 17% 12%;
       --foreground: 190, 100%, 91%;
-      --input: 281, 100%, 50%;
+      --input: 281, 100%, 67%;
       --destructive: 0 100% 35%;
       --accent: 304, 100%, 46%;
       --cursor: 300, 100%, 50%;
@@ -174,7 +174,7 @@
    .chrismas {
       --background: 132, 8%, 13%;
       --foreground: 128, 56%, 17%;
-      --input: 0, 93%, 30%;
+      --input: 0, 93%, 65%;
       --destructive: 0 100% 50%;
       --accent: 45, 93%, 47%;
       --cursor: 45, 93%, 47%;
