@@ -85,6 +85,32 @@ describe('guest result storage', () => {
       expect(loadGuestResults()).toEqual([]);
    });
 
+   it('should ignore a history payload that is not an array', () => {
+      localStorage.setItem(
+         GUEST_RESULTS_KEY,
+         JSON.stringify({ id: 'result-1234' })
+      );
+      expect(loadGuestResults()).toEqual([]);
+   });
+
+   it('should ignore a last-result payload that is missing stats', () => {
+      sessionStorage.setItem(
+         LAST_RESULT_KEY,
+         JSON.stringify({
+            id: 'last-id-1',
+            createdAt: '2026-10-13T00:00:00.000Z',
+            mode: 'default',
+            category: 'time',
+            language: 'english',
+            durationSeconds: 15,
+            wordCount: 1,
+            words: ['ab'],
+            log: [],
+         })
+      );
+      expect(loadClientResults().last).toBeNull();
+   });
+
    it('should remember the last result for the results screen', () => {
       const saved = result('last-id-1', '2026-10-13T00:00:00.000Z');
       rememberLastResult(saved);
