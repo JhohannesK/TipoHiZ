@@ -3,7 +3,13 @@ import { userConfigStore, wordStore } from '../../store';
 import { initialWordState, resetStores } from '../../test/utils';
 import { calculateStats } from './calculate';
 import { setKeystrokeClock } from './clock';
-import { appendKeystroke, buildFinishedResult, testDuration } from './record';
+import { MAX_EXTRA_LETTERS } from './types';
+import {
+   appendKeystroke,
+   buildFinishedResult,
+   classifyTypedKey,
+   testDuration,
+} from './record';
 
 describe('testDuration', () => {
    it('should use the configured limit for a timed test', () => {
@@ -36,6 +42,69 @@ describe('testDuration', () => {
             30
          )
       ).toEqual({ durationMs: 800, durationSeconds: 0.8 });
+   });
+
+   it('should floor a words test with no elapsed time at 1ms', () => {
+      expect(testDuration([], 'words', 30)).toEqual({
+         durationMs: 1,
+         durationSeconds: 0.001,
+      });
+      expect(
+         testDuration(
+            [
+               {
+                  key: 'a',
+                  expected: 'a',
+                  kind: 'correct',
+                  timestampMs: 0,
+                  wordIndex: 0,
+               },
+               {
+                  key: 'b',
+                  expected: 'b',
+                  kind: 'correct',
+                  timestampMs: 0,
+                  wordIndex: 0,
+               },
+            ],
+            'words',
+            30
+         )
+      ).toEqual({ durationMs: 1, durationSeconds: 0.001 });
+   });
+});
+
+describe('classifyTypedKey', () => {
+   it('should mark a mismatch inside the word as incorrect', () => {
+      expect(classifyTypedKey('cat', 'c', 'x')).toEqual({
+         expected: 'a',
+         kind: 'incorrect',
+         blocked: false,
+      });
+   });
+
+   it('should mark a letter past the word as extra, not incorrect', () => {
+      expect(classifyTypedKey('hi', 'hi', 'x')).toEqual({
+         expected: null,
+         kind: 'extra',
+         blocked: false,
+      });
+   });
+
+   it('should block extras once the cap is reached', () => {
+      const typed = `hi${'x'.repeat(MAX_EXTRA_LETTERS)}`;
+      expect(classifyTypedKey('hi', typed, 'z')).toEqual({
+         expected: null,
+         kind: 'extra',
+         blocked: true,
+      });
+      expect(
+         classifyTypedKey('hi', `hi${'x'.repeat(MAX_EXTRA_LETTERS - 1)}`, 'z')
+      ).toEqual({
+         expected: null,
+         kind: 'extra',
+         blocked: false,
+      });
    });
 });
 

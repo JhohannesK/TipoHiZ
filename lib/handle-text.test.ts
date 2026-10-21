@@ -121,6 +121,25 @@ describe('HandleText', () => {
       expect(run).not.toHaveBeenCalled();
    });
 
+   it('should log a backspace over an extra letter with a null expected char', () => {
+      const ref = wordRef();
+
+      HandleText('c', ref, run);
+      HandleText('a', ref, run);
+      HandleText('t', ref, run);
+      HandleText('x', ref, run);
+      HandleText('Backspace', ref, run);
+
+      const log = wordStore.getState().keystrokeLog;
+      expect(log[log.length - 1]).toMatchObject({
+         key: 'Backspace',
+         expected: null,
+         kind: 'backspace',
+         wordIndex: 0,
+      });
+      expect(wordStore.getState().userInput).toBe('cat');
+   });
+
    it('should restore the previous word when backspace is pressed on an empty input', () => {
       const ref = wordRef();
       ref.current?.classList.add('wrong');

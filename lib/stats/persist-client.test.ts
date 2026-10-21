@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { wordStore } from '../../store';
+import { userConfigStore, wordStore } from '../../store';
 import { setKeystrokeClock } from './clock';
 import {
    persistFinishedTest,
@@ -51,6 +51,21 @@ describe('persistFinishedTest', () => {
       expect(saved?.log).toHaveLength(2);
       expect(loadGuestResults().map((item) => item.id)).toEqual([saved?.id]);
       expect(resultPersistenceMode()).toBe('guest');
+   });
+
+   it('should persist a words test with keystroke elapsed time, not the timed limit', () => {
+      userConfigStore.setState({
+         category: 'words',
+         wordCount: 10,
+         time: 30,
+      });
+
+      const saved = persistFinishedTest();
+
+      expect(saved?.category).toBe('words');
+      expect(saved?.durationSeconds).toBeCloseTo(0.1);
+      expect(saved?.durationSeconds).not.toBe(30);
+      expect(loadGuestResults()[0]?.durationSeconds).toBeCloseTo(0.1);
    });
 
    it('should skip an empty log', () => {
