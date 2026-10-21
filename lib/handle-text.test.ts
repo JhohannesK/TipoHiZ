@@ -212,6 +212,31 @@ describe('HandleText', () => {
       expect(onFinish).toHaveBeenCalledTimes(1);
    });
 
+   it('should keep the last word editable when the typed letters are wrong', () => {
+      const onFinish = vi.fn();
+      userConfigStore.setState({ category: 'words', wordCount: 10 });
+      wordStore.setState({
+         ...initialWordState,
+         wordList: ['cat'],
+         activeWord: 'cat',
+      });
+      const ref = wordRef();
+
+      HandleText('c', ref, run, onFinish);
+      HandleText('a', ref, run, onFinish);
+      HandleText('x', ref, run, onFinish);
+
+      expect(onFinish).not.toHaveBeenCalled();
+      expect(wordStore.getState().disabled).toBe(false);
+      expect(wordStore.getState().userInput).toBe('cax');
+
+      HandleText('Backspace', ref, run, onFinish);
+
+      expect(wordStore.getState().userInput).toBe('ca');
+      expect(wordStore.getState().disabled).toBe(false);
+      expect(onFinish).not.toHaveBeenCalled();
+   });
+
    it('should finish a words test when space submits the last word', () => {
       const onFinish = vi.fn();
       userConfigStore.setState({ category: 'words', wordCount: 10 });

@@ -236,3 +236,134 @@ test('should keep a passage after shortcuts, restart, and mode changes', async (
    expect(words.length).toBeGreaterThan(8);
    await expect(timer(page)).toHaveText('60');
 });
+
+test('should keep words visible when the language changes in words mode', async ({
+   page,
+}) => {
+   await openHome(page);
+   await selectCategory(page, 'words');
+   await selectWordCount(page, 10);
+   await waitForWordCount(page, 10);
+   await expect(wordsProgress(page)).toHaveText('0/10');
+
+   await page.getByRole('combobox').click();
+   await page.getByRole('option', { name: 'Español' }).click();
+
+   const words = await waitForWordCount(page, 10);
+   expect(words.every((word) => word.length > 0)).toBe(true);
+   await expect(wordsProgress(page)).toHaveText('0/10');
+   await expect
+      .poll(async () => {
+         const saved = await page.evaluate(() =>
+            localStorage.getItem('userConfig')
+         );
+         return JSON.parse(saved ?? '{}').state?.language;
+      })
+      .toBe('spanish');
+});
+
+test('should show a fresh words passage after retake from results', async ({
+   page,
+}) => {
+   await openHome(page);
+   await selectCategory(page, 'words');
+   await selectWordCount(page, 10);
+   await waitForWordCount(page, 10);
+   await expect
+      .poll(async () => {
+         const saved = await page.evaluate(() =>
+            localStorage.getItem('userConfig')
+         );
+         return JSON.parse(saved ?? '{}').state;
+      })
+      .toMatchObject({ category: 'words', wordCount: 10 });
+
+   await page.goto('/results');
+   await page.getByRole('link', { name: 'Retake' }).click();
+
+   await expect(page).toHaveURL(/\/$/);
+   const words = await waitForWordCount(page, 10);
+   expect(words.every((word) => word.length > 0)).toBe(true);
+   await expect(wordsProgress(page)).toHaveText('0/10');
+});
+
+test('should reset a words test that is already underway', async ({ page }) => {
+   await openHome(page);
+   await selectCategory(page, 'words');
+   await selectWordCount(page, 10);
+   const words = await waitForWordCount(page, 10);
+   await focusTyping(page);
+   await page.keyboard.type(`${words[0] ?? ''} ${words[1] ?? ''} `, {
+      delay: 0,
+   });
+   await expect(wordsProgress(page)).toHaveText('2/10');
+   await expect
+      .poll(async () => elapsedTime(page).innerText(), { timeout: 4_000 })
+      .toBe('0:01');
+
+   await page.getByRole('button', { name: 'button to restart test' }).click();
+
+   const next = await expectWordsAfterRestart(page, words, 10);
+   expect(next.every((word) => word.length > 0)).toBe(true);
+   await expect(wordsProgress(page)).toHaveText('0/10');
+   await expect(elapsedTime(page)).toHaveText('0:00');
+});
+
+test('should keep the words counter off the language icon on a phone', async ({
+   page,
+}) => {
+   async function gap(): Promise<{ columnGap: string; space: number }> {
+      const row = page
+         .locator('div.justify-between')
+         .filter({ has: page.getByTestId('elapsed-time') });
+      const elapsed = await page.getByTestId('elapsed-time').boundingBox();
+      const globe = await page.locator('svg.lucide-globe').boundingBox();
+      const columnGap = await row.evaluate(
+         (element) => getComputedStyle(element).columnGap
+      );
+      if (!elapsed || !globe) {
+         throw new Error('counter or language icon is missing');
+      }
+      return { columnGap, space: globe.x - (elapsed.x + elapsed.width) };
+   }
+
+   await openHome(page);
+   await selectCategory(page, 'words');
+   await selectWordCount(page, 25);
+   const words = await waitForWordCount(page, 25);
+   await focusTyping(page);
+   await page.keyboard.type(`${words[0] ?? ''} ${words[1] ?? ''} `, {
+      delay: 0,
+   });
+   await expect(wordsProgress(page)).toHaveText('2/25');
+
+   await page.setViewportSize({ width: 375, height: 812 });
+   const phone = await gap();
+   expect(phone.columnGap).toBe('12px');
+   expect(phone.space).toBeGreaterThanOrEqual(8);
+
+   await page.setViewportSize({ width: 1280, height: 800 });
+   const desktop = await gap();
+   expect(desktop.columnGap).toBe('0px');
+   expect(desktop.space).toBeGreaterThan(48);
+});
+
+test('should reset the countdown when a timed test is restarted mid-run', async ({
+   page,
+}) => {
+   await openHome(page);
+   await selectTime(page, 15);
+   const words = await readWords(page);
+   await expect(timer(page)).toHaveText('15');
+   await focusTyping(page);
+   await page.keyboard.type(words[0]?.slice(0, 1) ?? 'a', { delay: 0 });
+   await expect
+      .poll(async () => timer(page).innerText(), { timeout: 4_000 })
+      .not.toBe('15');
+
+   await page.getByRole('button', { name: 'button to restart test' }).click();
+
+   const next = await expectWordsAfterRestart(page, words);
+   expect(next.length).toBeGreaterThan(8);
+   await expect(timer(page)).toHaveText('15');
+});

@@ -14,9 +14,7 @@ interface soundProps {
 }
 
 const TextArea: React.FC<soundProps> = ({ sound, run, onFinish }) => {
-   const { type, language, category, wordCount } = userConfigStore(
-      (state) => state
-   );
+   const { type, language } = userConfigStore((state) => state);
    const { wordList, activeWord, userInput, typedHistory } = wordStore(
       (state) => state
    );
@@ -129,11 +127,12 @@ const TextArea: React.FC<soundProps> = ({ sound, run, onFinish }) => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, []);
 
+   // resetTest owns category and word-count changes. Reloading those here
+   // as well replaces the passage mid-test while timers keep running.
    useEffect(() => {
       let cancelled = false;
 
       const loadWords = async () => {
-         if (category === 'words' && !Number.isFinite(wordCount)) return;
          try {
             if (language !== 'english') {
                if (type === 'default') {
@@ -183,7 +182,7 @@ const TextArea: React.FC<soundProps> = ({ sound, run, onFinish }) => {
       return () => {
          cancelled = true;
       };
-   }, [type, language, category, wordCount]);
+   }, [type, language]);
 
    const getCharClass = (isCorrect: boolean | null) => {
       if (isCorrect === null) return '';

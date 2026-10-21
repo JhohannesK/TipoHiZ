@@ -1,3 +1,5 @@
+import { readdirSync, readFileSync } from 'node:fs';
+import path from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 import {
    formatElapsed,
@@ -5,6 +7,36 @@ import {
    resolveWordCount,
    wordsTestFinished,
 } from './words';
+
+const textFilesDir = path.resolve('modules/TextFiles');
+
+function readWordBank(fileName: string): string[] {
+   const raw = readFileSync(path.join(textFilesDir, fileName), 'utf8');
+   return JSON.parse(raw) as string[];
+}
+
+function phraseTokens(entry: string): string[] {
+   return entry.split(' ').filter((token) => token.length > 0);
+}
+
+function containsPhrase(words: readonly string[], entry: string): boolean {
+   const tokens = phraseTokens(entry);
+   if (tokens.length < 2) return true;
+
+   const compact = words.filter((word) => word.length > 0);
+   for (let index = 0; index <= compact.length - tokens.length; index += 1) {
+      let matches = true;
+      for (let offset = 0; offset < tokens.length; offset += 1) {
+         if (compact[index + offset] !== tokens[offset]) {
+            matches = false;
+            break;
+         }
+      }
+      if (matches) return true;
+   }
+
+   return false;
+}
 
 describe('words mode passage', () => {
    it('should keep the offered counts and fall back otherwise', () => {
@@ -50,13 +82,69 @@ describe('words mode passage', () => {
       ]);
    });
 
-   it('should split phrases before applying the count', () => {
-      vi.spyOn(Math, 'random').mockReturnValue(0.5);
+   it('should keep sentence order when paragraphs are reordered', () => {
+      // A negative comparator reverses the entries. Math.random = 0.5
+      // makes the comparator return 0, which hides a word-level shuffle.
+      vi.spyOn(Math, 'random').mockReturnValue(0);
+      const bank = ['alpha beta gamma', 'one two', 'red blue green'];
 
-      expect(generatePassage(['hello world', 'next'], 2)).toEqual([
-         'hello',
-         'world',
+      expect(generatePassage(bank)).toEqual([
+         'red',
+         'blue',
+         'green',
+         'one',
+         'two',
+         'alpha',
+         'beta',
+         'gamma',
       ]);
+      expect(generatePassage(bank, 4)).toEqual(['red', 'blue', 'green', 'one']);
+      expect(bank).toEqual(['alpha beta gamma', 'one two', 'red blue green']);
+   });
+
+   it('should keep multi-word entries intact in every language file', () => {
+      const files = readdirSync(textFilesDir).filter((name) =>
+         name.endsWith('.json')
+      );
+      const french = readWordBank('french.json');
+      expect(french).toEqual(
+         expect.arrayContaining([
+            "s'il vous plaît",
+            'au revoir',
+            'se réveiller',
+         ])
+      );
+
+      const random = vi.spyOn(Math, 'random').mockReturnValue(0);
+
+      let phraseCount = 0;
+      for (const file of files) {
+         const entries = readWordBank(file);
+         const phrases = entries.filter((entry) => entry.includes(' '));
+         phraseCount += phrases.length;
+         const snapshot = [...entries];
+         const words = generatePassage(entries);
+
+         expect(entries, file).toEqual(snapshot);
+         for (const phrase of phrases) {
+            expect(containsPhrase(words, phrase), `${file}: ${phrase}`).toBe(
+               true
+            );
+         }
+      }
+
+      expect(phraseCount).toBeGreaterThan(0);
+
+      random.mockRestore();
+      const seen = new Set<string>();
+      for (let attempt = 0; attempt < 12; attempt += 1) {
+         const words = generatePassage(french);
+         seen.add(words.slice(0, 3).join('\n'));
+         for (const phrase of french.filter((entry) => entry.includes(' '))) {
+            expect(containsPhrase(words, phrase)).toBe(true);
+         }
+      }
+      expect(seen.size).toBeGreaterThan(1);
    });
 
    it('should leave the source bank untouched', () => {
@@ -108,6 +196,39 @@ describe('wordsTestFinished', () => {
             userInput: 'dog',
          })
       ).toBe(true);
+   });
+
+   it('should finish when the last word matches exactly', () => {
+      expect(
+         wordsTestFinished({
+            ...base,
+            wordListLength: 1,
+            nextIndex: 0,
+            activeWord: 'cat',
+            userInput: 'cat',
+         })
+      ).toBe(true);
+   });
+
+   it('should stay open when the last word has a wrong letter', () => {
+      expect(
+         wordsTestFinished({
+            ...base,
+            wordListLength: 1,
+            nextIndex: 0,
+            activeWord: 'cat',
+            userInput: 'cax',
+         })
+      ).toBe(false);
+      expect(
+         wordsTestFinished({
+            ...base,
+            wordListLength: 1,
+            nextIndex: 0,
+            activeWord: 'cat',
+            userInput: 'catx',
+         })
+      ).toBe(false);
    });
 
    it('should finish once the caret moves past the last word', () => {

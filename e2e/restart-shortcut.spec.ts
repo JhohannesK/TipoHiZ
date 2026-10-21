@@ -46,9 +46,7 @@ test('should keep words mode and 15 seconds when shift+enter restarts', async ({
    await openHome(page);
    await selectTime(page, 15);
    await chooseWords(page);
-   await expect
-      .poll(async () => (await readWords(page)).length)
-      .toBe(10);
+   await expect.poll(async () => (await readWords(page)).length).toBe(10);
    const words = await readWords(page);
    await expect
       .poll(async () => (await savedConfig(page)).state)

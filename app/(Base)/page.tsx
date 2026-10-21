@@ -76,7 +76,7 @@ export default function HomePage() {
    return (
       <div>
          <UserSelectPallete reset={reset} />
-         <div className="flex items-center justify-between mt-16 sm:px-10">
+         <div className="mt-16 flex items-center justify-between gap-3 sm:gap-0 sm:px-10">
             <div className="flex-wrap text-xl font-medium font-poppins text-accent">
                {wordsMode ? (
                   <div className="mb-2 flex items-baseline gap-4">

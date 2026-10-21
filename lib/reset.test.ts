@@ -58,6 +58,60 @@ describe('resetTest', () => {
       }
    );
 
+   it('should keep the newer word list when an older reset resolves last', async () => {
+      userConfigStore.setState({ category: 'words', wordCount: 10 });
+      let releaseFirst: (words: string[]) => void = () => {};
+      let releaseSecond: (words: string[]) => void = () => {};
+      const firstWords = new Promise<string[]>((resolve) => {
+         releaseFirst = resolve;
+      });
+      const secondWords = new Promise<string[]>((resolve) => {
+         releaseSecond = resolve;
+      });
+      const newer = [
+         'second',
+         'passage',
+         'wins',
+         'here',
+         'now',
+         'with',
+         'extra',
+         'tokens',
+         'present',
+         'done',
+      ];
+      const resetFirst = vi.fn();
+      const resetSecond = vi.fn();
+
+      const first = resetTest('default', resetFirst, () => firstWords);
+      const second = resetTest('punctuation', resetSecond, () => secondWords);
+
+      releaseSecond(newer);
+      await second;
+
+      expect(resetSecond).toHaveBeenCalledTimes(1);
+      const winning = wordStore.getState().wordList;
+      expect([...winning].sort()).toEqual([...newer].sort());
+
+      releaseFirst([
+         'stale',
+         'list',
+         'should',
+         'lose',
+         'completely',
+         'after',
+         'the',
+         'newer',
+         'call',
+         'lands',
+      ]);
+      await first;
+
+      expect(resetFirst).not.toHaveBeenCalled();
+      expect(wordStore.getState().wordList).toEqual(winning);
+      expect(wordStore.getState().userInput).toBe('');
+   });
+
    it('should scroll the start view into view when the element exists', async () => {
       const startView = document.createElement('div');
       startView.className = 'startView';

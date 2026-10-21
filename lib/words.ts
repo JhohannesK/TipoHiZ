@@ -15,20 +15,25 @@ export function generatePassage(
    wordList: readonly string[],
    count?: number
 ): string[] {
-   const expanded = wordList.some((word) => word.includes(' '))
-      ? wordList.flatMap((word) => word.split(' '))
-      : [...wordList];
-   const shuffled = expanded.sort(() => Math.random() - 0.5);
-   if (count === undefined) return shuffled;
+   // Shuffle passage entries (paragraphs) on a copy, then split into words.
+   // Sentence order inside a paragraph stays put, and the source bank is
+   // left alone. Shuffling after the split turns punctuation and code
+   // passages into a bag of random words.
+   const entries = [...wordList];
+   entries.sort(() => Math.random() - 0.5);
+   const expanded = entries.some((entry) => entry.includes(' '))
+      ? entries.flatMap((entry) => entry.split(' '))
+      : entries;
+   if (count === undefined) return expanded;
 
    const total = Math.floor(count);
-   if (!Number.isFinite(total) || total <= 0 || shuffled.length === 0) {
+   if (!Number.isFinite(total) || total <= 0 || expanded.length === 0) {
       return [];
    }
 
    const passage: string[] = [];
    while (passage.length < total) {
-      passage.push(...shuffled);
+      passage.push(...expanded);
    }
    return passage.slice(0, total);
 }
@@ -51,8 +56,7 @@ export function wordsTestFinished(input: {
    if (total <= 0) return false;
    if (input.nextIndex >= total) return true;
    if (input.nextIndex !== total - 1) return false;
-   return (
-      input.activeWord.length > 0 &&
-      input.userInput.length >= input.activeWord.length
-   );
+   // A wrong or extra letter must not end the test. The typist fixes it
+   // or presses Space, which takes the nextIndex >= total branch above.
+   return input.activeWord.length > 0 && input.userInput === input.activeWord;
 }

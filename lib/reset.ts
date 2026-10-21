@@ -42,13 +42,27 @@ async function loadWords(language: string, type: string): Promise<string[]> {
    }
 }
 
-export const resetTest = async (type: string, reset: () => void) => {
+let resetGeneration = 0;
+
+type WordBankLoader = (language: string, type: string) => Promise<string[]>;
+
+export const resetTest = async (
+   type: string,
+   reset: () => void,
+   loadWordBank: WordBankLoader = loadWords
+) => {
+   const generation = ++resetGeneration;
+
    document
       .querySelectorAll('.wrong, .right')
       .forEach((el) => el.classList.remove('wrong', 'right'));
 
    const { language } = userConfigStore.getState();
-   const words = await loadWords(language, type);
+   const words = await loadWordBank(language, type);
+
+   // A newer resetTest started while this load was in flight. Drop the
+   // result so a stale call cannot reset state or replace the passage.
+   if (generation !== resetGeneration) return;
 
    // resetStates clears the word list. Apply the fresh list after that,
    // or the passage disappears once scrollIntoView no longer throws.

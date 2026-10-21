@@ -69,11 +69,8 @@ export function displayedResult(input: {
    const durationSeconds =
       input.liveLog.length === 0
          ? input.config.time
-         : testDuration(
-              input.liveLog,
-              input.config.category,
-              input.config.time
-           ).durationSeconds;
+         : testDuration(input.liveLog, input.config.category, input.config.time)
+              .durationSeconds;
    const described = describeKeystrokeLog(
       input.liveLog,
       input.liveWords,
