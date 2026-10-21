@@ -5,6 +5,7 @@ import {
    setLanguage,
    setTheme,
    setType,
+   setWordCount,
    toggleSound,
 } from './actions/ConfigActions';
 import { resetStates, setDefaultTime } from './actions/TimeActions';
@@ -46,12 +47,14 @@ describe('word store actions', () => {
          userInput: 'stale',
          typedHistory: ['old'],
          activeWord: 'old',
+         disabled: true,
       });
 
       setWordList(['alpha', 'beta', 'gamma']);
 
       const state = wordStore.getState();
       expect(state.wordList).toEqual(['alpha', 'beta', 'gamma']);
+      expect(state.disabled).toBe(false);
       expect(state.activeWord).toBe('alpha');
       expect(state.userInput).toBe('');
       expect(state.typedHistory).toEqual([]);
@@ -67,6 +70,41 @@ describe('word store actions', () => {
       const state = wordStore.getState();
       expect(state.wordList).toEqual(['hello', 'world', 'next']);
       expect(state.activeWord).toBe('hello');
+   });
+
+   it('should keep the full bank while the test is timed', () => {
+      setWordCount(10);
+      setWordList(['alpha', 'beta', 'gamma', 'delta']);
+
+      expect(wordStore.getState().wordList).toEqual([
+         'alpha',
+         'beta',
+         'gamma',
+         'delta',
+      ]);
+   });
+
+   it('should generate exactly the chosen number of words', () => {
+      setCategory('words');
+      setWordCount(10);
+      const bank = Array.from({ length: 20 }, (_, index) => `w${index}`);
+
+      setWordList(bank);
+
+      expect(wordStore.getState().wordList).toEqual(bank.slice(0, 10));
+      expect(wordStore.getState().activeWord).toBe('w0');
+   });
+
+   it('should repeat the bank until the word count is filled', () => {
+      setCategory('words');
+      setWordCount(10);
+
+      setWordList(['alpha', 'beta']);
+
+      const words = wordStore.getState().wordList;
+      expect(words).toHaveLength(10);
+      expect(words.slice(0, 2)).toEqual(['alpha', 'beta']);
+      expect(words[2]).toBe('alpha');
    });
 
    it('should append a character and advance the character index', () => {
@@ -199,9 +237,13 @@ describe('config and time actions', () => {
       expect(userConfigStore.getState().sound).toBe(false);
    });
 
-   it('should default a fresh config to 30 seconds', () => {
+   it('should default a fresh config to 30 seconds and 10 words', () => {
       expect(Constants.TimeSec).toBe(30);
+      expect(Constants.WordCount).toBe(10);
+      expect(Constants.options.words).toEqual([10, 25, 50, 100]);
       expect(userConfigStore.getInitialState().time).toBe(30);
+      expect(userConfigStore.getInitialState().wordCount).toBe(10);
+      expect(userConfigStore.getInitialState().category).toBe('time');
    });
 
    it('should keep a saved time limit when storage is rehydrated', async () => {
@@ -239,6 +281,70 @@ describe('config and time actions', () => {
       expect(saved.state?.time).toBe(15);
    });
 
+   it('should persist words mode and the chosen count', () => {
+      setCategory('words');
+      setWordCount(100);
+
+      expect(userConfigStore.getState().category).toBe('words');
+      expect(userConfigStore.getState().wordCount).toBe(100);
+      const saved = JSON.parse(localStorage.getItem('userConfig') ?? '{}') as {
+         state?: { category?: string; wordCount?: number };
+      };
+      expect(saved.state?.category).toBe('words');
+      expect(saved.state?.wordCount).toBe(100);
+   });
+
+   it('should ignore a word count the picker does not offer', () => {
+      setWordCount(7);
+
+      expect(userConfigStore.getState().wordCount).toBe(10);
+   });
+
+   it('should restore a saved words config from storage', async () => {
+      localStorage.setItem(
+         'userConfig',
+         JSON.stringify({
+            state: {
+               time: 30,
+               wordCount: 50,
+               theme: '',
+               type: 'default',
+               category: 'words',
+               sound: false,
+               language: 'english',
+            },
+            version: 0,
+         })
+      );
+
+      await persistedConfig().persist.rehydrate();
+
+      expect(userConfigStore.getState().category).toBe('words');
+      expect(userConfigStore.getState().wordCount).toBe(50);
+   });
+
+   it('should keep the default word count when an older config has none', async () => {
+      localStorage.setItem(
+         'userConfig',
+         JSON.stringify({
+            state: {
+               time: 15,
+               theme: '',
+               type: 'default',
+               category: 'time',
+               sound: false,
+               language: 'english',
+            },
+            version: 0,
+         })
+      );
+
+      await persistedConfig().persist.rehydrate();
+
+      expect(userConfigStore.getState().time).toBe(15);
+      expect(userConfigStore.getState().wordCount).toBe(10);
+   });
+
    it('should clear the in-progress test without changing the saved time limit', () => {
       setDefaultTime(15);
       wordStore.setState({
@@ -268,5 +374,27 @@ describe('config and time actions', () => {
          keystrokeLog: [],
       });
       expect(userConfigStore.getState().time).toBe(15);
+   });
+
+   it('should keep words mode and the chosen count when the test is cleared', () => {
+      setCategory('words');
+      setWordCount(25);
+      wordStore.setState({
+         ...initialWordState,
+         activeWord: 'cat',
+         userInput: 'ca',
+         wordList: ['cat'],
+      });
+
+      resetStates();
+
+      expect(userConfigStore.getState().category).toBe('words');
+      expect(userConfigStore.getState().wordCount).toBe(25);
+      expect(wordStore.getState().userInput).toBe('');
+      const saved = JSON.parse(localStorage.getItem('userConfig') ?? '{}') as {
+         state?: { category?: string; wordCount?: number };
+      };
+      expect(saved.state?.category).toBe('words');
+      expect(saved.state?.wordCount).toBe(25);
    });
 });

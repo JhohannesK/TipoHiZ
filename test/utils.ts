@@ -27,6 +27,7 @@ export function resetStores(): void {
    wordStore.setState(initialWordState);
    userConfigStore.setState({
       time: Constants.TimeSec,
+      wordCount: Constants.WordCount,
       theme: '',
       type: 'default',
       category: 'time',

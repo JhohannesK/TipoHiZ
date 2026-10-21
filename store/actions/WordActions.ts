@@ -1,5 +1,6 @@
 import { resetKeystrokeClock } from '../../lib/stats/clock';
-import { wordStore } from '..';
+import { generatePassage, resolveWordCount } from '../../lib/words';
+import { userConfigStore, wordStore } from '..';
 
 export const setActiveWord = (activeWord: string) =>
    wordStore.setState({ activeWord });
@@ -8,13 +9,14 @@ export const setUserInput = (userInput: string) =>
    wordStore.setState({ userInput });
 
 export const setWordList = (wordList: string[]) => {
-   const areNotWords = wordList.some((word) => word.includes(' '));
-   let shuffledList = wordList.sort(() => Math.random() - 0.5);
-   if (areNotWords) {
-      shuffledList = wordList.flatMap((word) => word.split(' '));
-   }
+   const { category, wordCount } = userConfigStore.getState();
+   const shuffledList = generatePassage(
+      wordList,
+      category === 'words' ? resolveWordCount(wordCount) : undefined
+   );
    wordStore.setState((state) => ({
       ...state,
+      disabled: false,
       wordList: shuffledList,
       activeWord: shuffledList[0],
       userInput: '',
