@@ -22,6 +22,11 @@ import { languageOptions } from '@/lib/i18n';
 import { resetTest } from '@/lib/reset';
 import { persistFinishedTest } from '@/lib/stats/persist-client';
 import { formatElapsed, resolveWordCount } from '@/lib/words';
+import {
+   abandonTest,
+   trackTestFinished,
+   trackTestStarted,
+} from '@/lib/usage-events';
 
 export default function HomePage() {
    const { time, language, type, category, wordCount, sound } = userConfigStore(
@@ -29,7 +34,13 @@ export default function HomePage() {
    );
    const completed = wordStore((state) => state.nextIndex);
    const wordsMode = category === 'words';
-   const countdown = useTimer(1, time);
+   const countdown = useTimer(
+      1,
+      time,
+      true,
+      false,
+      wordsMode ? null : trackTestFinished
+   );
    const elapsed = useElapsed();
    const router = useRouter();
    const finishedRef = useRef(false);
@@ -37,11 +48,13 @@ export default function HomePage() {
 
    const reset = () => {
       finishedRef.current = false;
+      abandonTest();
       countdown.reset();
       elapsed.reset();
    };
 
-   const run = () => {
+   const beginTest = () => {
+      trackTestStarted();
       if (userConfigStore.getState().category === 'words') elapsed.run();
       else countdown.run();
    };
@@ -50,13 +63,14 @@ export default function HomePage() {
       if (finishedRef.current) return;
       if (userConfigStore.getState().category !== 'words') return;
       finishedRef.current = true;
+      trackTestFinished();
       persistFinishedTest();
       router.push('/results');
    };
 
    const handleLanguageChange = (value: string) => {
       setLanguage(value);
-      resetTest(type, reset);
+      void resetTest(type, reset);
    };
 
    return (
@@ -101,7 +115,7 @@ export default function HomePage() {
                </div>
             </div>
          </div>
-         <TextArea sound={sound} run={run} onFinish={finishWords} />
+         <TextArea sound={sound} run={beginTest} onFinish={finishWords} />
          <ResetTestButton reset={reset} />
       </div>
    );

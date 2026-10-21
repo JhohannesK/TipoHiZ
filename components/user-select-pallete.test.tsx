@@ -28,6 +28,21 @@ describe('UserSelectPallete', () => {
       vi.mocked(resetTest).mockClear();
    });
 
+   it('should render each option group with a key', () => {
+      const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      render(<UserSelectPallete reset={reset} />);
+
+      expect(
+         screen.getAllByRole('button', { name: '30' }).length
+      ).toBeGreaterThan(0);
+      const keyWarnings = error.mock.calls.filter((call) =>
+         call.some((arg) => String(arg).includes('unique "key" prop'))
+      );
+      expect(keyWarnings).toEqual([]);
+      error.mockRestore();
+   });
+
    it('should offer time limits until words mode is chosen', () => {
       render(<UserSelectPallete reset={reset} />);
 

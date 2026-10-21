@@ -1,10 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { track } from '@vercel/analytics';
 import { wordStore } from '../../store';
-
-vi.mock('@vercel/analytics', () => ({
-   track: vi.fn(),
-}));
 import { setKeystrokeClock } from './clock';
 import {
    persistFinishedTest,
@@ -56,7 +51,6 @@ describe('persistFinishedTest', () => {
       expect(saved?.log).toHaveLength(2);
       expect(loadGuestResults().map((item) => item.id)).toEqual([saved?.id]);
       expect(resultPersistenceMode()).toBe('guest');
-      expect(track).toHaveBeenCalledWith('test_finished', { wordCount: 1 });
    });
 
    it('should skip an empty log', () => {
@@ -64,7 +58,6 @@ describe('persistFinishedTest', () => {
 
       expect(persistFinishedTest()).toBeNull();
       expect(loadGuestResults()).toEqual([]);
-      expect(track).not.toHaveBeenCalled();
    });
 
    it('should post a signed-in result and keep it local when the post fails', async () => {

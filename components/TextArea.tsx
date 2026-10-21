@@ -194,6 +194,7 @@ const TextArea: React.FC<soundProps> = ({ sound, run, onFinish }) => {
       <div className="relative">
          <textarea
             ref={hiddenInputRef}
+            data-typing-field="true"
             aria-hidden="true"
             tabIndex={-1}
             autoCapitalize="none"

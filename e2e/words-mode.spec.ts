@@ -2,12 +2,16 @@ import { expect, test, type Page } from '@playwright/test';
 import {
    clockSeconds,
    elapsedTime,
+   expectWordsAfterRestart,
    focusTyping,
    openHome,
+   readWords,
    selectCategory,
+   selectTime,
    selectWordCount,
    statText,
    waitForWordCount,
+   timer,
    wordsProgress,
 } from './helpers';
 
@@ -76,9 +80,7 @@ test('should finish a words test on the last word and record elapsed stats', asy
    await expect(
       page.getByRole('heading', { name: 'Speed by second' })
    ).toBeVisible();
-   await expect(
-      page.getByRole('heading', { name: /Average Speed/ })
-   ).toBeVisible();
+   await expect(page.getByRole('heading', { name: /^wpm:$/i })).toBeVisible();
    await expect(page.getByText(/\d+\.\d+wpm/).first()).toBeVisible();
 
    const saved = await page.evaluate(() => {
@@ -107,13 +109,12 @@ test('should finish a words test on the last word and record elapsed stats', asy
    const samples = saved.last?.stats?.samples ?? [];
    expect(samples.length).toBeGreaterThan(0);
    expect(samples.length).toBe(Math.ceil(saved.last?.durationSeconds ?? 0));
-   await expect(page.getByTestId('speed-sample')).toHaveCount(samples.length);
-
-   const reported = Number.parseFloat(await statText(page, /Average Speed/));
+   const reported = Number.parseFloat(await statText(page, /^wpm:$/i));
    expect(reported).toBeCloseTo(saved.last?.stats?.wpm ?? -1, 1);
    expect(clockSeconds(await statText(page, /^words:/i))).toBe(
       Math.floor(saved.last?.durationSeconds ?? -1)
    );
+   await expect(page.locator('table tbody tr')).toHaveCount(samples.length);
 
    const events = await page.evaluate(
       () =>
@@ -132,7 +133,7 @@ test('should finish a words test on the last word and record elapsed stats', asy
             kind: 'event',
             payload: expect.objectContaining({
                name: 'test_finished',
-               data: { wordCount: 10 },
+               data: expect.objectContaining({ wordCount: 10 }),
             }),
          }),
       ])
@@ -148,14 +149,14 @@ test('should keep the chosen word count across restart and reload', async ({
    await openHome(page);
    await selectCategory(page, 'words');
    await selectWordCount(page, 25);
-   const words = await waitForWordCount(page, 25);
+   let words = await waitForWordCount(page, 25);
    await expect(wordsProgress(page)).toHaveText('0/25');
    await focusTyping(page);
    await page.keyboard.type(`${words[0] ?? ''} `, { delay: 0 });
    await expect(wordsProgress(page)).toHaveText('1/25');
 
    await page.getByRole('button', { name: 'button to restart test' }).click();
-   await waitForWordCount(page, 25);
+   words = await expectWordsAfterRestart(page, words, 25);
    await expect(wordsProgress(page)).toHaveText('0/25');
    await expect(elapsedTime(page)).toHaveText('0:00');
    await expect(
@@ -170,8 +171,8 @@ test('should keep the chosen word count across restart and reload', async ({
 
    await page.keyboard.press('Tab');
    await page.keyboard.press('Enter');
+   words = await expectWordsAfterRestart(page, words, 25);
    await expect(wordsProgress(page)).toHaveText('0/25');
-   await waitForWordCount(page, 25);
 
    await page.reload();
    await waitForWordCount(page, 25);
@@ -182,4 +183,56 @@ test('should keep the chosen word count across restart and reload', async ({
    await expect(
       page.locator('div.category button.selected').locator('visible=true')
    ).toHaveAttribute('value', 'words');
+});
+
+test('should keep a passage after shortcuts, restart, and mode changes', async ({
+   page,
+}) => {
+   await openHome(page);
+   let words = await readWords(page);
+
+   await selectTime(page, 15);
+   words = await expectWordsAfterRestart(page, words);
+   await expect(timer(page)).toHaveText('15');
+
+   await page.keyboard.press('Tab');
+   await page.keyboard.press('Enter');
+   words = await expectWordsAfterRestart(page, words);
+
+   await page.keyboard.press('Shift+Enter');
+   words = await expectWordsAfterRestart(page, words);
+
+   await page.getByRole('button', { name: 'button to restart test' }).click();
+   words = await expectWordsAfterRestart(page, words);
+
+   await selectTime(page, 60);
+   words = await expectWordsAfterRestart(page, words);
+   await expect(timer(page)).toHaveText('60');
+
+   await selectCategory(page, 'words');
+   words = await expectWordsAfterRestart(page, words, 10);
+   await expect(wordsProgress(page)).toHaveText('0/10');
+
+   await selectWordCount(page, 25);
+   words = await expectWordsAfterRestart(page, words, 25);
+   await expect(wordsProgress(page)).toHaveText('0/25');
+
+   await page.keyboard.press('Tab');
+   await page.keyboard.press('Enter');
+   words = await expectWordsAfterRestart(page, words, 25);
+
+   await page.keyboard.press('Shift+Enter');
+   words = await expectWordsAfterRestart(page, words, 25);
+
+   await page.getByRole('button', { name: 'button to restart test' }).click();
+   words = await expectWordsAfterRestart(page, words, 25);
+   await expect(wordsProgress(page)).toHaveText('0/25');
+
+   await selectWordCount(page, 50);
+   words = await expectWordsAfterRestart(page, words, 50);
+
+   await selectCategory(page, 'time');
+   words = await expectWordsAfterRestart(page, words);
+   expect(words.length).toBeGreaterThan(8);
+   await expect(timer(page)).toHaveText('60');
 });

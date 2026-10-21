@@ -12,6 +12,7 @@ export interface WordState {
    activeWordRef: React.RefObject<HTMLDivElement | null> | null;
    typedHistory: string[];
    nextIndex: number;
+   caretPos: number;
    nextCharIdx: number;
    typedEntries: number;
    errorCount: number;

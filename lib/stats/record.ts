@@ -2,7 +2,12 @@ import { userConfigStore, wordStore } from '../../store';
 import { calculateStats, replayKeystrokeLog } from './calculate';
 import { keystrokeTimestamp } from './clock';
 import { compactLog, MAX_EXTRA_LETTERS } from './types';
-import type { Keystroke, KeystrokeKind, SavedTestResult } from './types';
+import type {
+   Keystroke,
+   KeystrokeKind,
+   SavedTestResult,
+   TestStats,
+} from './types';
 
 export function classifyTypedKey(
    activeWord: string,
@@ -79,25 +84,37 @@ export function syncKeystrokeStats(): void {
    });
 }
 
+export function describeKeystrokeLog(
+   log: readonly Keystroke[],
+   wordList: readonly string[],
+   durationSeconds: number
+): { words: string[]; wordCount: number; stats: TestStats } {
+   const replayed = replayKeystrokeLog(log, wordList);
+   const words = wordList.slice(0, replayed.activeIndex + 1);
+   const current = replayed.typedWords[replayed.activeIndex] ?? '';
+   const wordCount = replayed.activeIndex + (current.length > 0 ? 1 : 0);
+   return {
+      words,
+      wordCount,
+      stats: calculateStats({
+         log,
+         words,
+         durationMs: durationSeconds * 1000,
+      }),
+   };
+}
+
 export function buildFinishedResult(): SavedTestResult | null {
    const { keystrokeLog, wordList } = wordStore.getState();
    if (keystrokeLog.length === 0) return null;
 
-   const replayed = replayKeystrokeLog(keystrokeLog, wordList);
-   const words = wordList.slice(0, replayed.activeIndex + 1);
-   const current = replayed.typedWords[replayed.activeIndex] ?? '';
-   const wordCount = replayed.activeIndex + (current.length > 0 ? 1 : 0);
    const { time, type, category, language } = userConfigStore.getState();
-   const { durationMs, durationSeconds } = testDuration(
+   const { durationSeconds } = testDuration(keystrokeLog, category, time);
+   const described = describeKeystrokeLog(
       keystrokeLog,
-      category,
-      time
+      wordList,
+      durationSeconds
    );
-   const stats = calculateStats({
-      log: keystrokeLog,
-      words,
-      durationMs,
-   });
 
    return {
       id: globalThis.crypto.randomUUID(),
@@ -106,9 +123,9 @@ export function buildFinishedResult(): SavedTestResult | null {
       category,
       language,
       durationSeconds,
-      wordCount,
-      words,
+      wordCount: described.wordCount,
+      words: described.words,
       log: compactLog(keystrokeLog),
-      stats,
+      stats: described.stats,
    };
 }

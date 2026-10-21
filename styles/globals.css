@@ -184,6 +184,78 @@
       --wrong_char: 47, 44%, 89%;
    }
 
+   .serika-dark {
+      --background: 216 4.8% 20.6%;
+      --foreground: 216 5% 27%;
+      --input: 55 11.5% 79.6%;
+      --accent: 47.5 83.7% 48.2%;
+      --destructive: 354 80% 64%;
+      --cursor: 47.5 83.7% 48.2%;
+      --radius: 0.5rem;
+      --correct_char: 108.6 50.5% 61.2%;
+      --wrong_char: 354 80% 64%;
+   }
+
+   .nord {
+      --background: 220 17.2% 17.1%;
+      --foreground: 220 16.4% 21.6%;
+      --input: 218.8 27.9% 88%;
+      --accent: 193.3 43.4% 67.5%;
+      --destructive: 354.3 42.3% 56.5%;
+      --cursor: 210 34% 63.1%;
+      --radius: 0.5rem;
+      --correct_char: 92.4 27.8% 64.7%;
+      --wrong_char: 354.3 42.3% 56.5%;
+   }
+
+   .dracula {
+      --background: 231.4 14.9% 18.4%;
+      --foreground: 231 15% 31%;
+      --input: 60 30% 96.1%;
+      --accent: 264.7 89.5% 77.6%;
+      --destructive: 0 100% 66.7%;
+      --cursor: 264.7 89.5% 77.6%;
+      --radius: 0.5rem;
+      --correct_char: 135.2 94.4% 64.7%;
+      --wrong_char: 0 100% 66.7%;
+   }
+
+   .carbon {
+      --background: 0 0% 19.2%;
+      --foreground: 0 0% 25%;
+      --input: 40 69.2% 87.3%;
+      --accent: 25 92.8% 50.8%;
+      --destructive: 0 100% 67.1%;
+      --cursor: 25 92.8% 50.8%;
+      --radius: 0.5rem;
+      --correct_char: 98.4 52.8% 61.8%;
+      --wrong_char: 0 100% 67.1%;
+   }
+
+   .botanical {
+      --background: 172.2 28.4% 15.9%;
+      --foreground: 173.1 26.5% 19.2%;
+      --input: 193.3 27.3% 93.5%;
+      --accent: 163 40.2% 63.9%;
+      --destructive: 12.6 67.5% 62.5%;
+      --cursor: 24.8 75.8% 80.6%;
+      --radius: 0.5rem;
+      --correct_char: 95.9 45.6% 64.7%;
+      --wrong_char: 12.6 67.5% 62.5%;
+   }
+
+   .olivia {
+      --background: 270 3.6% 11%;
+      --foreground: 345 5.6% 14.1%;
+      --input: 24 16.1% 93.9%;
+      --accent: 16.6 49.6% 74.3%;
+      --destructive: 353.7 72.4% 55.9%;
+      --cursor: 16.6 49.6% 74.3%;
+      --radius: 0.5rem;
+      --correct_char: 89.2 19.6% 61%;
+      --wrong_char: 353.7 72.4% 55.9%;
+   }
+
    body {
       font-feature-settings: 'rlig' 1, 'calt' 1;
       transition: cubic-bezier(1, 0, 0, 1);

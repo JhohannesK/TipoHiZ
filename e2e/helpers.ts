@@ -62,6 +62,32 @@ export async function selectWordCount(
       .click();
 }
 
+export async function expectWordsAfterRestart(
+   page: Page,
+   before: readonly string[],
+   expectedCount?: number
+): Promise<string[]> {
+   const previousJoined = before.join('\n');
+   let last = '';
+   let stable: string[] = [];
+   await expect
+      .poll(async () => {
+         const words = await readWords(page);
+         const joined = words.join('\n');
+         const longEnough =
+            expectedCount === undefined
+               ? words.length > 8
+               : words.length === expectedCount;
+         const settled =
+            longEnough && joined !== previousJoined && joined === last;
+         last = joined;
+         if (settled) stable = words;
+         return settled;
+      })
+      .toBe(true);
+   return stable;
+}
+
 export async function waitForWordCount(
    page: Page,
    count: number
