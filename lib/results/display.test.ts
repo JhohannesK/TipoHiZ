@@ -159,3 +159,28 @@ describe('formatTestMode', () => {
       ).toBe('words 25 words spanish punctuation');
    });
 });
+
+describe('sameKeystrokeLog', () => {
+   it('should reject a log that differs in kind, timestamp, or length', () => {
+      const live = [stroke('a', 'a', 100), stroke('b', 'b', 200)];
+      const saved = savedFrom(live, ['ab']);
+
+      expect(sameKeystrokeLog(live, saved.log)).toBe(true);
+      expect(
+         sameKeystrokeLog(
+            [
+               stroke('a', 'a', 100),
+               { ...stroke('b', 'b', 200), kind: 'incorrect' },
+            ],
+            saved.log
+         )
+      ).toBe(false);
+      expect(
+         sameKeystrokeLog(
+            [stroke('a', 'a', 100), stroke('b', 'b', 201)],
+            saved.log
+         )
+      ).toBe(false);
+      expect(sameKeystrokeLog([stroke('a', 'a', 100)], saved.log)).toBe(false);
+   });
+});
