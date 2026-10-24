@@ -96,6 +96,22 @@ describe('formatAuthErrorCode', () => {
          expect(message.toLowerCase()).not.toContain('not found');
       }
    });
+
+   it('should map rate-limit session and email codes without naming an account', () => {
+      expect(formatAuthErrorCode('TOO_MANY_REQUESTS')).toBe(
+         'Too many attempts. Try again later.'
+      );
+      expect(formatAuthErrorCode('SESSION_EXPIRED')).toBe(
+         'Your session expired. Sign in again.'
+      );
+      expect(formatAuthErrorCode('INVALID_EMAIL')).toBe(
+         'Enter a valid email address.'
+      );
+   });
+
+   it('should return undefined when the redirect code is missing', () => {
+      expect(formatAuthErrorCode(undefined)).toBeUndefined();
+   });
 });
 
 describe('mapBetterAuthError', () => {
@@ -135,6 +151,12 @@ describe('mapBetterAuthError', () => {
             })
          )
       ).toBe('Something went wrong. Please try again.');
+   });
+
+   it('should map a message-only invalid email without a body code', () => {
+      expect(mapBetterAuthError(apiError({ message: 'invalid email' }))).toBe(
+         'Enter a valid email address.'
+      );
    });
 });
 

@@ -492,6 +492,38 @@ describe('calculateStats', () => {
       expect(errorTotal).toBe(stats.errors);
    });
 
+   it('should report net wpm below raw wpm when a second has incorrect letters', () => {
+      const stats = calculateStats({
+         log: typeWord('ab', 'ax', 0, 0),
+         words: ['ab'],
+         durationMs: 1_000,
+      });
+      const sample = stats.samples[0];
+
+      expect(sample?.characters).toBe(2);
+      expect(sample?.errors).toBe(1);
+      expect(sample?.rawWpm).toBe(24);
+      expect(sample?.wpm).toBe(12);
+      expect(sample?.accuracy).toBe(50);
+      expect(sample?.rawWpm).toBeGreaterThan(sample?.wpm ?? 0);
+   });
+
+   it('should zero net wpm when missed letters land on the submit second', () => {
+      const log = [...typeWord('abcde', 'ab', 0, 100), space(0, 1_200)];
+      const stats = calculateStats({
+         log,
+         words: ['abcde', 'fghij'],
+         durationMs: 2_000,
+      });
+      const submitSecond = stats.samples[1];
+
+      expect(submitSecond?.characters).toBe(1);
+      expect(submitSecond?.errors).toBe(3);
+      expect(submitSecond?.rawWpm).toBe(12);
+      expect(submitSecond?.wpm).toBe(0);
+      expect(submitSecond?.accuracy).toBe(0);
+   });
+
    it('should build per-key stats from the final characters', () => {
       const stats = calculateStats({
          log: typeWord('ab', 'axyy', 0, 0),
