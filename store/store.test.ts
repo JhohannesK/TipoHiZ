@@ -84,6 +84,16 @@ describe('word store actions', () => {
       ]);
    });
 
+   it('should leave the active word undefined when a words-mode bank is empty', () => {
+      setCategory('words');
+      setWordCount(10);
+
+      setWordList([]);
+
+      expect(wordStore.getState().wordList).toEqual([]);
+      expect(wordStore.getState().activeWord).toBeUndefined();
+   });
+
    it('should generate exactly the chosen number of words', () => {
       setCategory('words');
       setWordCount(10);
