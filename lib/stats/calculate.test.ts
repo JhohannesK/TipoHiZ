@@ -43,6 +43,34 @@ function space(wordIndex: number, timestampMs: number): Keystroke {
    return stroke(' ', ' ', 'correct', timestampMs, wordIndex);
 }
 
+function pacedLog(
+   word: string,
+   wordCount: number,
+   gapsMs: readonly number[]
+): { log: Keystroke[]; words: string[] } {
+   const words = Array.from({ length: wordCount }, () => word);
+   const log: Keystroke[] = [];
+   let timestampMs = 0;
+   let gapIndex = 0;
+   const advance = () => {
+      const gap =
+         gapsMs.length === 0 ? 0 : gapsMs[gapIndex % gapsMs.length] ?? 0;
+      gapIndex += 1;
+      timestampMs += gap;
+   };
+
+   words.forEach((target, wordIndex) => {
+      for (const key of target) {
+         log.push(stroke(key, key, 'correct', timestampMs, wordIndex));
+         advance();
+      }
+      log.push(space(wordIndex, timestampMs));
+      advance();
+   });
+
+   return { log, words };
+}
+
 function logFromTypedWords(
    words: readonly string[],
    typedWords: readonly string[],
@@ -341,7 +369,7 @@ describe('calculateStats', () => {
       expect(stats.consistency).toBe(100);
    });
 
-   it('should drop consistency when the per-second pace swings', () => {
+   it('should ignore an empty second after the last keystroke', () => {
       const stats = calculateStats({
          log: typeWord('abcdeabcde', 'abcdeabcde', 0, 0, 10),
          words: ['abcdeabcde'],
@@ -350,7 +378,101 @@ describe('calculateStats', () => {
 
       expect(stats.samples[0]?.rawWpm).toBe(120);
       expect(stats.samples[1]?.rawWpm).toBe(0);
-      expect(stats.consistency).toBe(0);
+      expect(stats.consistency).toBe(100);
+   });
+
+   it('should score a one second test as fully consistent', () => {
+      const stats = calculateStats({
+         log: typeWord('abcde', 'abcde', 0, 120, 140),
+         words: ['abcde'],
+         durationMs: 1_000,
+      });
+
+      expect(stats.samples).toHaveLength(1);
+      expect(stats.samples[0]?.characters).toBe(5);
+      expect(stats.consistency).toBe(100);
+   });
+
+   it('should stay consistent when a steady human pace does not fill the clock', () => {
+      const { log, words } = pacedLog(
+         'abcde',
+         14,
+         [150, 165, 140, 180, 155, 170, 145, 175, 160, 185]
+      );
+      const stats = calculateStats({ log, words, durationMs: 30_000 });
+
+      expect(stats.samples).toHaveLength(30);
+      expect(stats.samples.at(-1)?.rawWpm).toBe(0);
+      expect(stats.typedEntries).toBe(log.length);
+      expect(stats.consistency).toBeGreaterThanOrEqual(80);
+      expect(stats.consistency).toBeLessThanOrEqual(95);
+   });
+
+   it('should score erratic human intervals below a steady pace', () => {
+      const steady = calculateStats({
+         ...pacedLog(
+            'abcde',
+            14,
+            [150, 165, 140, 180, 155, 170, 145, 175, 160, 185]
+         ),
+         durationMs: 30_000,
+      });
+      const erratic = calculateStats({
+         ...pacedLog(
+            'abcde',
+            16,
+            [40, 45, 50, 40, 55, 820, 40, 45, 900, 50, 40, 760, 35, 480, 1100]
+         ),
+         durationMs: 30_000,
+      });
+
+      expect(erratic.consistency).toBeGreaterThan(30);
+      expect(erratic.consistency).toBeLessThan(70);
+      expect(erratic.consistency).toBeLessThan(steady.consistency - 20);
+   });
+
+   it('should map a two speed test through kogasa', () => {
+      const target = 'abcdefghijk';
+      const log = [
+         ...target
+            .slice(0, 10)
+            .split('')
+            .map((key, index) => stroke(key, key, 'correct', index * 40, 0)),
+         stroke(target[10] ?? '', target[10] ?? '', 'correct', 1_400, 0),
+      ];
+      const stats = calculateStats({
+         log,
+         words: [target],
+         durationMs: 2_000,
+      });
+
+      expect(stats.samples.map((sample) => sample.rawWpm)).toEqual([120, 12]);
+      expect(stats.consistency).toBeCloseTo(20.9006, 3);
+   });
+
+   it('should count a pause between keystrokes as inconsistent', () => {
+      const target = 'abcdefghijklmnop';
+      const log = target
+         .split('')
+         .map((key, index) =>
+            stroke(
+               key,
+               key,
+               'correct',
+               index < 8 ? 50 + index * 80 : 2_100 + (index - 8) * 80,
+               0
+            )
+         );
+      const stats = calculateStats({
+         log,
+         words: [target],
+         durationMs: 4_000,
+      });
+
+      expect(stats.samples.map((sample) => sample.rawWpm)).toEqual([
+         96, 0, 96, 0,
+      ]);
+      expect(stats.consistency).toBeCloseTo(30.3581, 3);
    });
 
    it('should attribute missed letters to the second the word was submitted', () => {

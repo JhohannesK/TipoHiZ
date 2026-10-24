@@ -182,6 +182,13 @@ describe('words mode passage', () => {
 
       expect(bank).toEqual(['alpha', 'beta', 'gamma']);
    });
+
+   it('should return an empty passage for an empty bank or invalid count', () => {
+      expect(generatePassage([], 10)).toEqual([]);
+      expect(generatePassage(['alpha'], 0)).toEqual([]);
+      expect(generatePassage(['alpha'], -4)).toEqual([]);
+      expect(generatePassage(['alpha'], Number.NaN)).toEqual([]);
+   });
 });
 
 describe('wordsTestFinished', () => {
@@ -268,5 +275,39 @@ describe('wordsTestFinished', () => {
             userInput: '',
          })
       ).toBe(true);
+   });
+
+   it('should finish against the generated list when it is shorter than the picker count', () => {
+      const shortList = {
+         ...base,
+         wordCount: 100,
+         wordListLength: 3,
+         nextIndex: 2,
+         activeWord: 'end',
+         userInput: 'en',
+      };
+
+      expect(wordsTestFinished(shortList)).toBe(false);
+      expect(wordsTestFinished({ ...shortList, userInput: 'end' })).toBe(true);
+      expect(
+         wordsTestFinished({
+            ...shortList,
+            nextIndex: 3,
+            activeWord: '',
+            userInput: '',
+         })
+      ).toBe(true);
+   });
+
+   it('should stay open when the word list is empty', () => {
+      expect(
+         wordsTestFinished({
+            ...base,
+            wordListLength: 0,
+            nextIndex: 0,
+            activeWord: '',
+            userInput: '',
+         })
+      ).toBe(false);
    });
 });
