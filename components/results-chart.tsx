@@ -75,10 +75,12 @@ function ChartHover({ tooltip }: { tooltip: ChartTooltip }) {
 
 export function ResultsChart({
    samples,
+   durationSeconds,
 }: {
    samples: readonly SecondSample[];
+   durationSeconds?: number;
 }) {
-   const chart = buildWpmChart(samples);
+   const chart = buildWpmChart(samples, durationSeconds);
    const [hoverSecond, setHoverSecond] = useState<number | null>(null);
    const [focusSecond, setFocusSecond] = useState<number | null>(null);
    const [keyboardActive, setKeyboardActive] = useState(false);

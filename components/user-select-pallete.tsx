@@ -13,7 +13,13 @@ import { AiTwotoneSetting } from 'react-icons/ai';
 import { resetTest } from '@/lib/reset';
 import Chip from './ui/chip';
 
-const UserSelectPallete = ({ reset }: { reset: () => void }) => {
+const UserSelectPallete = ({
+   reset,
+   hidden = false,
+}: {
+   reset: () => void;
+   hidden?: boolean;
+}) => {
    const [open, setOpen] = useState(false);
    const { options } = Constants;
    const time = userConfigStore((state) => state.time);
@@ -21,13 +27,11 @@ const UserSelectPallete = ({ reset }: { reset: () => void }) => {
    const category = userConfigStore((state) => state.category);
    const wordCount = userConfigStore((state) => state.wordCount);
    const wordsMode = category === 'words';
-   const groups: { option: string; choices: readonly (string | number)[] }[] = [
+   const fixed: { option: string; choices: readonly (string | number)[] }[] = [
       { option: 'type', choices: options.type },
       { option: 'category', choices: options.category },
-      wordsMode
-         ? { option: 'words', choices: options.words }
-         : { option: 'time', choices: options.time },
    ];
+   const barClass = hidden ? 'pointer-events-none opacity-0' : 'opacity-100';
 
    React.useEffect(() => {
       document.querySelector('.type')?.childNodes.forEach((el) => {
@@ -93,38 +97,108 @@ const UserSelectPallete = ({ reset }: { reset: () => void }) => {
       }
    };
 
-   const renderGroups = (
+   const renderChoices = (
+      option: string,
+      choices: readonly (string | number)[],
+      vertical: boolean,
       onPick: (event: React.MouseEvent<HTMLButtonElement>) => void
-   ) =>
-      groups.map((group, optionIndex) => (
-         <Fragment key={group.option}>
-            <div
-               className={`${group.option} flex items-center justify-center space-x-2`}
+   ) => (
+      <div
+         className={`${option} flex items-center justify-center ${
+            vertical ? 'flex-col gap-2' : 'space-x-2'
+         }`}
+      >
+         {choices.map((choice) => (
+            <button
+               tabIndex={-1}
+               value={choice}
+               key={choice}
+               data-option={option}
+               onClick={onPick}
             >
-               {group.choices.map((choice) => (
+               {choice}
+            </button>
+         ))}
+      </div>
+   );
+
+   const renderCounts = (
+      vertical: boolean,
+      onPick: (event: React.MouseEvent<HTMLButtonElement>) => void
+   ) => {
+      const layout = vertical
+         ? 'flex flex-col items-center justify-center gap-2'
+         : 'flex items-center justify-center space-x-2';
+      return (
+         <div className="grid">
+            <div
+               className={`time col-start-1 row-start-1 ${layout} transition-opacity duration-[250ms] ${
+                  wordsMode ? 'pointer-events-none opacity-0' : 'opacity-100'
+               }`}
+               aria-hidden={wordsMode}
+               data-active={wordsMode ? 'false' : 'true'}
+            >
+               {options.time.map((choice) => (
                   <button
                      tabIndex={-1}
                      value={choice}
                      key={choice}
-                     data-option={group.option}
+                     data-option="time"
                      onClick={onPick}
                   >
                      {choice}
                   </button>
                ))}
             </div>
-            {optionIndex < groups.length - 1 && (
-               <span className="text-[2rem]">|</span>
-            )}
-         </Fragment>
-      ));
+            <div
+               className={`words col-start-1 row-start-1 ${layout} transition-opacity duration-[250ms] ${
+                  wordsMode ? 'opacity-100' : 'pointer-events-none opacity-0'
+               }`}
+               aria-hidden={!wordsMode}
+               data-active={wordsMode ? 'true' : 'false'}
+            >
+               {options.words.map((choice) => (
+                  <button
+                     tabIndex={-1}
+                     value={choice}
+                     key={choice}
+                     data-option="words"
+                     onClick={onPick}
+                  >
+                     {choice}
+                  </button>
+               ))}
+            </div>
+         </div>
+      );
+   };
 
    return (
       <div className="flex items-center justify-center w-full pt-3 text-xl">
-         <div className="items-center justify-center hidden px-3 py-2 space-x-2 rounded-md sm:flex bg-foreground text-input ">
-            {renderGroups(handleOption)}
+         <div
+            data-testid="config-bar"
+            className={`items-center justify-center hidden px-3 py-2 space-x-2 rounded-md sm:flex bg-foreground text-input transition-opacity duration-[250ms] ${barClass}`}
+         >
+            {fixed.map((group, optionIndex) => (
+               <Fragment key={group.option}>
+                  {renderChoices(
+                     group.option,
+                     group.choices,
+                     false,
+                     handleOption
+                  )}
+                  {optionIndex < fixed.length - 1 && (
+                     <span className="text-[2rem]">|</span>
+                  )}
+               </Fragment>
+            ))}
+            <span className="text-[2rem]">|</span>
+            {renderCounts(false, handleOption)}
          </div>
-         <div className="relative flex sm:hidden">
+         <div
+            data-testid="config-bar"
+            className={`relative flex sm:hidden transition-opacity duration-[250ms] ${barClass}`}
+         >
             <Chip
                onClick={() => setOpen(!open)}
                name="Test settings"
@@ -133,31 +207,28 @@ const UserSelectPallete = ({ reset }: { reset: () => void }) => {
             />
             <div
                className={
-                  open
+                  open && !hidden
                      ? `flex absolute top-8 w-[11rem] bg-foreground text-input opacity-95 px-5 py-4 rounded-xl z-10 flex-col gap-4`
                      : 'hidden'
                }
             >
-               {groups.map((group) => (
-                  <div
-                     key={group.option}
-                     className={`${group.option} flex flex-col items-center justify-center gap-2`}
-                  >
-                     {group.choices.map((choice) => (
-                        <button
-                           value={choice}
-                           key={choice}
-                           data-option={group.option}
-                           onClick={(event) => {
-                              handleOption(event);
-                              setOpen(false);
-                           }}
-                        >
-                           {choice}
-                        </button>
-                     ))}
-                  </div>
+               {fixed.map((group) => (
+                  <Fragment key={group.option}>
+                     {renderChoices(
+                        group.option,
+                        group.choices,
+                        true,
+                        (event) => {
+                           handleOption(event);
+                           setOpen(false);
+                        }
+                     )}
+                  </Fragment>
                ))}
+               {renderCounts(true, (event) => {
+                  handleOption(event);
+                  setOpen(false);
+               })}
             </div>
          </div>
       </div>

@@ -46,12 +46,21 @@ describe('UserSelectPallete', () => {
    it('should offer time limits until words mode is chosen', () => {
       render(<UserSelectPallete reset={reset} />);
 
-      expect(
-         screen.getAllByRole('button', byName('30')).length
-      ).toBeGreaterThan(0);
+      for (const seconds of ['15', '30', '60', '120']) {
+         expect(
+            screen.getAllByRole('button', byName(seconds)).length
+         ).toBeGreaterThan(0);
+      }
       expect(
          screen.queryByRole('button', byName('25'))
       ).not.toBeInTheDocument();
+      for (const node of document.querySelectorAll('div.words')) {
+         expect(node).toHaveClass('opacity-0');
+         expect(node).toHaveAttribute('data-active', 'false');
+      }
+      expect(
+         screen.getAllByRole('button', byName('punctuation')).length
+      ).toBeGreaterThan(0);
    });
 
    it('should offer word counts and remember the choice', () => {
@@ -69,6 +78,23 @@ describe('UserSelectPallete', () => {
          screen.queryByRole('button', byName('15'))
       ).not.toBeInTheDocument();
       expect(
+         screen.queryByRole('button', byName('30'))
+      ).not.toBeInTheDocument();
+      expect(
+         screen.queryByRole('button', byName('60'))
+      ).not.toBeInTheDocument();
+      expect(
+         screen.queryByRole('button', byName('120'))
+      ).not.toBeInTheDocument();
+      for (const node of document.querySelectorAll('div.time')) {
+         expect(node).toHaveClass('opacity-0');
+         expect(node).toHaveAttribute('aria-hidden', 'true');
+      }
+      for (const node of document.querySelectorAll('div.words')) {
+         expect(node).toHaveClass('opacity-100');
+         expect(node).toHaveAttribute('data-active', 'true');
+      }
+      expect(
          screen
             .getAllByRole('button', byName('10'))
             .some((button) => button.classList.contains('selected'))
@@ -83,5 +109,17 @@ describe('UserSelectPallete', () => {
          state?: { category?: string; wordCount?: number };
       };
       expect(saved.state).toMatchObject({ category: 'words', wordCount: 50 });
+   });
+
+   it('should fade the config bar while a test is running', () => {
+      render(<UserSelectPallete reset={reset} hidden />);
+
+      for (const bar of screen.getAllByTestId('config-bar')) {
+         expect(bar).toHaveClass('opacity-0');
+         expect(bar).toHaveClass('pointer-events-none');
+      }
+      expect(
+         screen.getAllByRole('button', byName('punctuation')).length
+      ).toBeGreaterThan(0);
    });
 });
