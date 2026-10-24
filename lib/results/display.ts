@@ -86,15 +86,17 @@ export function displayedResult(input: {
    };
 }
 
+export function formatElapsedStat(seconds: number): string {
+   if (!Number.isFinite(seconds) || seconds <= 0) return '0s';
+   return `${Math.round(seconds)}s`;
+}
+
 export function formatTestMode(
    result: Pick<
       DisplayedResult,
       'category' | 'mode' | 'language' | 'durationSeconds' | 'wordCount'
    >
 ): string {
-   const length =
-      result.category === 'words'
-         ? `${result.wordCount} words`
-         : `${result.durationSeconds}s`;
-   return `${result.category} ${length} ${result.language} ${result.mode}`;
+   if (result.category === 'words') return `words ${result.wordCount}`;
+   return `${result.category} ${result.durationSeconds}s ${result.language} ${result.mode}`;
 }

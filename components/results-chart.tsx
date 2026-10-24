@@ -8,10 +8,12 @@ function speedText(value: number): string {
 
 export function ResultsChart({
    samples,
+   durationSeconds,
 }: {
    samples: readonly SecondSample[];
+   durationSeconds?: number;
 }) {
-   const chart = buildWpmChart(samples);
+   const chart = buildWpmChart(samples, durationSeconds);
 
    return (
       <figure className="w-full min-w-0 space-y-3">

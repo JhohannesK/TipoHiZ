@@ -11,6 +11,20 @@ export function formatElapsed(seconds: number): string {
    return `${minutes}:${rest.toString().padStart(2, '0')}`;
 }
 
+export function wordPositionLabel(nextIndex: number, total: number): string {
+   const count = Math.max(1, Math.floor(total));
+   const position = Math.min(count, Math.max(1, Math.floor(nextIndex) + 1));
+   return `${position}/${count}`;
+}
+
+export function showWordCounter(input: {
+   category: string;
+   running: boolean;
+   disabled: boolean;
+}): boolean {
+   return input.category === 'words' && input.running && !input.disabled;
+}
+
 export function generatePassage(
    wordList: readonly string[],
    count?: number

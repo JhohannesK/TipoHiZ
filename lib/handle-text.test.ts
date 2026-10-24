@@ -237,6 +237,26 @@ describe('HandleText', () => {
       expect(onFinish).not.toHaveBeenCalled();
    });
 
+   it('should finish a words test when space submits a mistyped last word', () => {
+      const onFinish = vi.fn();
+      userConfigStore.setState({ category: 'words', wordCount: 10 });
+      wordStore.setState({
+         ...initialWordState,
+         wordList: ['cat', 'dog'],
+         activeWord: 'dog',
+         userInput: 'dxx',
+         nextIndex: 1,
+         typedHistory: ['cat'],
+      });
+
+      HandleText(' ', wordRef(), run, onFinish);
+
+      expect(onFinish).toHaveBeenCalledTimes(1);
+      expect(wordStore.getState().nextIndex).toBe(2);
+      expect(wordStore.getState().disabled).toBe(true);
+      expect(wordStore.getState().typedHistory).toEqual(['cat', 'dxx']);
+   });
+
    it('should finish a words test when space submits the last word', () => {
       const onFinish = vi.fn();
       userConfigStore.setState({ category: 'words', wordCount: 10 });

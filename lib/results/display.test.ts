@@ -2,7 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { resultFromSubmission, statsFromResult } from '@/lib/stats/aggregate';
 import { calculateStats } from '@/lib/stats/calculate';
 import type { Keystroke, SavedTestResult } from '@/lib/stats/types';
-import { displayedResult, formatTestMode, sameKeystrokeLog } from './display';
+import {
+   displayedResult,
+   formatElapsedStat,
+   formatTestMode,
+   sameKeystrokeLog,
+} from './display';
 
 const config = {
    time: 15,
@@ -146,6 +151,15 @@ describe('displayedResult', () => {
    });
 });
 
+describe('formatElapsedStat', () => {
+   it('should show real elapsed seconds', () => {
+      expect(formatElapsedStat(14)).toBe('14s');
+      expect(formatElapsedStat(14.4)).toBe('14s');
+      expect(formatElapsedStat(14.6)).toBe('15s');
+      expect(formatElapsedStat(0)).toBe('0s');
+   });
+});
+
 describe('formatTestMode', () => {
    it('should include the word count for a words test', () => {
       expect(
@@ -153,9 +167,9 @@ describe('formatTestMode', () => {
             category: 'words',
             mode: 'punctuation',
             language: 'spanish',
-            durationSeconds: 30,
+            durationSeconds: 14.2,
             wordCount: 25,
          })
-      ).toBe('words 25 words spanish punctuation');
+      ).toBe('words 25');
    });
 });
