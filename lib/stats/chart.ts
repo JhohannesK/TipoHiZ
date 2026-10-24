@@ -144,3 +144,87 @@ export function buildWpmChart(samples: readonly SecondSample[]): WpmChart {
       summary: summaryFor(ordered),
    };
 }
+
+export type TooltipAlign = 'start' | 'end';
+
+export interface ChartTooltip {
+   second: number;
+   wpm: string;
+   rawWpm: string;
+   errors: number;
+   errorText: string;
+   x: number;
+   align: TooltipAlign;
+   summary: string;
+}
+
+export function formatChartSpeed(value: number): string {
+   return finite(value).toFixed(0);
+}
+
+function errorText(errors: number): string {
+   const count = finite(errors);
+   if (count === 1) return '1 error';
+   return `${count} errors`;
+}
+
+export function tooltipAlign(x: number): TooltipAlign {
+   return x > 62 ? 'end' : 'start';
+}
+
+export function chartTooltip(point: ChartPoint): ChartTooltip {
+   const second = point.second + 1;
+   const wpm = formatChartSpeed(point.wpm);
+   const rawWpm = formatChartSpeed(point.rawWpm);
+   const errors = finite(point.errors);
+   const errorsLabel = errorText(errors);
+
+   return {
+      second,
+      wpm,
+      rawWpm,
+      errors,
+      errorText: errorsLabel,
+      x: point.x,
+      align: tooltipAlign(point.x),
+      summary: `Second ${second}: ${wpm} wpm, ${rawWpm} raw wpm, ${errorsLabel}`,
+   };
+}
+
+export function nearestChartPoint(
+   points: readonly ChartPoint[],
+   percentX: number
+): ChartPoint | null {
+   const first = points[0];
+   if (!first || !Number.isFinite(percentX)) return null;
+
+   let best = first;
+   let bestDistance = Math.abs(first.x - percentX);
+   for (const point of points) {
+      const distance = Math.abs(point.x - percentX);
+      if (distance < bestDistance) {
+         best = point;
+         bestDistance = distance;
+      }
+   }
+   return best;
+}
+
+export function chartStep(
+   count: number,
+   index: number,
+   key: string
+): number | null {
+   if (count <= 0) return null;
+   if (key === 'Home') return 0;
+   if (key === 'End') return count - 1;
+   if (key === 'ArrowRight' || key === 'ArrowUp') {
+      if (index < 0) return 0;
+      return Math.min(count - 1, index + 1);
+   }
+   if (key === 'ArrowLeft' || key === 'ArrowDown') {
+      if (index < 0) return count - 1;
+      return Math.max(0, index - 1);
+   }
+   return null;
+}

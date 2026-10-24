@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { HandleText } from './handle-text';
-import { wordStore } from '../store';
+import { userConfigStore, wordStore } from '../store';
 import { initialWordState, resetStores } from '../test/utils';
 
 function wordRef(): React.RefObject<HTMLDivElement | null> {
@@ -121,6 +121,25 @@ describe('HandleText', () => {
       expect(run).not.toHaveBeenCalled();
    });
 
+   it('should log a backspace over an extra letter with a null expected char', () => {
+      const ref = wordRef();
+
+      HandleText('c', ref, run);
+      HandleText('a', ref, run);
+      HandleText('t', ref, run);
+      HandleText('x', ref, run);
+      HandleText('Backspace', ref, run);
+
+      const log = wordStore.getState().keystrokeLog;
+      expect(log[log.length - 1]).toMatchObject({
+         key: 'Backspace',
+         expected: null,
+         kind: 'backspace',
+         wordIndex: 0,
+      });
+      expect(wordStore.getState().userInput).toBe('cat');
+   });
+
    it('should restore the previous word when backspace is pressed on an empty input', () => {
       const ref = wordRef();
       ref.current?.classList.add('wrong');
@@ -178,5 +197,97 @@ describe('HandleText', () => {
 
       expect(wordStore.getState().userInput).toBe('z');
       expect(scrollIntoView).not.toHaveBeenCalled();
+   });
+
+   it('should finish a words test when the last word is typed', () => {
+      const onFinish = vi.fn();
+      userConfigStore.setState({ category: 'words', wordCount: 10 });
+      wordStore.setState({
+         ...initialWordState,
+         wordList: ['cat', 'dog'],
+         activeWord: 'cat',
+      });
+      const ref = wordRef();
+
+      HandleText('c', ref, run, onFinish);
+      HandleText('a', ref, run, onFinish);
+      HandleText('t', ref, run, onFinish);
+      HandleText(' ', ref, run, onFinish);
+
+      expect(onFinish).not.toHaveBeenCalled();
+
+      HandleText('d', ref, run, onFinish);
+      HandleText('o', ref, run, onFinish);
+      HandleText('g', ref, run, onFinish);
+
+      expect(onFinish).toHaveBeenCalledTimes(1);
+      expect(wordStore.getState().disabled).toBe(true);
+      expect(wordStore.getState().userInput).toBe('dog');
+      expect(wordStore.getState().nextIndex).toBe(1);
+
+      HandleText('x', ref, run, onFinish);
+
+      expect(wordStore.getState().userInput).toBe('dog');
+      expect(onFinish).toHaveBeenCalledTimes(1);
+   });
+
+   it('should keep the last word editable when the typed letters are wrong', () => {
+      const onFinish = vi.fn();
+      userConfigStore.setState({ category: 'words', wordCount: 10 });
+      wordStore.setState({
+         ...initialWordState,
+         wordList: ['cat'],
+         activeWord: 'cat',
+      });
+      const ref = wordRef();
+
+      HandleText('c', ref, run, onFinish);
+      HandleText('a', ref, run, onFinish);
+      HandleText('x', ref, run, onFinish);
+
+      expect(onFinish).not.toHaveBeenCalled();
+      expect(wordStore.getState().disabled).toBe(false);
+      expect(wordStore.getState().userInput).toBe('cax');
+
+      HandleText('Backspace', ref, run, onFinish);
+
+      expect(wordStore.getState().userInput).toBe('ca');
+      expect(wordStore.getState().disabled).toBe(false);
+      expect(onFinish).not.toHaveBeenCalled();
+   });
+
+   it('should finish a words test when space submits the last word', () => {
+      const onFinish = vi.fn();
+      userConfigStore.setState({ category: 'words', wordCount: 10 });
+      wordStore.setState({
+         ...initialWordState,
+         wordList: ['cat'],
+         activeWord: 'cat',
+         userInput: 'ca',
+         nextIndex: 0,
+      });
+
+      HandleText(' ', wordRef(), run, onFinish);
+
+      expect(onFinish).toHaveBeenCalledTimes(1);
+      expect(wordStore.getState().nextIndex).toBe(1);
+      expect(wordStore.getState().disabled).toBe(true);
+   });
+
+   it('should keep a timed test open after the last word is typed', () => {
+      const onFinish = vi.fn();
+      const ref = wordRef();
+
+      HandleText('c', ref, run, onFinish);
+      HandleText('a', ref, run, onFinish);
+      HandleText('t', ref, run, onFinish);
+      HandleText(' ', ref, run, onFinish);
+      HandleText('d', ref, run, onFinish);
+      HandleText('o', ref, run, onFinish);
+      HandleText('g', ref, run, onFinish);
+
+      expect(onFinish).not.toHaveBeenCalled();
+      expect(wordStore.getState().disabled).toBe(false);
+      expect(wordStore.getState().userInput).toBe('dog');
    });
 });

@@ -27,6 +27,7 @@ export interface TimeState {
 
 export interface IuserConfig {
    time: number;
+   wordCount: number;
    theme: string;
    type: string;
    category: string;

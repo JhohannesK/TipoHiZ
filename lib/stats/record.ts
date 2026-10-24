@@ -51,6 +51,29 @@ export function appendKeystroke(entry: Omit<Keystroke, 'timestampMs'>): void {
    }));
 }
 
+export function testDuration(
+   log: readonly Keystroke[],
+   category: string,
+   configuredSeconds: number
+): { durationMs: number; durationSeconds: number } {
+   // TODO: words-mode duration is measured from the first keystroke (t = 0),
+   // so that character adds no time and WPM runs about 2% high on 10 words.
+   // Leave the stat as it is.
+   if (category !== 'words') {
+      return {
+         durationMs: configuredSeconds * 1000,
+         durationSeconds: configuredSeconds,
+      };
+   }
+
+   let elapsed = 0;
+   for (const event of log) {
+      if (event.timestampMs > elapsed) elapsed = event.timestampMs;
+   }
+   const durationMs = Math.max(elapsed, 1);
+   return { durationMs, durationSeconds: durationMs / 1000 };
+}
+
 export function syncKeystrokeStats(): void {
    const { keystrokeLog, wordList } = wordStore.getState();
    const stats = calculateStats({
@@ -89,7 +112,12 @@ export function buildFinishedResult(): SavedTestResult | null {
    if (keystrokeLog.length === 0) return null;
 
    const { time, type, category, language } = userConfigStore.getState();
-   const described = describeKeystrokeLog(keystrokeLog, wordList, time);
+   const { durationSeconds } = testDuration(keystrokeLog, category, time);
+   const described = describeKeystrokeLog(
+      keystrokeLog,
+      wordList,
+      durationSeconds
+   );
 
    return {
       id: globalThis.crypto.randomUUID(),
@@ -97,7 +125,7 @@ export function buildFinishedResult(): SavedTestResult | null {
       mode: type,
       category,
       language,
-      durationSeconds: time,
+      durationSeconds,
       wordCount: described.wordCount,
       words: described.words,
       log: compactLog(keystrokeLog),
