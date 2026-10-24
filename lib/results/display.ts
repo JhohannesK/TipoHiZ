@@ -87,8 +87,8 @@ export function displayedResult(input: {
 }
 
 export function formatElapsedStat(seconds: number): string {
-   if (!Number.isFinite(seconds) || seconds <= 0) return '0s';
-   return `${Math.round(seconds)}s`;
+   if (!Number.isFinite(seconds) || seconds <= 0) return '0.00s';
+   return `${seconds.toFixed(2)}s`;
 }
 
 export function formatTestMode(

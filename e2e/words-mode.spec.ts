@@ -136,7 +136,7 @@ test('should finish a words test on the last word and record elapsed stats', asy
    const reported = Number.parseFloat(await statText(page, /^wpm:$/i));
    expect(reported).toBeCloseTo(saved.last?.stats?.wpm ?? -1, 1);
    expect(await statText(page, /^time:/i)).toBe(
-      `${Math.round(saved.last?.durationSeconds ?? -1)}s`
+      `${(saved.last?.durationSeconds ?? 0).toFixed(2)}s`
    );
    expect(await statText(page, /^mode:$/i)).toBe('words 10');
    await expect(page.locator('table tbody tr')).toHaveCount(samples.length);
@@ -430,7 +430,7 @@ test('should end a words test when space is pressed on a mistyped last word', as
 
    await expect(page).toHaveURL(/\/results$/, { timeout: 10_000 });
    expect(await statText(page, /^mode:$/i)).toBe('words 10');
-   expect(await statText(page, /^time:/i)).toMatch(/^\d+s$/);
+   expect(await statText(page, /^time:/i)).toMatch(/^\d+\.\d{2}s$/);
 });
 
 test('should reset the countdown when a timed test is restarted mid-run', async ({

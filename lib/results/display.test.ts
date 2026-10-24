@@ -152,11 +152,11 @@ describe('displayedResult', () => {
 });
 
 describe('formatElapsedStat', () => {
-   it('should show real elapsed seconds', () => {
-      expect(formatElapsedStat(14)).toBe('14s');
-      expect(formatElapsedStat(14.4)).toBe('14s');
-      expect(formatElapsedStat(14.6)).toBe('15s');
-      expect(formatElapsedStat(0)).toBe('0s');
+   it('should show real elapsed seconds to two decimals', () => {
+      expect(formatElapsedStat(21.95)).toBe('21.95s');
+      expect(formatElapsedStat(14)).toBe('14.00s');
+      expect(formatElapsedStat(14.4)).toBe('14.40s');
+      expect(formatElapsedStat(0)).toBe('0.00s');
    });
 });
 
