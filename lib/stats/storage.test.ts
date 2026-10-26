@@ -93,4 +93,34 @@ describe('guest result storage', () => {
       expect(loadClientResults().last?.id).toBe('last-id-1');
       expect(loadClientResults()).toBe(loadClientResults());
    });
+
+   it('should keep only valid rows when guest history is mixed', () => {
+      const kept = result('kept-id-2', '2026-10-13T00:00:00.000Z');
+      localStorage.setItem(
+         GUEST_RESULTS_KEY,
+         JSON.stringify([
+            kept,
+            { ...kept, id: 'no-stats', stats: undefined },
+            { id: 'x' },
+            {
+               ...kept,
+               id: 'bad-kind',
+               log: [['a', 'a', 'typo', 0, 0]],
+            },
+            {
+               ...kept,
+               id: 'short-tuple',
+               log: [['a', 'a', 'correct']],
+            },
+         ])
+      );
+
+      expect(loadGuestResults().map((item) => item.id)).toEqual(['kept-id-2']);
+
+      saveGuestResult(result('kept-id-3', '2026-10-13T00:01:00.000Z'));
+      expect(loadGuestResults().map((item) => item.id)).toEqual([
+         'kept-id-3',
+         'kept-id-2',
+      ]);
+   });
 });
