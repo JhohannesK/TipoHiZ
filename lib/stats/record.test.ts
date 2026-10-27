@@ -19,6 +19,31 @@ describe('testDuration', () => {
       });
    });
 
+   it('should ignore keystroke timestamps on a timed test', () => {
+      expect(
+         testDuration(
+            [
+               {
+                  key: 'a',
+                  expected: 'a',
+                  kind: 'correct',
+                  timestampMs: 0,
+                  wordIndex: 0,
+               },
+               {
+                  key: 'b',
+                  expected: 'b',
+                  kind: 'correct',
+                  timestampMs: 800,
+                  wordIndex: 0,
+               },
+            ],
+            'time',
+            15
+         )
+      ).toEqual({ durationMs: 15_000, durationSeconds: 15 });
+   });
+
    it('should use the last keystroke for a words test', () => {
       expect(
          testDuration(
@@ -42,6 +67,31 @@ describe('testDuration', () => {
             30
          )
       ).toEqual({ durationMs: 800, durationSeconds: 0.8 });
+   });
+
+   it('should use the max timestamp on a words test even if the last event is earlier', () => {
+      expect(
+         testDuration(
+            [
+               {
+                  key: 'a',
+                  expected: 'a',
+                  kind: 'correct',
+                  timestampMs: 1200,
+                  wordIndex: 0,
+               },
+               {
+                  key: 'Backspace',
+                  expected: 'a',
+                  kind: 'backspace',
+                  timestampMs: 400,
+                  wordIndex: 0,
+               },
+            ],
+            'words',
+            30
+         )
+      ).toEqual({ durationMs: 1200, durationSeconds: 1.2 });
    });
 
    it('should floor a words test with no elapsed time at 1ms', () => {
