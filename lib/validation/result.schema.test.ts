@@ -46,4 +46,52 @@ describe('result submission schema', () => {
 
       expect(parsed.success).toBe(false);
    });
+
+   it.each([0, -1, 3601])(
+      'should reject durationSeconds %s',
+      (durationSeconds) => {
+         const parsed = resultSubmissionSchema.safeParse({
+            ...submission,
+            durationSeconds,
+         });
+         expect(parsed.success).toBe(false);
+      }
+   );
+
+   it('should accept the duration and log index bounds', () => {
+      const parsed = resultSubmissionSchema.safeParse({
+         ...submission,
+         durationSeconds: 3600,
+         log: [['a', 'a', 'correct', 0, 10_000]],
+      });
+      expect(parsed.success).toBe(true);
+   });
+
+   it('should reject a short id and an empty keystroke key', () => {
+      expect(
+         resultSubmissionSchema.safeParse({ ...submission, id: 'short' })
+            .success
+      ).toBe(false);
+      expect(
+         resultSubmissionSchema.safeParse({
+            ...submission,
+            log: [['', 'a', 'correct', 0, 0]],
+         }).success
+      ).toBe(false);
+   });
+
+   it('should reject a compact tuple with a negative timestamp or wordIndex', () => {
+      expect(
+         resultSubmissionSchema.safeParse({
+            ...submission,
+            log: [['a', 'a', 'correct', -1, 0]],
+         }).success
+      ).toBe(false);
+      expect(
+         resultSubmissionSchema.safeParse({
+            ...submission,
+            log: [['a', 'a', 'correct', 0, 10_001]],
+         }).success
+      ).toBe(false);
+   });
 });
