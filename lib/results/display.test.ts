@@ -116,6 +116,25 @@ describe('displayedResult', () => {
       expect(display.stats.wpm).toBe(statsFromResult(saved).wpm);
    });
 
+   it('should keep a timed run on the configured duration even when the log is 800ms', () => {
+      const liveLog = [stroke('a', 'a', 100), stroke('b', 'b', 800)];
+      const display = displayedResult({
+         liveLog,
+         liveWords: ['ab'],
+         config,
+         saved: null,
+      });
+
+      expect(display.durationSeconds).toBe(15);
+      expect(display.stats).toEqual(
+         calculateStats({
+            log: liveLog,
+            words: ['ab'],
+            durationMs: 15_000,
+         })
+      );
+   });
+
    it('should score a words run from the elapsed keystroke time', () => {
       const liveLog = [stroke('a', 'a', 100), stroke('b', 'b', 800)];
       const display = displayedResult({
