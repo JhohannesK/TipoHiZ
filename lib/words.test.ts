@@ -53,6 +53,8 @@ describe('words mode passage', () => {
       expect(formatElapsed(0)).toBe('0:00');
       expect(formatElapsed(12)).toBe('0:12');
       expect(formatElapsed(75)).toBe('1:15');
+      expect(formatElapsed(12.9)).toBe('0:12');
+      expect(formatElapsed(-8)).toBe('0:00');
    });
 
    it('should label the word the typist is on from 1 through N', () => {
@@ -64,6 +66,8 @@ describe('words mode passage', () => {
       expect(wordPositionLabel(0, 25)).not.toBe('0/25');
       expect(wordPositionLabel(40, 25)).toBe('25/25');
       expect(wordPositionLabel(40, 25)).not.toBe('26/25');
+      expect(wordPositionLabel(0, 0)).toBe('1/1');
+      expect(wordPositionLabel(3, -4)).toBe('1/1');
    });
 
    it('should show the word counter only while a words test is running', () => {

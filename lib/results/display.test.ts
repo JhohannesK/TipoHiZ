@@ -177,6 +177,12 @@ describe('formatElapsedStat', () => {
       expect(formatElapsedStat(14.4)).toBe('14.40s');
       expect(formatElapsedStat(0)).toBe('0.00s');
    });
+
+   it('should zero non-finite and negative elapsed seconds', () => {
+      expect(formatElapsedStat(Number.NaN)).toBe('0.00s');
+      expect(formatElapsedStat(Number.POSITIVE_INFINITY)).toBe('0.00s');
+      expect(formatElapsedStat(-0.4)).toBe('0.00s');
+   });
 });
 
 describe('formatTestMode', () => {
@@ -190,5 +196,17 @@ describe('formatTestMode', () => {
             wordCount: 25,
          })
       ).toBe('words 25');
+   });
+
+   it('should keep time-mode copy when the category is not words', () => {
+      expect(
+         formatTestMode({
+            category: 'time',
+            mode: 'default',
+            language: 'english',
+            durationSeconds: 21.95,
+            wordCount: 40,
+         })
+      ).toBe('time 21.95s english default');
    });
 });
