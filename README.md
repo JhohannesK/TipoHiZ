@@ -19,7 +19,7 @@ Tipohiz is a sleek and customizable typing test platform designed to enhance you
 -  21 themes (`components/expo/theme.constant.ts`). Hover/focus paints the class on `<html>` before click. Persisted as next-themes `localStorage` key `theme`, **not** `userConfig.theme`
 -  optional key sounds
 -  optional accounts (`/login`, `/register`, Google / GitHub / Twitter) via Better Auth + MongoDB — typing works without signing in
--  config in `localStorage` (Zustand persist key `userConfig`). Guest results in `tipohiz.results` (cap 50); signed-in users `POST /api/results`
+-  config in `localStorage` (Zustand persist key `userConfig`). Guest results in `tipohiz.results` (cap 50); signed-in users `POST /api/results` (first-write-wins by `id`; `GET` newest 500; list-fetch failure still shows local history)
 
 # Future Features
 
@@ -48,12 +48,16 @@ Typing tests run with **no env vars**. Auth needs:
 | ------------------------------ | -------------------------------------------------------------------------------------- |
 | `MONGODB_URI`                  | Better Auth MongoDB adapter                                                            |
 | `BETTER_AUTH_SECRET`           | Session signing                                                                        |
-| `BETTER_AUTH_URL`              | Public origin used for OAuth callbacks. A trailing slash is stripped                   |
-| `BETTER_AUTH_TRUSTED_ORIGINS`  | Extra comma-separated origins. `BETTER_AUTH_URL` and `VERCEL_URL` are included as well |
+| `BETTER_AUTH_URL`              | Public origin for OAuth callbacks (trailing slash stripped). If unset on Vercel: `VERCEL_PROJECT_PRODUCTION_URL` when `VERCEL_ENV=production`, else `VERCEL_BRANCH_URL` (`lib/auth/base-url.ts`) |
+| `BETTER_AUTH_TRUSTED_ORIGINS`  | Extra comma-separated origins. Also includes `BETTER_AUTH_URL` and `https://$VERCEL_URL`. Does **not** auto-add `VERCEL_BRANCH_URL` or the production fallback host |
 | `BETTER_AUTH_API_KEY`          | Optional Better Auth dashboard key. Auth still runs when it is unset                   |
 | `GOOGLE_CLIENT_ID` / `SECRET`  | Google OAuth                                                                           |
 | `GITHUB_CLIENT_ID` / `SECRET`  | GitHub OAuth                                                                           |
 | `TWITTER_CLIENT_ID` / `SECRET` | Twitter/X OAuth                                                                        |
+
+Set `BETTER_AUTH_URL` locally. Preview OAuth 403/CORS usually means the branch host is missing from `BETTER_AUTH_TRUSTED_ORIGINS` even though `resolveAuthBaseUrl()` already fell back to `VERCEL_BRANCH_URL`.
+
+`mongodb+srv://` or a URI with `replicaSet=` enables Better Auth adapter transactions. Standalone `mongodb://localhost:27017/…` (including `directConnection=true`) does not (`mongoTransactionsEnabled`). Linking/OAuth persistence can differ from Atlas.
 
 `proxy.ts` redirects a signed-in visitor away from `/login` and `/register`. It does not gate the typing test. Anonymous use is expected.
 
