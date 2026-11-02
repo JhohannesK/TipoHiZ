@@ -1,10 +1,11 @@
 import { getServerSession } from '@/lib/auth/session';
+import { userIdFromSession } from '@/lib/auth/session-user';
+import { resultPayloadFromBody } from '@/lib/stats/result-payload';
 import { listResultsForUser, saveResultForUser } from '@/lib/stats/repository';
 import { resultSubmissionSchema } from '@/lib/validation/result.schema';
 
 async function requireUserId(): Promise<string | null> {
-   const session = await getServerSession();
-   return session?.user?.id ?? null;
+   return userIdFromSession(await getServerSession());
 }
 
 export async function GET() {
@@ -33,10 +34,7 @@ export async function POST(request: Request) {
       }
 
       const body: unknown = await request.json();
-      const payload =
-         body && typeof body === 'object' && 'result' in body
-            ? body.result
-            : body;
+      const payload = resultPayloadFromBody(body);
       const parsed = resultSubmissionSchema.safeParse(payload);
       if (!parsed.success) {
          return Response.json({ error: 'Invalid result' }, { status: 400 });
