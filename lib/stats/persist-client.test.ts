@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { userConfigStore, wordStore } from '../../store';
 import { setKeystrokeClock } from './clock';
 import {
+   migrateGuestResults,
    persistFinishedTest,
    resultPersistenceMode,
    setResultPersistenceMode,
@@ -103,5 +104,27 @@ describe('persistFinishedTest', () => {
       });
 
       expect(loadGuestResults()).toEqual([]);
+   });
+
+   it('should clear guest rows after a successful migrate and omit stats', async () => {
+      const saved = persistFinishedTest();
+      expect(loadGuestResults()).toHaveLength(1);
+
+      const fetchMock = vi.fn().mockResolvedValue({ ok: true });
+      vi.stubGlobal('fetch', fetchMock);
+
+      await expect(migrateGuestResults()).resolves.toBe(true);
+
+      expect(loadGuestResults()).toEqual([]);
+      expect(fetchMock).toHaveBeenCalledWith(
+         '/api/results/migrate',
+         expect.objectContaining({ method: 'POST' })
+      );
+      const body = JSON.parse(
+         String(fetchMock.mock.calls[0]?.[1]?.body ?? '{}')
+      ) as { results?: Array<Record<string, unknown>> };
+      expect(body.results).toHaveLength(1);
+      expect(body.results?.[0]?.id).toBe(saved?.id);
+      expect(body.results?.[0]).not.toHaveProperty('stats');
    });
 });
