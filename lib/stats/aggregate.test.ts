@@ -105,4 +105,70 @@ describe('saved result aggregation', () => {
       expect(merged[0]?.createdAt).toBe(older.createdAt);
       expect(statsFromResult(merged[0] ?? older).typedEntries).toBe(5);
    });
+
+   it('should keep the primary body when extras repeat an id', () => {
+      const primary = submission('same', '2026-10-13T00:00:00.000Z', 'abcde');
+      const extra = submission(
+         'same',
+         '2026-10-14T00:00:00.000Z',
+         'abcdefghij'
+      );
+      const merged = mergeResults([primary], [extra]);
+
+      expect(merged).toHaveLength(1);
+      expect(merged[0]?.createdAt).toBe(primary.createdAt);
+      expect(statsFromResult(merged[0] ?? primary).typedEntries).toBe(5);
+   });
+
+   it('should ignore stale stored rawWpm accuracy and consistency when ranking bests', () => {
+      const honest = submission('honest', '2026-10-13T00:00:00.000Z', 'abcde');
+      const stale = {
+         ...submission('stale', '2026-10-13T00:01:00.000Z', 'ab'),
+         stats: {
+            ...submission('stale', '2026-10-13T00:01:00.000Z', 'ab').stats,
+            rawWpm: 9_999,
+            accuracy: 1,
+            consistency: 1,
+         },
+      };
+      const summary = summarizeResults([stale, honest]);
+      const honestStats = statsFromResult(honest);
+      const staleStats = statsFromResult(stale);
+
+      expect(summary.personalBests.rawWpm).toBeCloseTo(honestStats.rawWpm, 5);
+      expect(summary.personalBests.accuracy).toBeCloseTo(
+         Math.max(honestStats.accuracy, staleStats.accuracy),
+         5
+      );
+      expect(summary.personalBests.consistency).toBeCloseTo(
+         Math.max(honestStats.consistency, staleStats.consistency),
+         5
+      );
+      expect(summary.personalBests.rawWpm).not.toBe(9_999);
+      expect(summary.personalBests.accuracy).not.toBe(1);
+      expect(summary.personalBests.consistency).not.toBe(1);
+   });
+
+   it('should sum per-key counts across tests instead of averaging accuracy', () => {
+      const first = submission('first', '2026-10-13T00:00:00.000Z', 'aa');
+      const second = submission('second', '2026-10-13T00:01:00.000Z', 'ab');
+      const summary = summarizeResults([first, second]);
+
+      expect(summary.perKey).toEqual([
+         {
+            key: 'a',
+            correct: 3,
+            incorrect: 0,
+            extra: 0,
+            accuracy: 100,
+         },
+         {
+            key: 'b',
+            correct: 1,
+            incorrect: 0,
+            extra: 0,
+            accuracy: 100,
+         },
+      ]);
+   });
 });
