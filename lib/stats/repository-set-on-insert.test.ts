@@ -72,4 +72,26 @@ describe('resultUpsertWrite', () => {
       expect(Object.keys(firstWrite.update)).toEqual(['$setOnInsert']);
       expect(Object.keys(secondWrite.update)).toEqual(['$setOnInsert']);
    });
+
+   it('should store a parsed createdAt and fall back when the ISO is invalid', () => {
+      const valid = resultUpsertWrite(
+         'user-1',
+         submission(),
+         resultFromSubmission(submission())
+      );
+      expect(valid.update.$setOnInsert.createdAt.toISOString()).toBe(
+         '2026-10-31T00:00:00.000Z'
+      );
+
+      const before = Date.now();
+      const invalid = resultUpsertWrite(
+         'user-1',
+         submission({ createdAt: 'not-a-date' }),
+         resultFromSubmission(submission({ createdAt: 'not-a-date' }))
+      );
+      const stamp = invalid.update.$setOnInsert.createdAt.getTime();
+      expect(Number.isNaN(stamp)).toBe(false);
+      expect(stamp).toBeGreaterThanOrEqual(before);
+      expect(stamp).toBeLessThanOrEqual(Date.now());
+   });
 });
