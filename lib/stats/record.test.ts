@@ -3,13 +3,37 @@ import { userConfigStore, wordStore } from '../../store';
 import { initialWordState, resetStores } from '../../test/utils';
 import { calculateStats } from './calculate';
 import { setKeystrokeClock } from './clock';
-import { MAX_EXTRA_LETTERS } from './types';
+import { MAX_EXTRA_LETTERS, type Keystroke } from './types';
 import {
    appendKeystroke,
    buildFinishedResult,
    classifyTypedKey,
+   describeKeystrokeLog,
+   syncKeystrokeStats,
    testDuration,
 } from './record';
+
+function stroke(
+   key: string,
+   expected: string | null,
+   timestampMs: number,
+   wordIndex = 0,
+   kind?: Keystroke['kind']
+): Keystroke {
+   return {
+      key,
+      expected,
+      kind:
+         kind ??
+         (expected === null
+            ? 'extra'
+            : key === expected
+            ? 'correct'
+            : 'incorrect'),
+      timestampMs,
+      wordIndex,
+   };
+}
 
 describe('testDuration', () => {
    it('should use the configured limit for a timed test', () => {
@@ -155,6 +179,79 @@ describe('classifyTypedKey', () => {
          kind: 'extra',
          blocked: false,
       });
+   });
+});
+
+describe('describeKeystrokeLog', () => {
+   it('should count zero words on an empty log', () => {
+      const described = describeKeystrokeLog([], ['ab', 'cd'], 15);
+
+      expect(described.wordCount).toBe(0);
+      expect(described.words).toEqual(['ab']);
+      expect(described.stats).toEqual(
+         calculateStats({ log: [], words: ['ab'], durationMs: 15_000 })
+      );
+   });
+
+   it('should count the in-progress word without advancing past it', () => {
+      const log = [stroke('a', 'a', 0)];
+      const described = describeKeystrokeLog(log, ['ab', 'cd'], 15);
+
+      expect(described.wordCount).toBe(1);
+      expect(described.words).toEqual(['ab']);
+      expect(described.stats.correct).toBe(1);
+   });
+
+   it('should not count the next word until a letter is typed after space', () => {
+      const log = [
+         stroke('a', 'a', 0),
+         stroke('b', 'b', 20),
+         stroke(' ', ' ', 40),
+      ];
+      const described = describeKeystrokeLog(log, ['ab', 'cd'], 15);
+
+      expect(described.wordCount).toBe(1);
+      expect(described.words).toEqual(['ab', 'cd']);
+   });
+
+   it('should score against the provided duration, not the keystroke span', () => {
+      const log = [stroke('a', 'a', 0), stroke('b', 'b', 200)];
+      const described = describeKeystrokeLog(log, ['ab'], 30);
+
+      expect(described.stats).toEqual(
+         calculateStats({ log, words: ['ab'], durationMs: 30_000 })
+      );
+      expect(described.stats.rawWpm).toBeCloseTo(0.8);
+   });
+});
+
+describe('syncKeystrokeStats', () => {
+   beforeEach(() => {
+      resetStores();
+   });
+
+   it('should write live errorCount and typedEntries from a 1s placeholder duration', () => {
+      const log = [
+         stroke('a', 'a', 0),
+         stroke('x', 'b', 100),
+         stroke('z', null, 200),
+      ];
+      wordStore.setState({
+         ...initialWordState,
+         wordList: ['ab', 'cd'],
+         keystrokeLog: log,
+      });
+
+      syncKeystrokeStats();
+
+      const stats = calculateStats({
+         log,
+         words: ['ab', 'cd'],
+         durationMs: 1000,
+      });
+      expect(wordStore.getState().errorCount).toBe(stats.errors);
+      expect(wordStore.getState().typedEntries).toBe(stats.typedEntries);
+      expect(wordStore.getState().errorCount).toBeGreaterThan(0);
    });
 });
 
