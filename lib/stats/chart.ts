@@ -104,7 +104,26 @@ function summaryFor(samples: readonly SecondSample[]): string {
    return `Net WPM and raw WPM for each second of the test. ${errorText}`;
 }
 
-export function buildWpmChart(samples: readonly SecondSample[]): WpmChart {
+function formatLastSecond(
+   sampleSecond: number,
+   durationSeconds?: number
+): string {
+   if (
+      durationSeconds === undefined ||
+      !Number.isFinite(durationSeconds) ||
+      durationSeconds <= 0
+   ) {
+      return String(sampleSecond);
+   }
+   const tenths = Math.round(durationSeconds * 10) / 10;
+   if (Number.isInteger(tenths)) return String(tenths);
+   return tenths.toFixed(1);
+}
+
+export function buildWpmChart(
+   samples: readonly SecondSample[],
+   durationSeconds?: number
+): WpmChart {
    const ordered = [...samples].sort(
       (left, right) => left.second - right.second
    );
@@ -135,10 +154,13 @@ export function buildWpmChart(samples: readonly SecondSample[]): WpmChart {
       })),
       xLabels: labels.map((second) => {
          const point = points[second - 1];
+         const last = second === ordered.length;
          return {
             second,
             x: point?.x ?? 50,
-            label: String(second),
+            label: last
+               ? formatLastSecond(second, durationSeconds)
+               : String(second),
          };
       }),
       summary: summaryFor(ordered),

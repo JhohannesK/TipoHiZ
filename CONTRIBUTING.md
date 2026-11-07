@@ -139,7 +139,7 @@ Home-page Globe selector writes `userConfig.language` (`english` | `spanish` | `
 | `english`            | `default.json` | `punctuation.json`                                      | `numbers.json` |
 | `spanish` / `french` | `{lang}.json`  | `{lang}_punctuation.json` (fallback `punctuation.json`) | `numbers.json` |
 
-`category` (`time` \| `words`) is stored and shown as the results card label. It does **not** change word loading or the timer. `modules/TextFiles/code.json` is unused (`Constants.options.type` has no `code`; palette removed it).
+`category` (`time` \| `words`) is a real mode switch, not a label. It changes the palette row (`time` vs `wordCount`), `generatePassage` length, which clock starts (`useTimer` vs `useElapsed`), the finish condition, and the results card (`formatTestMode` → `words N` vs `time Ns …`). `modules/TextFiles/code.json` is unused (`Constants.options.type` has no `code`; palette removed it).
 
 To add a typing language:
 
@@ -157,15 +157,59 @@ Three language UIs:
 
 `lib/i18n/translations.ts` chrome strings are unused. UI chrome stays English.
 
-### Timer → results
+### Time vs words
 
-`useTimer(1, time)` on the home test. First printable key via `HandleText` starts the clock (`run()`). When remaining time hits the 1s bound, navigate to `/results`. Metrics in `lib/utils.ts`:
+Defaults live in `modules/_constants.ts`: `TimeSec: 30`, `WordCount: 10`, times `[15, 30, 60, 120]`, words `[10, 25, 50, 100]`. Invalid word counts fall back through `resolveWordCount()`.
 
--  gross WPM: `((typedEntries / 5) * 60) / time`
--  adjusted WPM: `max(typedEntries - errorCount, 0) / 5 / (time / 60)`
--  accuracy: `max(0, (typedEntries - errorCount) / typedEntries) * 100` (100 if nothing typed)
+| | Time | Words |
+| --- | --- | --- |
+| Passage | `generatePassage(bank)` — full shuffled bank | `generatePassage(bank, resolveWordCount(wordCount))` |
+| Start | first printable key → `countdown.run()` (`useTimer`) | first printable key → `elapsed.run()` (`useElapsed`) |
+| During | countdown digits | countdown slot is an empty `min-h-7`; `data-testid="words-progress"` (`3/10`) only while `elapsed.running && !disabled` |
+| Finish | remaining time hits **1s** (`hooks/useTimer.ts`) | `wordsTestFinished()` in `lib/words.ts`: `nextIndex >= total`, **or** last word typed exactly. A wrong last word does not finish until it is fixed or Space advances `nextIndex` |
+| Duration for stats | configured `time` seconds, not wall clock | max keystroke `timestampMs`, `durationMs = max(elapsed, 1)` (`testDuration()`) |
 
-Mobile: hidden textarea + `onKeyDown` → `HandleText` (composing / modifier / Enter / Tab ignored). If keys do nothing on a phone, the hidden input lost focus.
+`TextArea.tsx` reloads the word bank on `[type, language]` only. Category / wordCount / time changes must go through `resetTest` (`lib/reset.ts`). That path bumps a monotonic `resetGeneration` so a stale async load cannot overwrite a newer passage. Do not add those fields to the TextArea effect.
+
+Mobile: hidden textarea + `onKeyDown` → `HandleText` (composing / modifier / Enter / Tab ignored). If keys do nothing on a phone, the hidden input lost focus. Header collapses to a hamburger below `md` (`components/header.tsx`) so 320–414px does not scroll sideways.
+
+### Keystroke log and results
+
+Every handled key is appended in `lib/stats/record.ts` (`appendKeystroke`). Timestamps are ms from the first key after `resetKeystrokeClock()` (`lib/stats/clock.ts`). Extra letters cap at `MAX_EXTRA_LETTERS = 10`.
+
+Authoritative stats: `lib/stats/calculate.ts` → `calculateStats({ log, words, durationMs })`. Consistency is MonkeyType-style kogasa on **per-second raw WPM**, window trimmed to first→last **non-zero** sample so a trailing zero tail from configured duration does not force 0%.
+
+`syncKeystrokeStats()` updates store `errorCount` / `typedEntries` with a **1s placeholder** duration. Do not wire a live WPM HUD off that helper without passing real `durationMs`.
+
+`lib/utils.ts` (`accurateWPM`, `calculateAccuracy`) is still used by **Vercel usage events**, not the results page. Words-mode `test_finished.duration` is `userConfig.time`, not elapsed.
+
+`persistFinishedTest()` (`lib/stats/persist-client.ts`) builds `SavedTestResult` and:
+
+| Mode | Where |
+| ---- | ----- |
+| Guest | `localStorage` `tipohiz.results` (cap `GUEST_RESULT_LIMIT = 50`) + `sessionStorage` `tipohiz.lastResult` |
+| Account | `POST /api/results` `{ result: submissionOf(result) }`. On failure, falls back to guest storage |
+| Sign-in | `components/result-sync.tsx` sets account mode and `POST /api/results/migrate` (max 50) |
+
+Results page (`app/(Base)/results/page.tsx`) shows net + raw WPM lines, error dots, hover/focus tooltip, keyboard arrows. The per-second table stays in the DOM inside `sr-only` for a11y / e2e.
+
+### Restart shortcuts
+
+`userConfig` (category, time, wordCount, type, language) is never cleared by restart.
+
+| Context | Shortcut | Behavior |
+| ------- | -------- | -------- |
+| Home | **Shift+Enter** or **Tab then Enter** | `reset-test-button.tsx` → `resetTest` + timer reset. `test_restarted` `{ how: 'shortcut' }` |
+| Home | Restart button | same path, `{ how: 'button' }` |
+| Home | Tab alone | `preventDefault`; arms the Tab+Enter chord |
+| Results | **Shift+Enter** | `resetStates()`, `/`, `test_restarted` `{ how: 'shortcut' }` |
+| Results | **Tab** (not on an interactive control) | same navigation, **no** `test_restarted` event |
+
+Footer copy matches the home chord. Results Tab is a different handler (`lib/results/restart-key.ts`).
+
+### Themes
+
+21 ids in `components/expo/theme.constant.ts` (includes `serika-dark`, `nord`, `dracula`, `carbon`, `botanical`, `olivia`). Default `dark-gray` (`app/layout.tsx`). Hover/focus preview: `hooks/useThemePreview.ts` paints the class on `<html>`; click commits via next-themes. Persistence is **`localStorage` key `theme`**. `userConfig.theme` / `ConfigActions.setTheme` exist and are unused by the theme UI — do not mix the two.
 
 ### Auth (optional)
 
@@ -174,8 +218,14 @@ Mobile: hidden textarea + `onKeyDown` → `HandleText` (composing / modifier / E
 | `/login`             | Credentials + OAuth entry. Provider errors land here.    |
 | `/register`          | Server action; schema in `lib/validation/auth.schema.ts` |
 | `/api/auth/[...all]` | Better Auth `GET`/`POST` handlers                        |
+| `GET\|POST /api/results` | Session required. Server **recomputes** stats from `log` + `words` + client `durationSeconds` |
+| `POST /api/results/migrate` | Session required. Max 50 guest results |
 
 Typing does not require a session. `proxy.ts` only redirects signed-in visitors away from `/login` and `/register`. Register password rule of thumb: ≥8, upper, lower, digit. The special-character regex currently requires the literal prefix `A-Za-z0-9` — treat that as a known trap, not a real complexity rule. Trusted origins come from `BETTER_AUTH_TRUSTED_ORIGINS` (comma-separated) plus `BETTER_AUTH_URL` and `VERCEL_URL`. A trailing slash on `BETTER_AUTH_URL` is stripped. Rate limits use the database. The first auth use ensures a unique index on `rateLimit.key`, and a MongoDB outage is logged without stopping startup. The dashboard plugin is `dash()` and uses optional `BETTER_AUTH_API_KEY`.
+
+Credential failures always render **`Invalid email or password`**. Duplicate sign-up uses generic copy, and some duplicate codes return `{ success: true }` so the client cannot tell the email is already registered (`lib/auth/error-messages.ts`).
+
+`resultSubmissionSchema` (`lib/validation/result.schema.ts`): `durationSeconds` positive max 3600, `wordCount` 0–10000, `words` max 2000, `log` max 20000. Client-sent WPM fields are ignored. The server **trusts client `durationSeconds`** for WPM scaling (a shortened duration inflates WPM) and **trusts client `wordCount`** on the dashboard recent list. Stats themselves are replayed from the log.
 
 ### 🐳 Docker (optional, stale)
 

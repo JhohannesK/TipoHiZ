@@ -110,6 +110,44 @@ describe('buildWpmChart', () => {
       expect(chart.wpmLine).toMatch(/ 98\.00,/);
       expect(chart.xLabels.map((label) => label.label)).toEqual(['1']);
    });
+
+   it('should label a partial last second with the elapsed time', () => {
+      const chart = buildWpmChart(
+         [sample(0, 40, 40, 0), sample(1, 20, 20, 0)],
+         1.44
+      );
+
+      expect(chart.points.map((point) => point.wpm)).toEqual([40, 20]);
+      expect(chart.xLabels.map((label) => label.label)).toEqual(['1', '1.4']);
+   });
+
+   it('should keep a whole-second axis when the run ends on a second', () => {
+      const chart = buildWpmChart(
+         [sample(0, 40, 40, 0), sample(1, 20, 20, 0)],
+         2
+      );
+
+      expect(chart.xLabels.map((label) => label.label)).toEqual(['1', '2']);
+   });
+
+   it('should round a last second of 1.95 to a whole-second label', () => {
+      const chart = buildWpmChart(
+         [sample(0, 40, 40, 0), sample(1, 20, 20, 0)],
+         1.95
+      );
+
+      expect(chart.xLabels.map((label) => label.label)).toEqual(['1', '2']);
+      expect(chart.points.map((point) => point.wpm)).toEqual([40, 20]);
+   });
+
+   it('should fall back to the sample second when elapsed time is not finite', () => {
+      const chart = buildWpmChart(
+         [sample(0, 40, 40, 0), sample(1, 20, 20, 0)],
+         Number.NaN
+      );
+
+      expect(chart.xLabels.map((label) => label.label)).toEqual(['1', '2']);
+   });
 });
 
 describe('chartTooltip', () => {

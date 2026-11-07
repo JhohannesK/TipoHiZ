@@ -123,6 +123,21 @@ describe('calculateStats', () => {
       expect(stats.samples).toEqual([]);
    });
 
+   it.each([Number.NaN, Number.POSITIVE_INFINITY, -1000])(
+      'should treat non-finite durationMs %s as a zero-length test',
+      (durationMs) => {
+         const log = typeWord('ab', 'ab', 0, 0);
+         const stats = calculateStats({ log, words: ['ab'], durationMs });
+
+         expect(stats.typedEntries).toBe(2);
+         expect(stats.errors).toBe(0);
+         expect(stats.wpm).toBe(0);
+         expect(stats.rawWpm).toBe(0);
+         expect(stats.samples).toEqual([]);
+         expect(stats.consistency).toBe(100);
+      }
+   );
+
    it('should ignore letters that have not been typed on the active word', () => {
       const stats = calculateStats({
          log: typeWord('abcde', 'ab', 0, 0),
@@ -538,5 +553,39 @@ describe('calculateStats', () => {
          typedWords: [''],
          activeIndex: 0,
       });
+   });
+
+   it('should ignore a lying wordIndex and type into the sequential active word', () => {
+      const log = typeWord('ab', 'ab', 3, 0);
+      const replayed = replayKeystrokeLog(log, ['ab']);
+      const stats = calculateStats({
+         log,
+         words: ['ab'],
+         durationMs: 1_000,
+      });
+
+      expect(replayed).toEqual({ typedWords: ['ab'], activeIndex: 0 });
+      expect(stats.typedEntries).toBe(2);
+      expect(stats.errors).toBe(0);
+      expect(stats.wpm).toBeGreaterThan(0);
+   });
+
+   it('should not rewrite a submitted word when later strokes reuse wordIndex 0', () => {
+      const log = [
+         ...typeWord('ab', 'ab', 0, 0),
+         space(0, 20),
+         ...typeWord('cd', 'xy', 0, 30),
+      ];
+      const replayed = replayKeystrokeLog(log, ['ab', 'cd']);
+      const stats = calculateStats({
+         log,
+         words: ['ab', 'cd'],
+         durationMs: 1_000,
+      });
+
+      expect(replayed.typedWords).toEqual(['ab', 'xy']);
+      expect(replayed.activeIndex).toBe(1);
+      expect(stats.correct).toBe(2);
+      expect(stats.incorrect).toBe(2);
    });
 });

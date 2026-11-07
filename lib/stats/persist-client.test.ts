@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { userConfigStore, wordStore } from '../../store';
 import { setKeystrokeClock } from './clock';
 import {
+   migrateGuestResults,
    persistFinishedTest,
    resultPersistenceMode,
    setResultPersistenceMode,
@@ -103,5 +104,34 @@ describe('persistFinishedTest', () => {
       });
 
       expect(loadGuestResults()).toEqual([]);
+   });
+
+   it('should keep a signed-in result locally when fetch throws', async () => {
+      setResultPersistenceMode('account');
+      vi.stubGlobal(
+         'fetch',
+         vi.fn().mockRejectedValue(new Error('network down'))
+      );
+
+      const saved = persistFinishedTest();
+      await vi.waitFor(() => {
+         expect(loadGuestResults()).toHaveLength(1);
+      });
+
+      expect(loadGuestResults()[0]?.id).toBe(saved?.id);
+   });
+
+   it('should keep guest results when migrate fetch throws', async () => {
+      const saved = persistFinishedTest();
+      expect(loadGuestResults()).toHaveLength(1);
+
+      setResultPersistenceMode('account');
+      vi.stubGlobal(
+         'fetch',
+         vi.fn().mockRejectedValue(new Error('network down'))
+      );
+
+      await expect(migrateGuestResults()).resolves.toBe(false);
+      expect(loadGuestResults().map((item) => item.id)).toEqual([saved?.id]);
    });
 });
