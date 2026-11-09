@@ -2,6 +2,8 @@
 
 We take the security and integrity of TipoHiZ very seriously. If you have found a vulnerability, please report it ASAP so we can quickly remediate the issue.
 
+Production is pinned to **`next@16.4.5`** (and `eslint-config-next@16.4.5`) so the app sits outside the November 2026 Next.js GHSA ranges. Do not revert `next` below 16.4.5 without re-checking those advisories.
+
 ### Reporting a Vulnerability
 
 For vulnerabilities that impact the confidentiality, integrity, and availability of TipoHiZ, please send your disclosure via [email](jdomeh77@gmail.com). For non-security related platform bugs, follow the bug submission [guidelines](https://github.com/jhohannesk/tipohiz#bug-report-or-feature-request). Include as much detail as possible to ensure reproducibility. At a minimum, vulnerability disclosures should include:
