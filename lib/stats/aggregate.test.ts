@@ -105,4 +105,19 @@ describe('saved result aggregation', () => {
       expect(merged[0]?.createdAt).toBe(older.createdAt);
       expect(statsFromResult(merged[0] ?? older).typedEntries).toBe(5);
    });
+
+   it('should keep the first duplicate id inside the primary list', () => {
+      const older = submission('same', '2026-10-13T00:00:00.000Z', 'abcde');
+      const newer = submission(
+         'same',
+         '2026-10-14T00:00:00.000Z',
+         'abcdefghij'
+      );
+      const merged = mergeResults([older, newer], []);
+
+      expect(merged).toHaveLength(1);
+      expect(merged[0]?.createdAt).toBe(older.createdAt);
+      expect(statsFromResult(merged[0] ?? older).typedEntries).toBe(5);
+      expect(statsFromResult(newer).typedEntries).toBe(10);
+   });
 });
