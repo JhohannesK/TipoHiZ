@@ -222,4 +222,14 @@ describe('buildFinishedResult', () => {
       expect(result?.stats.rawWpm).toBeCloseTo(75);
       expect(result?.stats.samples).toHaveLength(1);
    });
+
+   it('should record the language selected before a words test finishes', () => {
+      userConfigStore.setState({
+         category: 'words',
+         language: 'english',
+      });
+      userConfigStore.setState({ language: 'spanish' });
+
+      expect(buildFinishedResult()?.language).toBe('spanish');
+   });
 });

@@ -138,7 +138,7 @@ test('should finish a words test on the last word and record elapsed stats', asy
    expect(await statText(page, /^time:/i)).toBe(
       `${(saved.last?.durationSeconds ?? 0).toFixed(2)}s`
    );
-   expect(await statText(page, /^mode:$/i)).toBe('words 10');
+   expect(await statText(page, /^mode:$/i)).toBe('words 10 english default');
    await expect(page.locator('table tbody tr')).toHaveCount(samples.length);
 
    const events = await page.evaluate(
@@ -429,8 +429,52 @@ test('should end a words test when space is pressed on a mistyped last word', as
    await page.keyboard.press('Space');
 
    await expect(page).toHaveURL(/\/results$/, { timeout: 10_000 });
-   expect(await statText(page, /^mode:$/i)).toBe('words 10');
+   expect(await statText(page, /^mode:$/i)).toBe('words 10 english default');
    expect(await statText(page, /^time:/i)).toMatch(/^\d+\.\d{2}s$/);
+});
+
+test('should show the language a words test ran with after a mid-session switch', async ({
+   page,
+}) => {
+   await openHome(page);
+   await selectCategory(page, 'words');
+   await selectWordCount(page, 10);
+   await waitForWordCount(page, 10);
+
+   await page.getByRole('combobox').click();
+   await page.getByRole('option', { name: 'Español' }).click();
+   const words = await waitForWordCount(page, 10);
+   expect(words).toHaveLength(10);
+
+   await focusTyping(page);
+   for (let index = 0; index < words.length; index += 1) {
+      await page.keyboard.type(words[index] ?? '', { delay: 0 });
+      if (index < words.length - 1) {
+         await page.keyboard.press('Space');
+      }
+   }
+
+   await expect(page).toHaveURL(/\/results$/, { timeout: 10_000 });
+   expect(await statText(page, /^mode:$/i)).toBe('words 10 spanish default');
+
+   const ranWith = await page.evaluate(() => {
+      const last = JSON.parse(
+         sessionStorage.getItem('tipohiz.lastResult') ?? 'null'
+      ) as { language?: string } | null;
+      return last?.language;
+   });
+   expect(ranWith).toBe('spanish');
+
+   await page.evaluate(() => {
+      const saved = JSON.parse(localStorage.getItem('userConfig') ?? '{}') as {
+         state?: { language?: string };
+      };
+      if (saved.state) saved.state.language = 'french';
+      localStorage.setItem('userConfig', JSON.stringify(saved));
+   });
+   await page.reload();
+
+   expect(await statText(page, /^mode:$/i)).toBe('words 10 spanish default');
 });
 
 test('should reset the countdown when a timed test is restarted mid-run', async ({

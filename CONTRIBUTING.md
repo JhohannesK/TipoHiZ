@@ -139,7 +139,7 @@ Home-page Globe selector writes `userConfig.language` (`english` | `spanish` | `
 | `english`            | `default.json` | `punctuation.json`                                      | `numbers.json` |
 | `spanish` / `french` | `{lang}.json`  | `{lang}_punctuation.json` (fallback `punctuation.json`) | `numbers.json` |
 
-`category` (`time` \| `words`) is a real mode switch, not a label. It changes the palette row (`time` vs `wordCount`), `generatePassage` length, which clock starts (`useTimer` vs `useElapsed`), the finish condition, and the results card (`formatTestMode` → `words N` vs `time Ns …`). `modules/TextFiles/code.json` is unused (`Constants.options.type` has no `code`; palette removed it).
+`category` (`time` \| `words`) is a real mode switch, not a label. It changes the palette row (`time` vs `wordCount`), `generatePassage` length, which clock starts (`useTimer` vs `useElapsed`), the finish condition, and the results card (`formatTestMode` → `words N <language> <mode>` vs `time Ns <language> <mode>`). `modules/TextFiles/code.json` is unused (`Constants.options.type` has no `code`; palette removed it).
 
 To add a typing language:
 
