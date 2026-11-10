@@ -1,5 +1,12 @@
 import { expect, test } from '@playwright/test';
-import { focusTyping, openHome, readWords, selectTime, timer } from './helpers';
+import {
+   focusTyping,
+   openHome,
+   readWords,
+   selectTime,
+   statText,
+   timer,
+} from './helpers';
 
 test('should show wpm and accuracy after a timed test finishes', async ({
    page,
@@ -26,4 +33,5 @@ test('should show wpm and accuracy after a timed test finishes', async ({
    ).toBeVisible();
    await expect(page.getByText(/\d+\.\d+wpm/).first()).toBeVisible();
    await expect(page.getByText(/\d+\.\d+%/).first()).toBeVisible();
+   expect(await statText(page, /^consistency:$/i)).not.toBe('0.0%');
 });

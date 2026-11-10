@@ -69,6 +69,39 @@ describe('formatAuthErrorCode', () => {
       );
    });
 
+   it.each([
+      [
+         'unable_to_link_account',
+         'This sign-in could not be linked. Use the original login method.',
+      ],
+      [
+         'email_does_not_match',
+         'The provider email does not match this account.',
+      ],
+      ['email_not_found', 'The provider did not return a verified email.'],
+      ['email_not_verified', 'The provider email is not verified.'],
+      [
+         'account_not_linked',
+         'This account is not linked. Sign in with the original method.',
+      ],
+   ] as const)('should map oauth code %s', (code, message) => {
+      expect(formatAuthErrorCode(code)).toBe(message);
+      expect(message.toLowerCase()).not.toContain('no account');
+      expect(message.toLowerCase()).not.toContain('that email');
+   });
+
+   it('should map account_not_linked from an APIError code', () => {
+      expect(mapBetterAuthError(apiError({ code: 'account_not_linked' }))).toBe(
+         'This account is not linked. Sign in with the original method.'
+      );
+   });
+
+   it('should map email not verified from the message when code is missing', () => {
+      expect(
+         mapBetterAuthError(apiError({ message: 'email not verified' }))
+      ).toBe('Verify your email before signing in.');
+   });
+
    it('should fall back for unknown codes without exposing them', () => {
       expect(formatAuthErrorCode('SOME_WEIRD_CODE')).toBe(
          'Sign-in failed. Try again or use another method.'

@@ -7,7 +7,11 @@ import { ResultsChart } from '@/components/results-chart';
 import { StatCard } from '@/components/stat-card';
 import { useShiftEnterRestart } from '@/hooks/useShiftEnterRestart';
 import { useSavedResults } from '@/hooks/useSavedResults';
-import { displayedResult, formatTestMode } from '@/lib/results/display';
+import {
+   displayedResult,
+   formatElapsedStat,
+   formatTestMode,
+} from '@/lib/results/display';
 import { isRestartBlockedTarget, tabRestarts } from '@/lib/results/restart-key';
 import { formatTime } from '@/lib/utils';
 import { trackTestRestarted } from '@/lib/usage-events';
@@ -96,7 +100,10 @@ export default function ResultsPage() {
                      <h2 className="text-lg font-medium sm:text-xl">
                         Speed by second
                      </h2>
-                     <ResultsChart samples={stats.samples} />
+                     <ResultsChart
+                        samples={stats.samples}
+                        durationSeconds={display.durationSeconds}
+                     />
                   </div>
                )}
                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
@@ -113,8 +120,14 @@ export default function ResultsPage() {
                      detail="correct / incorrect / extra / missed"
                   />
                   <StatCard
-                     label={display.category}
-                     value={formatTime(display.durationSeconds)}
+                     label={
+                        display.category === 'words' ? 'time' : display.category
+                     }
+                     value={
+                        display.category === 'words'
+                           ? formatElapsedStat(display.durationSeconds)
+                           : formatTime(display.durationSeconds)
+                     }
                   />
                   <StatCard
                      className="col-span-2 sm:col-span-1"

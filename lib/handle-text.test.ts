@@ -121,6 +121,25 @@ describe('HandleText', () => {
       expect(run).not.toHaveBeenCalled();
    });
 
+   it('should log a backspace over an extra letter with a null expected char', () => {
+      const ref = wordRef();
+
+      HandleText('c', ref, run);
+      HandleText('a', ref, run);
+      HandleText('t', ref, run);
+      HandleText('x', ref, run);
+      HandleText('Backspace', ref, run);
+
+      const log = wordStore.getState().keystrokeLog;
+      expect(log[log.length - 1]).toMatchObject({
+         key: 'Backspace',
+         expected: null,
+         kind: 'backspace',
+         wordIndex: 0,
+      });
+      expect(wordStore.getState().userInput).toBe('cat');
+   });
+
    it('should restore the previous word when backspace is pressed on an empty input', () => {
       const ref = wordRef();
       ref.current?.classList.add('wrong');
@@ -235,6 +254,26 @@ describe('HandleText', () => {
       expect(wordStore.getState().userInput).toBe('ca');
       expect(wordStore.getState().disabled).toBe(false);
       expect(onFinish).not.toHaveBeenCalled();
+   });
+
+   it('should finish a words test when space submits a mistyped last word', () => {
+      const onFinish = vi.fn();
+      userConfigStore.setState({ category: 'words', wordCount: 10 });
+      wordStore.setState({
+         ...initialWordState,
+         wordList: ['cat', 'dog'],
+         activeWord: 'dog',
+         userInput: 'dxx',
+         nextIndex: 1,
+         typedHistory: ['cat'],
+      });
+
+      HandleText(' ', wordRef(), run, onFinish);
+
+      expect(onFinish).toHaveBeenCalledTimes(1);
+      expect(wordStore.getState().nextIndex).toBe(2);
+      expect(wordStore.getState().disabled).toBe(true);
+      expect(wordStore.getState().typedHistory).toEqual(['cat', 'dxx']);
    });
 
    it('should finish a words test when space submits the last word', () => {
