@@ -1,6 +1,10 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
-import { savedResultFromDocument } from './repository';
+import {
+   createdAtFrom,
+   duplicateKey,
+   savedResultFromDocument,
+} from './repository';
 
 describe('savedResultFromDocument', () => {
    it('should recompute wpm from the stored log', () => {
@@ -34,5 +38,35 @@ describe('savedResultFromDocument', () => {
       expect(saved.stats.accuracy).toBe(100);
       expect(saved.stats.wpm).not.toBe(1);
       expect(saved.stats.wpm).toBeGreaterThan(1);
+   });
+});
+
+describe('duplicateKey', () => {
+   it('should treat Mongo 11000 as a duplicate upsert', () => {
+      expect(duplicateKey({ code: 11000 })).toBe(true);
+   });
+
+   it('should not swallow other Mongo errors or non-objects', () => {
+      expect(duplicateKey({ code: 1 })).toBe(false);
+      expect(duplicateKey({ code: '11000' })).toBe(false);
+      expect(duplicateKey(null)).toBe(false);
+      expect(duplicateKey('E11000 duplicate key')).toBe(false);
+   });
+});
+
+describe('createdAtFrom', () => {
+   it('should keep a valid ISO timestamp', () => {
+      const parsed = createdAtFrom('2026-10-13T00:00:00.000Z');
+      expect(parsed.toISOString()).toBe('2026-10-13T00:00:00.000Z');
+   });
+
+   it('should fall back to now when createdAt is not a date', () => {
+      const before = Date.now();
+      const parsed = createdAtFrom('not-a-date');
+      const after = Date.now();
+
+      expect(Number.isNaN(parsed.getTime())).toBe(false);
+      expect(parsed.getTime()).toBeGreaterThanOrEqual(before);
+      expect(parsed.getTime()).toBeLessThanOrEqual(after);
    });
 });
