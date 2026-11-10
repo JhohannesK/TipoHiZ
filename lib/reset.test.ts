@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { userConfigStore, wordStore } from '../store';
 import { resetStates } from '../store/actions/TimeActions';
 import { resetStores } from '../test/utils';
-import { resetTest } from './reset';
+import { loadWords, resetTest } from './reset';
 
 describe('resetTest', () => {
    beforeEach(() => {
@@ -122,5 +122,70 @@ describe('resetTest', () => {
       await resetTest('default', vi.fn());
 
       expect(scrollIntoView).toHaveBeenCalledTimes(1);
+   });
+});
+
+describe('loadWords', () => {
+   it('should load the spanish and french default banks', async () => {
+      const spanish = await loadWords('spanish', 'default');
+      const french = await loadWords('french', 'default');
+
+      expect(spanish[0]).toBe('hola');
+      expect(spanish).toContain('perro');
+      expect(french[0]).toBe('le');
+      expect(french).toContain('une');
+      expect(spanish).not.toContain('lorem');
+      expect(french).not.toContain('lorem');
+   });
+
+   it('should load language-specific punctuation instead of the english bank', async () => {
+      const frenchPunctuation = await loadWords('french', 'punctuation');
+      const englishPunctuation = await loadWords('english', 'punctuation');
+
+      expect(frenchPunctuation[0]).toMatch(/^Le soleil/);
+      expect(englishPunctuation[0]).toMatch(/^lorem ipsum/);
+      expect(frenchPunctuation[0]).not.toBe(englishPunctuation[0]);
+   });
+
+   it('should share the numbers bank across languages', async () => {
+      const englishNumbers = await loadWords('english', 'numbers');
+      const spanishNumbers = await loadWords('spanish', 'numbers');
+
+      expect(englishNumbers[0]).toBe('1');
+      expect(spanishNumbers).toEqual(englishNumbers);
+   });
+
+   it('should fall back to english punctuation when the language file is missing', async () => {
+      const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const englishPunctuation = await loadWords('english', 'punctuation');
+
+      const fallback = await loadWords('klingon', 'punctuation');
+
+      expect(fallback).toEqual(englishPunctuation);
+      expect(log).toHaveBeenCalled();
+      log.mockRestore();
+   });
+
+   it('should fall back to the default english bank when the language is unknown', async () => {
+      const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const englishDefault = await loadWords('english', 'default');
+
+      const fallback = await loadWords('klingon', 'default');
+
+      expect(fallback).toEqual(englishDefault);
+      expect(fallback[0]).toBe('lorem');
+      expect(error).toHaveBeenCalled();
+      error.mockRestore();
+   });
+
+   it('should fall back to the default english bank when the type file is missing', async () => {
+      const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const englishDefault = await loadWords('english', 'default');
+
+      const fallback = await loadWords('english', 'missing-bank');
+
+      expect(fallback).toEqual(englishDefault);
+      expect(error).toHaveBeenCalled();
+      error.mockRestore();
    });
 });
