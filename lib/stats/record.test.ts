@@ -3,7 +3,13 @@ import { userConfigStore, wordStore } from '../../store';
 import { initialWordState, resetStores } from '../../test/utils';
 import { calculateStats } from './calculate';
 import { setKeystrokeClock } from './clock';
-import { appendKeystroke, buildFinishedResult, testDuration } from './record';
+import { MAX_EXTRA_LETTERS } from './types';
+import {
+   appendKeystroke,
+   buildFinishedResult,
+   classifyTypedKey,
+   testDuration,
+} from './record';
 
 describe('testDuration', () => {
    it('should use the configured limit for a timed test', () => {
@@ -13,7 +19,32 @@ describe('testDuration', () => {
       });
    });
 
-   it('should use the last keystroke for a words test', () => {
+   it('should ignore keystroke timestamps on a timed test', () => {
+      expect(
+         testDuration(
+            [
+               {
+                  key: 'a',
+                  expected: 'a',
+                  kind: 'correct',
+                  timestampMs: 0,
+                  wordIndex: 0,
+               },
+               {
+                  key: 'b',
+                  expected: 'b',
+                  kind: 'correct',
+                  timestampMs: 800,
+                  wordIndex: 0,
+               },
+            ],
+            'time',
+            15
+         )
+      ).toEqual({ durationMs: 15_000, durationSeconds: 15 });
+   });
+
+   it('should include the opening character gap on a words test', () => {
       expect(
          testDuration(
             [
@@ -35,7 +66,95 @@ describe('testDuration', () => {
             'words',
             30
          )
-      ).toEqual({ durationMs: 800, durationSeconds: 0.8 });
+      ).toEqual({ durationMs: 1_600, durationSeconds: 1.6 });
+   });
+
+   it('should measure a words test from the earliest keystroke to the latest', () => {
+      expect(
+         testDuration(
+            [
+               {
+                  key: 'a',
+                  expected: 'a',
+                  kind: 'correct',
+                  timestampMs: 1200,
+                  wordIndex: 0,
+               },
+               {
+                  key: 'Backspace',
+                  expected: 'a',
+                  kind: 'backspace',
+                  timestampMs: 400,
+                  wordIndex: 0,
+               },
+            ],
+            'words',
+            30
+         )
+      ).toEqual({ durationMs: 1_600, durationSeconds: 1.6 });
+   });
+
+   it('should floor a words test with no elapsed time at 1ms', () => {
+      expect(testDuration([], 'words', 30)).toEqual({
+         durationMs: 1,
+         durationSeconds: 0.001,
+      });
+      expect(
+         testDuration(
+            [
+               {
+                  key: 'a',
+                  expected: 'a',
+                  kind: 'correct',
+                  timestampMs: 0,
+                  wordIndex: 0,
+               },
+               {
+                  key: 'b',
+                  expected: 'b',
+                  kind: 'correct',
+                  timestampMs: 0,
+                  wordIndex: 0,
+               },
+            ],
+            'words',
+            30
+         )
+      ).toEqual({ durationMs: 1, durationSeconds: 0.001 });
+   });
+});
+
+describe('classifyTypedKey', () => {
+   it('should mark a mismatch inside the word as incorrect', () => {
+      expect(classifyTypedKey('cat', 'c', 'x')).toEqual({
+         expected: 'a',
+         kind: 'incorrect',
+         blocked: false,
+      });
+   });
+
+   it('should mark a letter past the word as extra, not incorrect', () => {
+      expect(classifyTypedKey('hi', 'hi', 'x')).toEqual({
+         expected: null,
+         kind: 'extra',
+         blocked: false,
+      });
+   });
+
+   it('should block extras once the cap is reached', () => {
+      const typed = `hi${'x'.repeat(MAX_EXTRA_LETTERS)}`;
+      expect(classifyTypedKey('hi', typed, 'z')).toEqual({
+         expected: null,
+         kind: 'extra',
+         blocked: true,
+      });
+      expect(
+         classifyTypedKey('hi', `hi${'x'.repeat(MAX_EXTRA_LETTERS - 1)}`, 'z')
+      ).toEqual({
+         expected: null,
+         kind: 'extra',
+         blocked: false,
+      });
    });
 });
 
@@ -91,16 +210,26 @@ describe('buildFinishedResult', () => {
       const stats = calculateStats({
          log,
          words: ['ab', 'cd'],
-         durationMs: 800,
+         durationMs: 1_000,
       });
 
       expect(result?.category).toBe('words');
-      expect(result?.durationSeconds).toBeCloseTo(0.8);
+      expect(result?.durationSeconds).toBe(1);
       expect(result?.durationSeconds).not.toBe(30);
       expect(result?.wordCount).toBe(2);
       expect(result?.words).toEqual(['ab', 'cd']);
       expect(result?.stats).toEqual(stats);
-      expect(result?.stats.rawWpm).toBeCloseTo(75);
+      expect(result?.stats.rawWpm).toBe(60);
       expect(result?.stats.samples).toHaveLength(1);
+   });
+
+   it('should record the language selected before a words test finishes', () => {
+      userConfigStore.setState({
+         category: 'words',
+         language: 'english',
+      });
+      userConfigStore.setState({ language: 'spanish' });
+
+      expect(buildFinishedResult()?.language).toBe('spanish');
    });
 });

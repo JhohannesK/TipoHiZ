@@ -21,7 +21,11 @@ import {
 import { languageOptions } from '@/lib/i18n';
 import { resetTest } from '@/lib/reset';
 import { persistFinishedTest } from '@/lib/stats/persist-client';
-import { formatElapsed, resolveWordCount } from '@/lib/words';
+import {
+   resolveWordCount,
+   showWordCounter,
+   wordPositionLabel,
+} from '@/lib/words';
 import {
    abandonTest,
    trackTestFinished,
@@ -33,6 +37,7 @@ export default function HomePage() {
       (state) => state
    );
    const completed = wordStore((state) => state.nextIndex);
+   const disabled = wordStore((state) => state.disabled);
    const wordsMode = category === 'words';
    const countdown = useTimer(
       1,
@@ -45,6 +50,12 @@ export default function HomePage() {
    const router = useRouter();
    const finishedRef = useRef(false);
    const totalWords = resolveWordCount(wordCount);
+   const typing = wordsMode ? elapsed.running : countdown.isRunning;
+   const showWordsProgress = showWordCounter({
+      category,
+      running: elapsed.running,
+      disabled,
+   });
 
    const reset = () => {
       finishedRef.current = false;
@@ -75,20 +86,13 @@ export default function HomePage() {
 
    return (
       <div>
-         <UserSelectPallete reset={reset} />
+         <UserSelectPallete reset={reset} hidden={typing} />
          <div className="mt-16 flex items-center justify-between gap-3 sm:gap-0 sm:px-10">
-            <div className="flex-wrap text-xl font-medium font-poppins text-accent">
+            <div className="min-h-7 min-w-[4.5rem] text-xl font-medium font-poppins text-accent">
                {wordsMode ? (
-                  <div className="mb-2 flex items-baseline gap-4">
-                     <span data-testid="words-progress">
-                        {Math.min(completed, totalWords)}/{totalWords}
-                     </span>
-                     <span data-testid="elapsed-time">
-                        {formatElapsed(elapsed.elapsed)}
-                     </span>
-                  </div>
+                  <div className="mb-2 min-h-7" />
                ) : (
-                  <div className="mb-2">{countdown.timer}</div>
+                  <div className="mb-2 min-h-7">{countdown.timer}</div>
                )}
             </div>
 
@@ -115,7 +119,17 @@ export default function HomePage() {
                </div>
             </div>
          </div>
-         <TextArea sound={sound} run={beginTest} onFinish={finishWords} />
+         <div className="relative">
+            {showWordsProgress ? (
+               <p
+                  data-testid="words-progress"
+                  className="pointer-events-none absolute bottom-full left-[7px] mb-1 text-sm font-medium leading-none text-accent sm:left-[calc(2.5rem+7px)]"
+               >
+                  {wordPositionLabel(completed, totalWords)}
+               </p>
+            ) : null}
+            <TextArea sound={sound} run={beginTest} onFinish={finishWords} />
+         </div>
          <ResetTestButton reset={reset} />
       </div>
    );

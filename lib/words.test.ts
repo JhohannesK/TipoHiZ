@@ -5,6 +5,8 @@ import {
    formatElapsed,
    generatePassage,
    resolveWordCount,
+   showWordCounter,
+   wordPositionLabel,
    wordsTestFinished,
 } from './words';
 
@@ -51,6 +53,36 @@ describe('words mode passage', () => {
       expect(formatElapsed(0)).toBe('0:00');
       expect(formatElapsed(12)).toBe('0:12');
       expect(formatElapsed(75)).toBe('1:15');
+      expect(formatElapsed(12.9)).toBe('0:12');
+      expect(formatElapsed(-8)).toBe('0:00');
+   });
+
+   it('should label the word the typist is on from 1 through N', () => {
+      expect(wordPositionLabel(0, 25)).toBe('1/25');
+      expect(wordPositionLabel(11, 25)).toBe('12/25');
+      expect(wordPositionLabel(24, 25)).toBe('25/25');
+      expect(wordPositionLabel(25, 25)).toBe('25/25');
+      expect(wordPositionLabel(-4, 10)).toBe('1/10');
+      expect(wordPositionLabel(0, 25)).not.toBe('0/25');
+      expect(wordPositionLabel(40, 25)).toBe('25/25');
+      expect(wordPositionLabel(40, 25)).not.toBe('26/25');
+      expect(wordPositionLabel(0, 0)).toBe('1/1');
+      expect(wordPositionLabel(3, -4)).toBe('1/1');
+   });
+
+   it('should show the word counter only while a words test is running', () => {
+      expect(
+         showWordCounter({ category: 'words', running: false, disabled: false })
+      ).toBe(false);
+      expect(
+         showWordCounter({ category: 'words', running: true, disabled: false })
+      ).toBe(true);
+      expect(
+         showWordCounter({ category: 'words', running: true, disabled: true })
+      ).toBe(false);
+      expect(
+         showWordCounter({ category: 'time', running: true, disabled: false })
+      ).toBe(false);
    });
 
    it('should return a shuffled bank when no count is requested', () => {
@@ -154,6 +186,13 @@ describe('words mode passage', () => {
 
       expect(bank).toEqual(['alpha', 'beta', 'gamma']);
    });
+
+   it('should return an empty passage for an empty bank or invalid count', () => {
+      expect(generatePassage([], 10)).toEqual([]);
+      expect(generatePassage(['alpha'], 0)).toEqual([]);
+      expect(generatePassage(['alpha'], -4)).toEqual([]);
+      expect(generatePassage(['alpha'], Number.NaN)).toEqual([]);
+   });
 });
 
 describe('wordsTestFinished', () => {
@@ -240,5 +279,39 @@ describe('wordsTestFinished', () => {
             userInput: '',
          })
       ).toBe(true);
+   });
+
+   it('should finish against the generated list when it is shorter than the picker count', () => {
+      const shortList = {
+         ...base,
+         wordCount: 100,
+         wordListLength: 3,
+         nextIndex: 2,
+         activeWord: 'end',
+         userInput: 'en',
+      };
+
+      expect(wordsTestFinished(shortList)).toBe(false);
+      expect(wordsTestFinished({ ...shortList, userInput: 'end' })).toBe(true);
+      expect(
+         wordsTestFinished({
+            ...shortList,
+            nextIndex: 3,
+            activeWord: '',
+            userInput: '',
+         })
+      ).toBe(true);
+   });
+
+   it('should stay open when the word list is empty', () => {
+      expect(
+         wordsTestFinished({
+            ...base,
+            wordListLength: 0,
+            nextIndex: 0,
+            activeWord: '',
+            userInput: '',
+         })
+      ).toBe(false);
    });
 });

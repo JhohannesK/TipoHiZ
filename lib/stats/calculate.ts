@@ -171,16 +171,44 @@ function wpmFromChars(characters: number, durationMs: number): number {
    return characters / 5 / minutes;
 }
 
+// MonkeyType consistency.
+//
+// Per-second raw WPM is (characters in that second / 5) * 60.
+// CV is the population standard deviation of those samples divided by their mean.
+// kogasa maps that CV onto 0-100:
+//   100 * (1 - tanh(CV + CV^3/3 + CV^5/5))
+// which tracks 100 * (1 - CV) while CV is in [0, 1) and falls toward 0 after that.
+//
+// The series is the seconds from the first keystroke through the last one.
+// A pause inside that span stays in the series. Seconds that exist only because
+// callers pass the configured duration (results page, buildFinishedResult,
+// statsFromResult) do not: those trailing buckets are 0 WPM, CV then exceeds 1,
+// and the old clamp reported 0% on every run that did not fill the clock.
+// One active second, or no keystrokes, has no variation, so consistency is 100.
+function kogasa(cov: number): number {
+   if (!Number.isFinite(cov)) return 100;
+   const series = cov + cov ** 3 / 3 + cov ** 5 / 5;
+   return clamp(100 * (1 - Math.tanh(series)), 0, 100);
+}
+
 function consistencyOf(rawSamples: readonly number[]): number {
-   if (rawSamples.length === 0) return 100;
-   const mean =
-      rawSamples.reduce((sum, value) => sum + value, 0) / rawSamples.length;
+   const first = rawSamples.findIndex((value) => value > 0);
+   if (first < 0) return 100;
+
+   let last = rawSamples.length - 1;
+   while (last > first && (rawSamples[last] ?? 0) === 0) last -= 1;
+
+   const window = rawSamples.slice(first, last + 1);
+   if (window.length < 2) return 100;
+
+   const mean = window.reduce((sum, value) => sum + value, 0) / window.length;
    if (mean === 0) return 100;
+
    const variance =
-      rawSamples.reduce((sum, value) => sum + (value - mean) ** 2, 0) /
-      rawSamples.length;
+      window.reduce((sum, value) => sum + (value - mean) ** 2, 0) /
+      window.length;
    const deviation = Math.sqrt(variance);
-   return clamp(100 - (deviation / mean) * 100, 0, 100);
+   return kogasa(deviation / mean);
 }
 
 function secondIndex(timestampMs: number, seconds: number): number {
