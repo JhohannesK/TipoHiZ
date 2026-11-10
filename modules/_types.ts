@@ -1,4 +1,10 @@
 export interface IConstants {
    TimeSec: number;
-   options: { type: string[]; category: string[]; time: number[] };
+   WordCount: number;
+   options: {
+      type: string[];
+      category: string[];
+      time: number[];
+      words: number[];
+   };
 }

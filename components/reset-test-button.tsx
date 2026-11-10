@@ -10,7 +10,9 @@ import { setCaretRef, setUserInput } from '@/store/actions/WordActions';
 function restartFromStore(reset: () => void, how: RestartHow) {
    trackTestRestarted(how);
    const { type } = userConfigStore.getState();
-   resetTest(type, reset);
+   // resetTest loads the passage, then reset(), resetStates(), setWordList().
+   // The synchronous resetStates below runs before that load resolves.
+   void resetTest(type, reset);
    reset();
    resetStates();
    setUserInput('');

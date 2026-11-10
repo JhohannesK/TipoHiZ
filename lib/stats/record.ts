@@ -51,6 +51,44 @@ export function appendKeystroke(entry: Omit<Keystroke, 'timestampMs'>): void {
    }));
 }
 
+function wordsElapsedMs(log: readonly Keystroke[]): number {
+   let first = Number.POSITIVE_INFINITY;
+   let last = Number.NEGATIVE_INFINITY;
+   let count = 0;
+
+   for (const event of log) {
+      const stamp = event.timestampMs;
+      if (!Number.isFinite(stamp)) continue;
+      count += 1;
+      if (stamp < first) first = stamp;
+      if (stamp > last) last = stamp;
+   }
+
+   if (count < 2) return 1;
+
+   const span = last - first;
+   if (span <= 0) return 1;
+
+   // The first keystroke is the clock origin, so `span` is only the later gaps.
+   return (span * count) / (count - 1);
+}
+
+export function testDuration(
+   log: readonly Keystroke[],
+   category: string,
+   configuredSeconds: number
+): { durationMs: number; durationSeconds: number } {
+   if (category !== 'words') {
+      return {
+         durationMs: configuredSeconds * 1000,
+         durationSeconds: configuredSeconds,
+      };
+   }
+
+   const durationMs = wordsElapsedMs(log);
+   return { durationMs, durationSeconds: durationMs / 1000 };
+}
+
 export function syncKeystrokeStats(): void {
    const { keystrokeLog, wordList } = wordStore.getState();
    const stats = calculateStats({
@@ -89,7 +127,12 @@ export function buildFinishedResult(): SavedTestResult | null {
    if (keystrokeLog.length === 0) return null;
 
    const { time, type, category, language } = userConfigStore.getState();
-   const described = describeKeystrokeLog(keystrokeLog, wordList, time);
+   const { durationSeconds } = testDuration(keystrokeLog, category, time);
+   const described = describeKeystrokeLog(
+      keystrokeLog,
+      wordList,
+      durationSeconds
+   );
 
    return {
       id: globalThis.crypto.randomUUID(),
@@ -97,7 +140,7 @@ export function buildFinishedResult(): SavedTestResult | null {
       mode: type,
       category,
       language,
-      durationSeconds: time,
+      durationSeconds,
       wordCount: described.wordCount,
       words: described.words,
       log: compactLog(keystrokeLog),

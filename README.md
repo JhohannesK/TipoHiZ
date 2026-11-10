@@ -10,14 +10,16 @@ Tipohiz is a sleek and customizable typing test platform designed to enhance you
 # Features
 
 -  minimalistic design
--  live errors, wpm, and accuracy displays
 -  punctuation and numbers modes (`default` \| `punctuation` \| `numbers`)
--  timed tests: 15 / 30 / 60 / 120 seconds (palette `category: words` is **label-only** — it does not switch to a word-count test)
+-  timed tests: 15 / 30 / 60 / 120 seconds. Fresh `userConfig` defaults to **30s** (`Constants.TimeSec`)
+-  words tests: 10 / 25 / 50 / 100 (default **10**). Palette `category: words` is a real mode — the run ends on the last matching word, or Space past it. Countdown is hidden; a `3/10` counter (`data-testid="words-progress"`) appears after the first keystroke
 -  typing languages: English, Spanish, French (home-page Globe; word lists in `modules/TextFiles/`)
--  results after the timer hits the 1s bound: `/results` with gross WPM, adjusted WPM, accuracy (`lib/utils.ts`)
--  themes and optional key sounds
+-  `/results` from the keystroke log (`lib/stats/calculate.ts`): net WPM, raw WPM, accuracy, consistency, character breakdown, per-second chart. Time mode still exits when `useTimer` hits the 1s bound. There is **no live WPM/accuracy HUD** on the home test — only per-character coloring
+-  Shift+Enter (or Tab then Enter on the home test) restarts without dropping `userConfig`
+-  21 themes (`components/expo/theme.constant.ts`). Hover/focus paints the class on `<html>` before click. Persisted as next-themes `localStorage` key `theme`, **not** `userConfig.theme`
+-  optional key sounds
 -  optional accounts (`/login`, `/register`, Google / GitHub / Twitter) via Better Auth + MongoDB — typing works without signing in
--  config persistence in `localStorage` (Zustand persist key `userConfig`)
+-  config in `localStorage` (Zustand persist key `userConfig`). Guest results in `tipohiz.results` (cap 50); signed-in users `POST /api/results`
 
 # Future Features
 
@@ -55,7 +57,7 @@ Typing tests run with **no env vars**. Auth needs:
 
 `proxy.ts` redirects a signed-in visitor away from `/login` and `/register`. It does not gate the typing test. Anonymous use is expected.
 
-Auth routes: `GET|POST /api/auth/[...all]`. Credentials login min password length 8. Register (`lib/validation/auth.schema.ts`): name ≥3, email, password ≥8 with upper / lower / digit. The “special character” regex is `/^A-Za-z0-9/` — it matches a literal prefix, not a special char; if register fails unexpectedly, look there first. Auth rate limits are stored in MongoDB, not in process memory. The first auth use ensures a unique index on `rateLimit.key`. If MongoDB is unreachable, that check logs the error and the app keeps running. `dash()` from `@better-auth/infra` powers the dashboard and reads `BETTER_AUTH_API_KEY`. A missing key does not stop the app.
+Auth routes: `GET|POST /api/auth/[...all]`. Credentials login min password length 8. Register (`lib/validation/auth.schema.ts`): name ≥3, email, password ≥8 with upper / lower / digit. The “special character” regex is `/^A-Za-z0-9/` — it matches a literal prefix, not a special char; if register fails unexpectedly, look there first. Credential failures always return **`Invalid email or password`**. Duplicate sign-up uses a generic “unable to create an account” copy, and some duplicate codes return `{ success: true }` so the response shape does not confirm the email is registered (`lib/auth/error-messages.ts`). Auth rate limits are stored in MongoDB, not in process memory. The first auth use ensures a unique index on `rateLimit.key`. If MongoDB is unreachable, that check logs the error and the app keeps running. `dash()` from `@better-auth/infra` powers the dashboard and reads `BETTER_AUTH_API_KEY`. A missing key does not stop the app.
 
 Prisma client is generated to `prisma/generated/prisma` (`output` in `prisma/schema.prisma`). That tree is **committed** — do not hand-edit it. `pnpm build` runs `prisma generate && next build`.
 
@@ -83,7 +85,8 @@ CI=true pnpm test:e2e
 
 `CI=true` makes Playwright run `pnpm start` against the production build. Without a prior `pnpm build`, that path fails. Dev-mode e2e (`pnpm test:e2e` with no `CI`) hits `pnpm dev` on `127.0.0.1:3000` and can stall on Next 16 cross-origin HMR.
 
--  `e2e/smoke.spec.ts` — happy-path 15s test → `/results`.
+-  `e2e/smoke.spec.ts` — happy-path **selected 15s** test → `/results`. That is not the default duration (30s).
+-  `e2e/words-mode.spec.ts` — words 10, last-word finish, hidden countdown, `3/10` counter.
 -  `e2e/known-failures.spec.ts` — three `test.fail` P0s (timer restart, countdown at 0, mistype scoring). Those failures **count as passes**. Green CI does not mean those bugs are gone.
 
 Husky pre-commit: `pnpm ts-check`, `pnpm lint`, `npx prettier --write .`, then `git add .`. CI does **not** run Prettier.
