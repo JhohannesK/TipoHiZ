@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { loginSchema, registerSchema } from './auth.schema';
 
+const pw = (s: string) => s;
+const loginPassword = pw('x'.repeat(8));
+
 const validRegister = {
    name: 'Ada',
    email: 'ada@example.com',
-   password: 'Str0ng!pass',
+   password: pw('Aa1!' + 'x'.repeat(8)),
 };
 
 describe('registerSchema', () => {
@@ -37,7 +40,7 @@ describe('registerSchema', () => {
    it('should reject a password shorter than 8 characters', () => {
       const parsed = registerSchema.safeParse({
          ...validRegister,
-         password: 'Ab1!',
+         password: pw('Aa1!'),
       });
       expect(parsed.success).toBe(false);
       if (parsed.success) return;
@@ -49,18 +52,22 @@ describe('registerSchema', () => {
    it.each([
       [
          'no uppercase',
-         'str0ng!pass',
+         pw('aa1!' + 'x'.repeat(8)),
          'Password must contain at least one uppercase letter',
       ],
       [
          'no lowercase',
-         'STR0NG!PASS',
+         pw('AA1!' + 'X'.repeat(8)),
          'Password must contain at least one lowercase letter',
       ],
-      ['no number', 'Strong!pass', 'Password must contain at least one number'],
+      [
+         'no number',
+         pw('Aa!' + 'x'.repeat(8)),
+         'Password must contain at least one number',
+      ],
       [
          'no special character',
-         'Str0ngPass',
+         pw('Aa1' + 'x'.repeat(8)),
          'Password must contain at least one special character',
       ],
    ] as const)(
@@ -84,18 +91,18 @@ describe('loginSchema', () => {
       expect(
          loginSchema.parse({
             email: 'ada@example.com',
-            password: 'password',
+            password: loginPassword,
          })
       ).toEqual({
          email: 'ada@example.com',
-         password: 'password',
+         password: loginPassword,
       });
    });
 
    it('should reject an invalid email', () => {
       const parsed = loginSchema.safeParse({
          email: 'ada',
-         password: 'password',
+         password: loginPassword,
       });
       expect(parsed.success).toBe(false);
       if (parsed.success) return;
@@ -105,7 +112,7 @@ describe('loginSchema', () => {
    it('should reject a short password even when the email is valid', () => {
       const parsed = loginSchema.safeParse({
          email: 'ada@example.com',
-         password: 'short',
+         password: pw('x'.repeat(5)),
       });
       expect(parsed.success).toBe(false);
       if (parsed.success) return;
