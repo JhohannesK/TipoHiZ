@@ -265,12 +265,13 @@ export function ResultsChart({
                </div>
                <div
                   aria-hidden="true"
+                  data-testid="wpm-chart-x-axis"
                   className="relative ml-11 mt-1 h-5 text-xs tabular-nums text-input/80 sm:ml-12 sm:text-sm"
                >
                   {chart.xLabels.map((label) => (
                      <span
                         key={label.second}
-                        className="absolute -translate-x-1/2"
+                        className="absolute -translate-x-1/2 whitespace-nowrap"
                         style={{ left: `${label.x}%` }}
                      >
                         {label.label}
