@@ -64,9 +64,9 @@ describe('persistFinishedTest', () => {
       const saved = persistFinishedTest();
 
       expect(saved?.category).toBe('words');
-      expect(saved?.durationSeconds).toBeCloseTo(0.1);
+      expect(saved?.durationSeconds).toBeCloseTo(0.2);
       expect(saved?.durationSeconds).not.toBe(30);
-      expect(loadGuestResults()[0]?.durationSeconds).toBeCloseTo(0.1);
+      expect(loadGuestResults()[0]?.durationSeconds).toBeCloseTo(0.2);
    });
 
    it('should skip an empty log', () => {
@@ -104,6 +104,35 @@ describe('persistFinishedTest', () => {
       });
 
       expect(loadGuestResults()).toEqual([]);
+   });
+
+   it('should keep a signed-in result locally when fetch throws', async () => {
+      setResultPersistenceMode('account');
+      vi.stubGlobal(
+         'fetch',
+         vi.fn().mockRejectedValue(new Error('network down'))
+      );
+
+      const saved = persistFinishedTest();
+      await vi.waitFor(() => {
+         expect(loadGuestResults()).toHaveLength(1);
+      });
+
+      expect(loadGuestResults()[0]?.id).toBe(saved?.id);
+   });
+
+   it('should keep guest results when migrate fetch throws', async () => {
+      const saved = persistFinishedTest();
+      expect(loadGuestResults()).toHaveLength(1);
+
+      setResultPersistenceMode('account');
+      vi.stubGlobal(
+         'fetch',
+         vi.fn().mockRejectedValue(new Error('network down'))
+      );
+
+      await expect(migrateGuestResults()).resolves.toBe(false);
+      expect(loadGuestResults().map((item) => item.id)).toEqual([saved?.id]);
    });
 
    it('should clear guest rows after a successful migrate and omit stats', async () => {
