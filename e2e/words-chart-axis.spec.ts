@@ -101,7 +101,7 @@ test('should keep 100-word x-axis labels apart on desktop and at 375px', async (
    await expect(
       page.getByRole('heading', { name: 'Speed by second' })
    ).toBeVisible();
-   expect(await statText(page, /^mode:$/i)).toBe('words 100');
+   expect(await statText(page, /^mode:$/i)).toBe('words 100 english default');
    expect(await statText(page, /^time:/i)).toBe('120.40s');
    await expectAxisReadable(page, '120.4');
 
