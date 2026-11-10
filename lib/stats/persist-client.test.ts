@@ -134,4 +134,30 @@ describe('persistFinishedTest', () => {
       await expect(migrateGuestResults()).resolves.toBe(false);
       expect(loadGuestResults().map((item) => item.id)).toEqual([saved?.id]);
    });
+
+   it('should keep guest results when migrate returns a failed response', async () => {
+      const saved = persistFinishedTest();
+      expect(loadGuestResults()).toHaveLength(1);
+
+      setResultPersistenceMode('account');
+      const fetchMock = vi.fn().mockResolvedValue({ ok: false, status: 401 });
+      vi.stubGlobal('fetch', fetchMock);
+
+      await expect(migrateGuestResults()).resolves.toBe(false);
+      expect(loadGuestResults().map((item) => item.id)).toEqual([saved?.id]);
+      expect(fetchMock).toHaveBeenCalledWith(
+         '/api/results/migrate',
+         expect.objectContaining({ method: 'POST' })
+      );
+   });
+
+   it('should skip fetch when there are no guest results to migrate', async () => {
+      const fetchMock = vi.fn();
+      vi.stubGlobal('fetch', fetchMock);
+
+      setResultPersistenceMode('account');
+      await expect(migrateGuestResults()).resolves.toBe(true);
+      expect(fetchMock).not.toHaveBeenCalled();
+      expect(loadGuestResults()).toEqual([]);
+   });
 });
