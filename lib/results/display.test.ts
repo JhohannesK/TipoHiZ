@@ -144,12 +144,12 @@ describe('displayedResult', () => {
          saved: null,
       });
 
-      expect(display.durationSeconds).toBeCloseTo(0.8);
+      expect(display.durationSeconds).toBeCloseTo(1.4);
       expect(display.stats).toEqual(
          calculateStats({
             log: liveLog,
             words: ['ab'],
-            durationMs: 800,
+            durationMs: 1_400,
          })
       );
       expect(display.durationSeconds).not.toBe(30);

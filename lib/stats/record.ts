@@ -51,14 +51,33 @@ export function appendKeystroke(entry: Omit<Keystroke, 'timestampMs'>): void {
    }));
 }
 
+function wordsElapsedMs(log: readonly Keystroke[]): number {
+   let first = Number.POSITIVE_INFINITY;
+   let last = Number.NEGATIVE_INFINITY;
+   let count = 0;
+
+   for (const event of log) {
+      const stamp = event.timestampMs;
+      if (!Number.isFinite(stamp)) continue;
+      count += 1;
+      if (stamp < first) first = stamp;
+      if (stamp > last) last = stamp;
+   }
+
+   if (count < 2) return 1;
+
+   const span = last - first;
+   if (span <= 0) return 1;
+
+   // The first keystroke is the clock origin, so `span` is only the later gaps.
+   return (span * count) / (count - 1);
+}
+
 export function testDuration(
    log: readonly Keystroke[],
    category: string,
    configuredSeconds: number
 ): { durationMs: number; durationSeconds: number } {
-   // TODO: words-mode duration is measured from the first keystroke (t = 0),
-   // so that character adds no time and WPM runs about 2% high on 10 words.
-   // Leave the stat as it is.
    if (category !== 'words') {
       return {
          durationMs: configuredSeconds * 1000,
@@ -66,11 +85,7 @@ export function testDuration(
       };
    }
 
-   let elapsed = 0;
-   for (const event of log) {
-      if (event.timestampMs > elapsed) elapsed = event.timestampMs;
-   }
-   const durationMs = Math.max(elapsed, 1);
+   const durationMs = wordsElapsedMs(log);
    return { durationMs, durationSeconds: durationMs / 1000 };
 }
 

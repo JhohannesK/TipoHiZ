@@ -44,7 +44,7 @@ describe('testDuration', () => {
       ).toEqual({ durationMs: 15_000, durationSeconds: 15 });
    });
 
-   it('should use the last keystroke for a words test', () => {
+   it('should include the opening character gap on a words test', () => {
       expect(
          testDuration(
             [
@@ -66,10 +66,10 @@ describe('testDuration', () => {
             'words',
             30
          )
-      ).toEqual({ durationMs: 800, durationSeconds: 0.8 });
+      ).toEqual({ durationMs: 1_600, durationSeconds: 1.6 });
    });
 
-   it('should use the max timestamp on a words test even if the last event is earlier', () => {
+   it('should measure a words test from the earliest keystroke to the latest', () => {
       expect(
          testDuration(
             [
@@ -91,7 +91,7 @@ describe('testDuration', () => {
             'words',
             30
          )
-      ).toEqual({ durationMs: 1200, durationSeconds: 1.2 });
+      ).toEqual({ durationMs: 1_600, durationSeconds: 1.6 });
    });
 
    it('should floor a words test with no elapsed time at 1ms', () => {
@@ -210,16 +210,16 @@ describe('buildFinishedResult', () => {
       const stats = calculateStats({
          log,
          words: ['ab', 'cd'],
-         durationMs: 800,
+         durationMs: 1_000,
       });
 
       expect(result?.category).toBe('words');
-      expect(result?.durationSeconds).toBeCloseTo(0.8);
+      expect(result?.durationSeconds).toBe(1);
       expect(result?.durationSeconds).not.toBe(30);
       expect(result?.wordCount).toBe(2);
       expect(result?.words).toEqual(['ab', 'cd']);
       expect(result?.stats).toEqual(stats);
-      expect(result?.stats.rawWpm).toBeCloseTo(75);
+      expect(result?.stats.rawWpm).toBe(60);
       expect(result?.stats.samples).toHaveLength(1);
    });
 });

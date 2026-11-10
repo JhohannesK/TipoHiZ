@@ -64,9 +64,9 @@ describe('persistFinishedTest', () => {
       const saved = persistFinishedTest();
 
       expect(saved?.category).toBe('words');
-      expect(saved?.durationSeconds).toBeCloseTo(0.1);
+      expect(saved?.durationSeconds).toBeCloseTo(0.2);
       expect(saved?.durationSeconds).not.toBe(30);
-      expect(loadGuestResults()[0]?.durationSeconds).toBeCloseTo(0.1);
+      expect(loadGuestResults()[0]?.durationSeconds).toBeCloseTo(0.2);
    });
 
    it('should skip an empty log', () => {
