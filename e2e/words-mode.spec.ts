@@ -443,15 +443,40 @@ test('should show the language a words test ran with after a mid-session switch'
 
    await page.getByRole('combobox').click();
    await page.getByRole('option', { name: 'Español' }).click();
-   const words = await waitForWordCount(page, 10);
-   expect(words).toHaveLength(10);
+   await expect
+      .poll(async () => {
+         const saved = await page.evaluate(() =>
+            localStorage.getItem('userConfig')
+         );
+         return JSON.parse(saved ?? '{}').state?.language;
+      })
+      .toBe('spanish');
+
+   // Language change loads the list twice. Wait until the passage stops changing.
+   let previous = '';
+   let streak = 0;
+   let words: string[] = [];
+   await expect
+      .poll(
+         async () => {
+            const next = await readWords(page);
+            const joined = next.join('\n');
+            if (next.length === 10 && joined === previous) {
+               streak += 1;
+               words = next;
+            } else {
+               streak = 0;
+               previous = joined;
+            }
+            return streak;
+         },
+         { timeout: 15_000 }
+      )
+      .toBeGreaterThanOrEqual(10);
 
    await focusTyping(page);
-   for (let index = 0; index < words.length; index += 1) {
-      await page.keyboard.type(words[index] ?? '', { delay: 0 });
-      if (index < words.length - 1) {
-         await page.keyboard.press('Space');
-      }
+   for (const word of words) {
+      await page.keyboard.type(`${word} `, { delay: 0 });
    }
 
    await expect(page).toHaveURL(/\/results$/, { timeout: 10_000 });
