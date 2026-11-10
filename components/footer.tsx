@@ -10,7 +10,10 @@ import Chip from './ui/chip';
 function Footer() {
    return (
       <div className="flex flex-col items-center justify-center w-full gap-8 border-t-2 border-input text-input">
-         <div className="flex items-center justify-center gap-3 mt-3">
+         <div className="flex flex-wrap items-center justify-center gap-3 px-4 mt-3">
+            <Chip className="bg-foreground text-input" name="shift" /> +{' '}
+            <Chip className="bg-foreground text-input" name="enter" />
+            <span>or</span>
             <Chip className="bg-foreground text-input" name="tab" /> +{' '}
             <Chip className="bg-foreground text-input" name="enter" /> to reset
             test

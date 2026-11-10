@@ -48,25 +48,76 @@ function axisMax(peak: number): number {
    return Math.ceil(padded / step) * step;
 }
 
+const NARROW_PLOT_PX = 248;
+const LABEL_CHAR_PX = 8;
+const LABEL_PAD_PX = 4;
+
+function axisStep(sampleCount: number): number {
+   if (sampleCount <= 8) return 1;
+   if (sampleCount <= 20) return 5;
+   if (sampleCount <= 45) return 10;
+   if (sampleCount <= 90) return 15;
+   return 30;
+}
+
+function labelWidthPx(second: number, last: boolean): number {
+   const digits = String(second).length;
+   return (last ? digits + 2 : digits) * LABEL_CHAR_PX;
+}
+
+function ticksClear(
+   sampleCount: number,
+   earlier: number,
+   later: number
+): boolean {
+   const gapPx =
+      ((later - earlier) / (sampleCount - 1)) * 0.96 * NARROW_PLOT_PX;
+   const needed =
+      labelWidthPx(earlier, false) / 2 +
+      labelWidthPx(later, later === sampleCount) / 2 +
+      LABEL_PAD_PX;
+   return gapPx >= needed;
+}
+
+function spaceAxisLabels(
+   ticks: readonly number[],
+   sampleCount: number
+): number[] {
+   const kept: number[] = [];
+   for (let index = ticks.length - 1; index >= 0; index -= 1) {
+      const second = ticks[index];
+      if (second === undefined) continue;
+      const later = kept[0];
+      if (later === undefined || ticksClear(sampleCount, second, later)) {
+         kept.unshift(second);
+      }
+   }
+
+   if (kept[0] === 1 || ticks[0] !== 1) return kept;
+   const next = kept[0];
+   if (next !== undefined && ticksClear(sampleCount, 1, next)) {
+      return [1, ...kept];
+   }
+   const after = kept[1];
+   if (after !== undefined && ticksClear(sampleCount, 1, after)) {
+      return [1, ...kept.slice(1)];
+   }
+   return kept;
+}
+
 export function xAxisLabels(sampleCount: number): number[] {
    if (sampleCount <= 0) return [];
    if (sampleCount === 1) return [1];
 
-   const step =
-      sampleCount <= 8
-         ? 1
-         : sampleCount <= 20
-         ? 5
-         : sampleCount <= 45
-         ? 10
-         : sampleCount <= 90
-         ? 15
-         : 30;
+   const step = axisStep(sampleCount);
    const labels = new Set<number>([1, sampleCount]);
    for (let second = step; second < sampleCount; second += step) {
       labels.add(second);
    }
-   return [...labels].sort((left, right) => left - right);
+   return spaceAxisLabels(
+      [...labels].sort((left, right) => left - right),
+      sampleCount
+   );
 }
 
 function xOf(index: number, count: number): number {
@@ -104,7 +155,26 @@ function summaryFor(samples: readonly SecondSample[]): string {
    return `Net WPM and raw WPM for each second of the test. ${errorText}`;
 }
 
-export function buildWpmChart(samples: readonly SecondSample[]): WpmChart {
+function formatLastSecond(
+   sampleSecond: number,
+   durationSeconds?: number
+): string {
+   if (
+      durationSeconds === undefined ||
+      !Number.isFinite(durationSeconds) ||
+      durationSeconds <= 0
+   ) {
+      return String(sampleSecond);
+   }
+   const tenths = Math.round(durationSeconds * 10) / 10;
+   if (Number.isInteger(tenths)) return String(tenths);
+   return tenths.toFixed(1);
+}
+
+export function buildWpmChart(
+   samples: readonly SecondSample[],
+   durationSeconds?: number
+): WpmChart {
    const ordered = [...samples].sort(
       (left, right) => left.second - right.second
    );
@@ -135,12 +205,99 @@ export function buildWpmChart(samples: readonly SecondSample[]): WpmChart {
       })),
       xLabels: labels.map((second) => {
          const point = points[second - 1];
+         const last = second === ordered.length;
          return {
             second,
             x: point?.x ?? 50,
-            label: String(second),
+            label: last
+               ? formatLastSecond(second, durationSeconds)
+               : String(second),
          };
       }),
       summary: summaryFor(ordered),
    };
+}
+
+export type TooltipAlign = 'start' | 'end';
+
+export interface ChartTooltip {
+   second: number;
+   wpm: string;
+   rawWpm: string;
+   errors: number;
+   errorText: string;
+   x: number;
+   align: TooltipAlign;
+   summary: string;
+}
+
+export function formatChartSpeed(value: number): string {
+   return finite(value).toFixed(0);
+}
+
+function errorText(errors: number): string {
+   const count = finite(errors);
+   if (count === 1) return '1 error';
+   return `${count} errors`;
+}
+
+export function tooltipAlign(x: number): TooltipAlign {
+   return x > 62 ? 'end' : 'start';
+}
+
+export function chartTooltip(point: ChartPoint): ChartTooltip {
+   const second = point.second + 1;
+   const wpm = formatChartSpeed(point.wpm);
+   const rawWpm = formatChartSpeed(point.rawWpm);
+   const errors = finite(point.errors);
+   const errorsLabel = errorText(errors);
+
+   return {
+      second,
+      wpm,
+      rawWpm,
+      errors,
+      errorText: errorsLabel,
+      x: point.x,
+      align: tooltipAlign(point.x),
+      summary: `Second ${second}: ${wpm} wpm, ${rawWpm} raw wpm, ${errorsLabel}`,
+   };
+}
+
+export function nearestChartPoint(
+   points: readonly ChartPoint[],
+   percentX: number
+): ChartPoint | null {
+   const first = points[0];
+   if (!first || !Number.isFinite(percentX)) return null;
+
+   let best = first;
+   let bestDistance = Math.abs(first.x - percentX);
+   for (const point of points) {
+      const distance = Math.abs(point.x - percentX);
+      if (distance < bestDistance) {
+         best = point;
+         bestDistance = distance;
+      }
+   }
+   return best;
+}
+
+export function chartStep(
+   count: number,
+   index: number,
+   key: string
+): number | null {
+   if (count <= 0) return null;
+   if (key === 'Home') return 0;
+   if (key === 'End') return count - 1;
+   if (key === 'ArrowRight' || key === 'ArrowUp') {
+      if (index < 0) return 0;
+      return Math.min(count - 1, index + 1);
+   }
+   if (key === 'ArrowLeft' || key === 'ArrowDown') {
+      if (index < 0) return count - 1;
+      return Math.max(0, index - 1);
+   }
+   return null;
 }

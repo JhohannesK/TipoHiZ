@@ -1,5 +1,5 @@
 import { statsFromResult } from '@/lib/stats/aggregate';
-import { describeKeystrokeLog } from '@/lib/stats/record';
+import { describeKeystrokeLog, testDuration } from '@/lib/stats/record';
 import { compactLog } from '@/lib/stats/types';
 import type {
    CompactKeystroke,
@@ -66,19 +66,29 @@ export function displayedResult(input: {
       };
    }
 
+   const durationSeconds =
+      input.liveLog.length === 0
+         ? input.config.time
+         : testDuration(input.liveLog, input.config.category, input.config.time)
+              .durationSeconds;
    const described = describeKeystrokeLog(
       input.liveLog,
       input.liveWords,
-      input.config.time
+      durationSeconds
    );
    return {
       stats: described.stats,
-      durationSeconds: input.config.time,
+      durationSeconds,
       category: input.config.category,
       mode: input.config.type,
       language: input.config.language,
       wordCount: described.wordCount,
    };
+}
+
+export function formatElapsedStat(seconds: number): string {
+   if (!Number.isFinite(seconds) || seconds <= 0) return '0.00s';
+   return `${seconds.toFixed(2)}s`;
 }
 
 export function formatTestMode(
@@ -87,9 +97,7 @@ export function formatTestMode(
       'category' | 'mode' | 'language' | 'durationSeconds' | 'wordCount'
    >
 ): string {
-   const length =
-      result.category === 'words'
-         ? `${result.wordCount} words`
-         : `${result.durationSeconds}s`;
-   return `${result.category} ${length} ${result.language} ${result.mode}`;
+   if (result.category === 'words')
+      return `words ${result.wordCount} ${result.language} ${result.mode}`;
+   return `${result.category} ${result.durationSeconds}s ${result.language} ${result.mode}`;
 }

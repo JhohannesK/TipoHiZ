@@ -12,6 +12,7 @@ export interface WordState {
    activeWordRef: React.RefObject<HTMLDivElement | null> | null;
    typedHistory: string[];
    nextIndex: number;
+   caretPos: number;
    nextCharIdx: number;
    typedEntries: number;
    errorCount: number;
@@ -26,6 +27,7 @@ export interface TimeState {
 
 export interface IuserConfig {
    time: number;
+   wordCount: number;
    theme: string;
    type: string;
    category: string;

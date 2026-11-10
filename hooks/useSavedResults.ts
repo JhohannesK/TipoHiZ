@@ -2,7 +2,10 @@
 
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import { authClient } from '@/lib/auth-client';
-import { mergeResults } from '@/lib/stats/aggregate';
+import {
+   accountResultsFromResponse,
+   visibleSavedResults,
+} from '@/lib/stats/saved-results';
 import {
    loadClientResults,
    loadServerResults,
@@ -31,10 +34,12 @@ export function useSavedResults(): SavedTestResult[] {
             return (await response.json()) as { results?: SavedTestResult[] };
          })
          .then((body) => {
-            if (!cancelled) setAccount(body.results ?? []);
+            if (!cancelled) {
+               setAccount(accountResultsFromResponse(true, body.results));
+            }
          })
          .catch(() => {
-            if (!cancelled) setAccount([]);
+            if (!cancelled) setAccount(accountResultsFromResponse(false));
          });
 
       return () => {
@@ -42,9 +47,10 @@ export function useSavedResults(): SavedTestResult[] {
       };
    }, [signedIn, userId]);
 
-   const carried = snapshot.last ? [snapshot.last] : [];
-   if (signedIn) {
-      return mergeResults(account ?? [], [...snapshot.history, ...carried]);
-   }
-   return mergeResults(snapshot.history, carried);
+   return visibleSavedResults({
+      signedIn,
+      account: signedIn ? account : null,
+      history: snapshot.history,
+      last: snapshot.last,
+   });
 }

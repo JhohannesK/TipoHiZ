@@ -23,7 +23,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
          <Head>
             <link rel="icon" href="/favicon.ico" type="image/x-icon" />
          </Head>
-         <Analytics />
+         {process.env.VERCEL ? <Analytics /> : null}
          <body
             className={`min-h-screen bg-background text-foreground font-sans antialiased ${font.variable}`}
          >

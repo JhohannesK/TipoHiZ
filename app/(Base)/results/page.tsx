@@ -1,16 +1,22 @@
 'use client';
 import React, { useEffect } from 'react';
-import { StatCard } from '@/components/stat-card';
-import { PersonalBests } from '@/components/personal-bests';
-import { ResultsChart } from '@/components/results-chart';
-import { userConfigStore, wordStore } from '@/store';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { formatTime } from '@/lib/utils';
-import { displayedResult, formatTestMode } from '@/lib/results/display';
-import { isRestartBlockedTarget, tabRestarts } from '@/lib/results/restart-key';
-import { resetStates } from '@/store/actions/TimeActions';
+import { PersonalBests } from '@/components/personal-bests';
+import { ResultsChart } from '@/components/results-chart';
+import { StatCard } from '@/components/stat-card';
+import { useShiftEnterRestart } from '@/hooks/useShiftEnterRestart';
 import { useSavedResults } from '@/hooks/useSavedResults';
+import {
+   displayedResult,
+   formatElapsedStat,
+   formatTestMode,
+} from '@/lib/results/display';
+import { isRestartBlockedTarget, tabRestarts } from '@/lib/results/restart-key';
+import { formatTime } from '@/lib/utils';
+import { trackTestRestarted } from '@/lib/usage-events';
+import { userConfigStore, wordStore } from '@/store';
+import { resetStates } from '@/store/actions/TimeActions';
 
 function wpmText(value: number): string {
    return `${value.toFixed(2)}wpm`;
@@ -40,6 +46,12 @@ export default function ResultsPage() {
       saved: saved[0] ?? null,
    });
    const { stats } = display;
+
+   useShiftEnterRestart(() => {
+      trackTestRestarted('shortcut');
+      resetStates();
+      router.push('/');
+   });
 
    useEffect(() => {
       function onKeyDown(event: KeyboardEvent) {
@@ -88,7 +100,10 @@ export default function ResultsPage() {
                      <h2 className="text-lg font-medium sm:text-xl">
                         Speed by second
                      </h2>
-                     <ResultsChart samples={stats.samples} />
+                     <ResultsChart
+                        samples={stats.samples}
+                        durationSeconds={display.durationSeconds}
+                     />
                   </div>
                )}
                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
@@ -105,8 +120,14 @@ export default function ResultsPage() {
                      detail="correct / incorrect / extra / missed"
                   />
                   <StatCard
-                     label={display.category}
-                     value={formatTime(display.durationSeconds)}
+                     label={
+                        display.category === 'words' ? 'time' : display.category
+                     }
+                     value={
+                        display.category === 'words'
+                           ? formatElapsedStat(display.durationSeconds)
+                           : formatTime(display.durationSeconds)
+                     }
                   />
                   <StatCard
                      className="col-span-2 sm:col-span-1"

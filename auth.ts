@@ -34,6 +34,8 @@ function createAuth() {
       emailAndPassword: {
          enabled: true,
          // Register still sends the user to /login. A session is created on sign-in.
+         // false also makes duplicate sign-ups return a synthetic success,
+         // so the response does not reveal that the email is registered.
          autoSignIn: false,
       },
       socialProviders: {
