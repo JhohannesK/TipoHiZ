@@ -144,12 +144,12 @@ describe('displayedResult', () => {
          saved: null,
       });
 
-      expect(display.durationSeconds).toBeCloseTo(0.8);
+      expect(display.durationSeconds).toBeCloseTo(1.4);
       expect(display.stats).toEqual(
          calculateStats({
             log: liveLog,
             words: ['ab'],
-            durationMs: 800,
+            durationMs: 1_400,
          })
       );
       expect(display.durationSeconds).not.toBe(30);
@@ -186,7 +186,7 @@ describe('formatElapsedStat', () => {
 });
 
 describe('formatTestMode', () => {
-   it('should include the word count for a words test', () => {
+   it('should include the word count and the language the words test used', () => {
       expect(
          formatTestMode({
             category: 'words',
@@ -195,7 +195,7 @@ describe('formatTestMode', () => {
             durationSeconds: 14.2,
             wordCount: 25,
          })
-      ).toBe('words 25');
+      ).toBe('words 25 spanish punctuation');
    });
 
    it('should keep time-mode copy when the category is not words', () => {
@@ -208,5 +208,59 @@ describe('formatTestMode', () => {
             wordCount: 40,
          })
       ).toBe('time 21.95s english default');
+   });
+});
+
+describe('words result language', () => {
+   it('should keep the language a words test ran with after the store language changes', () => {
+      const log = [stroke('a', 'a', 100), stroke('b', 'b', 800)];
+      const saved = {
+         ...savedFrom(log, ['ab']),
+         category: 'words',
+         language: 'spanish',
+         mode: 'default',
+         wordCount: 10,
+      };
+
+      const display = displayedResult({
+         liveLog: log,
+         liveWords: ['ab'],
+         config: {
+            time: 30,
+            category: 'words',
+            type: 'punctuation',
+            language: 'french',
+         },
+         saved,
+      });
+
+      expect(display.language).toBe('spanish');
+      expect(formatTestMode(display)).toBe('words 10 spanish default');
+   });
+
+   it('should use the switched language for a new words test, not an older result', () => {
+      const saved = {
+         ...savedFrom([stroke('a', 'a', 100)], ['a']),
+         category: 'words',
+         language: 'english',
+         mode: 'default',
+         wordCount: 10,
+      };
+      const liveLog = [stroke('h', 'h', 100), stroke('o', 'o', 400)];
+
+      const display = displayedResult({
+         liveLog,
+         liveWords: ['hola'],
+         config: {
+            time: 30,
+            category: 'words',
+            type: 'default',
+            language: 'french',
+         },
+         saved,
+      });
+
+      expect(display.language).toBe('french');
+      expect(formatTestMode(display)).toBe('words 1 french default');
    });
 });

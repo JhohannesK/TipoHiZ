@@ -139,7 +139,7 @@ Home-page Globe selector writes `userConfig.language` (`english` | `spanish` | `
 | `english`            | `default.json` | `punctuation.json`                                      | `numbers.json` |
 | `spanish` / `french` | `{lang}.json`  | `{lang}_punctuation.json` (fallback `punctuation.json`) | `numbers.json` |
 
-`category` (`time` \| `words`) is a real mode switch, not a label. It changes the palette row (`time` vs `wordCount`), `generatePassage` length, which clock starts (`useTimer` vs `useElapsed`), the finish condition, and the results card (`formatTestMode` → `words N` vs `time Ns …`). `modules/TextFiles/code.json` is unused (`Constants.options.type` has no `code`; palette removed it).
+`category` (`time` \| `words`) is a real mode switch, not a label. It changes the palette row (`time` vs `wordCount`), `generatePassage` length, which clock starts (`useTimer` vs `useElapsed`), the finish condition, and the results card (`formatTestMode` → `words N <language> <mode>` vs `time Ns <language> <mode>`). `modules/TextFiles/code.json` is unused (`Constants.options.type` has no `code`; palette removed it).
 
 To add a typing language:
 
@@ -161,14 +161,14 @@ Three language UIs:
 
 Defaults live in `modules/_constants.ts`: `TimeSec: 30`, `WordCount: 10`, times `[15, 30, 60, 120]`, words `[10, 25, 50, 100]`. Invalid word counts fall back through `resolveWordCount()`.
 
-| | Time | Words |
-| --- | --- | --- |
-| Passage | `generatePassage(bank)` — full shuffled bank | `generatePassage(bank, resolveWordCount(wordCount))` |
-| Start | first printable key → `countdown.run()` (`useTimer`) | first printable key → `elapsed.run()` (`useElapsed`) |
-| During | countdown digits | countdown slot is an empty `min-h-7`; `data-testid="words-progress"` (`wordPositionLabel`, e.g. `3/10`) only while `elapsed.running && !disabled`. Position is clamped to `1…count`; invalid totals render `1/1` (never `0/N` or `26/25`) |
-| Finish | remaining time hits **1s** (`hooks/useTimer.ts`) | `wordsTestFinished()` in `lib/words.ts`: `nextIndex >= total`, **or** last word typed exactly. A wrong last word does not finish until it is fixed or Space advances `nextIndex` |
-| Duration for stats | configured `time` seconds, not wall clock | max keystroke `timestampMs`, `durationMs = max(elapsed, 1)` (`testDuration()`). First keystroke is `t = 0`, so that character adds no time and WPM runs ~2% high on 10-word runs (source TODO in `lib/stats/record.ts`; leave it) |
-| Results time card | `formatTime` → `HH:MM:SS` (`Math.floor`; non-finite / negative → `00:00:00`) | `formatElapsedStat` → `21.95s` (`toFixed(2)`; non-finite / ≤0 → `0.00s`) |
+|                    | Time                                                            | Words                                                                                                                                                                                                                                     |
+| ------------------ | --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Passage            | `generatePassage(bank)` — full shuffled bank                    | `generatePassage(bank, resolveWordCount(wordCount))`                                                                                                                                                                                      |
+| Start              | first printable key → `countdown.run()` (`useTimer`)            | first printable key → `elapsed.run()` (`useElapsed`)                                                                                                                                                                                      |
+| During             | countdown digits                                                | countdown slot is an empty `min-h-7`; `data-testid="words-progress"` (`wordPositionLabel`, e.g. `3/10`) only while `elapsed.running && !disabled`. Position is clamped to `1…count`; invalid totals render `1/1` (never `0/N` or `26/25`) |
+| Finish             | remaining time hits **1s** (`hooks/useTimer.ts`)                | `wordsTestFinished()` in `lib/words.ts`: `nextIndex >= total`, **or** last word typed exactly. A wrong last word does not finish until it is fixed or Space advances `nextIndex`                                                          |
+| Duration for stats | configured `time` seconds, not wall clock                       | `span * N / (N - 1)` from the first keystroke to the last, floored at 1ms (`testDuration()`). The first keystroke is `t = 0`, so `span` is only the later gaps and `N / (N - 1)` counts that opening character                            |
+| Results time card  | `formatTime` → `HH:MM:SS` (`Math.floor`; negative → `00:00:00`) | `formatElapsedStat` → `21.95s` (`toFixed(2)`; non-finite / ≤0 → `0.00s`)                                                                                                                                                                  |
 
 `TextArea.tsx` reloads the word bank on `[type, language]` only. Category / wordCount / time changes must go through `resetTest` (`lib/reset.ts`). That path bumps a monotonic `resetGeneration` so a stale async load cannot overwrite a newer passage. Do not add those fields to the TextArea effect.
 
@@ -186,11 +186,11 @@ Authoritative stats: `lib/stats/calculate.ts` → `calculateStats({ log, words, 
 
 `persistFinishedTest()` (`lib/stats/persist-client.ts`) builds `SavedTestResult` and:
 
-| Mode | Where |
-| ---- | ----- |
-| Guest | `localStorage` `tipohiz.results` (cap `GUEST_RESULT_LIMIT = 50`) + `sessionStorage` `tipohiz.lastResult` |
-| Account | `POST /api/results` `{ result: submissionOf(result) }`. On failure, falls back to guest storage |
-| Sign-in | `components/result-sync.tsx` sets account mode and `POST /api/results/migrate` (max 50) |
+| Mode           | Where                                                                                                                                                                                                                                                           |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Guest          | `localStorage` `tipohiz.results` (cap `GUEST_RESULT_LIMIT = 50`) + `sessionStorage` `tipohiz.lastResult`                                                                                                                                                        |
+| Account        | `POST /api/results` `{ result: submissionOf(result) }`. On failure, falls back to guest storage                                                                                                                                                                 |
+| Sign-in        | `components/result-sync.tsx` sets account mode and `POST /api/results/migrate` (max 50)                                                                                                                                                                         |
 | Signed-in list | `GET /api/results` newest **500**. On 401/500, `accountResultsFromResponse(false)` → `[]`, but `visibleSavedResults` still **merges** local `tipohiz.results` + `tipohiz.lastResult` (dedupe by `id`, account primary). Distinct from POST failure → guest copy |
 
 Results page (`app/(Base)/results/page.tsx`) shows net + raw WPM lines, error dots, hover/focus tooltip, keyboard arrows. The per-second table stays in the DOM inside `sr-only` for a11y / e2e.
@@ -199,13 +199,13 @@ Results page (`app/(Base)/results/page.tsx`) shows net + raw WPM lines, error do
 
 `userConfig` (category, time, wordCount, type, language) is never cleared by restart.
 
-| Context | Shortcut | Behavior |
-| ------- | -------- | -------- |
-| Home | **Shift+Enter** or **Tab then Enter** | `reset-test-button.tsx` → `resetTest` + timer reset. `test_restarted` `{ how: 'shortcut' }` |
-| Home | Restart button | same path, `{ how: 'button' }` |
-| Home | Tab alone | `preventDefault`; arms the Tab+Enter chord |
-| Results | **Shift+Enter** | `resetStates()`, `/`, `test_restarted` `{ how: 'shortcut' }` |
-| Results | **Tab** (not on an interactive control) | same navigation, **no** `test_restarted` event |
+| Context | Shortcut                                | Behavior                                                                                    |
+| ------- | --------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Home    | **Shift+Enter** or **Tab then Enter**   | `reset-test-button.tsx` → `resetTest` + timer reset. `test_restarted` `{ how: 'shortcut' }` |
+| Home    | Restart button                          | same path, `{ how: 'button' }`                                                              |
+| Home    | Tab alone                               | `preventDefault`; arms the Tab+Enter chord                                                  |
+| Results | **Shift+Enter**                         | `resetStates()`, `/`, `test_restarted` `{ how: 'shortcut' }`                                |
+| Results | **Tab** (not on an interactive control) | same navigation, **no** `test_restarted` event                                              |
 
 Footer copy matches the home chord. Results Tab is a different handler (`lib/results/restart-key.ts`).
 
@@ -215,13 +215,13 @@ Footer copy matches the home chord. Results Tab is a different handler (`lib/res
 
 ### Auth (optional)
 
-| Path                 | Role                                                     |
-| -------------------- | -------------------------------------------------------- |
-| `/login`             | Credentials + OAuth entry. Provider errors land here (`?error=` → `formatAuthErrorCode`) |
-| `/register`          | Server action; schema in `lib/validation/auth.schema.ts` |
-| `/api/auth/[...all]` | Better Auth `GET`/`POST` handlers                        |
-| `GET\|POST /api/results` | Session required. Server **recomputes** stats from `log` + `words` + client `durationSeconds` |
-| `POST /api/results/migrate` | Session required. Max 50 guest results |
+| Path                        | Role                                                                                          |
+| --------------------------- | --------------------------------------------------------------------------------------------- |
+| `/login`                    | Credentials + OAuth entry. Provider errors land here (`?error=` → `formatAuthErrorCode`)      |
+| `/register`                 | Server action; schema in `lib/validation/auth.schema.ts`                                      |
+| `/api/auth/[...all]`        | Better Auth `GET`/`POST` handlers                                                             |
+| `GET\|POST /api/results`    | Session required. Server **recomputes** stats from `log` + `words` + client `durationSeconds` |
+| `POST /api/results/migrate` | Session required. Max 50 guest results                                                        |
 
 Typing does not require a session. `proxy.ts` only redirects signed-in visitors away from `/login` and `/register`. Register password rule of thumb: ≥8, upper, lower, digit. The special-character regex currently requires the literal prefix `A-Za-z0-9` — treat that as a known trap, not a real complexity rule.
 

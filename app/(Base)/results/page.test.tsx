@@ -2,6 +2,8 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { track } from '@vercel/analytics';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { resultFromSubmission } from '@/lib/stats/aggregate';
+import { rememberLastResult } from '@/lib/stats/storage';
 import { userConfigStore, wordStore } from '@/store';
 import { resetStores } from '@/test/utils';
 import ResultsPage from './page';
@@ -96,6 +98,32 @@ describe('results restart shortcut', () => {
       expect(push).not.toHaveBeenCalled();
       expect(wordStore.getState().typedEntries).toBe(40);
       expect(userConfigStore.getState().time).toBe(15);
+   });
+
+   it('should show the language the words test ran with after the store language changes', () => {
+      rememberLastResult(
+         resultFromSubmission({
+            id: 'words-es',
+            createdAt: '2026-11-09T00:00:00.000Z',
+            mode: 'default',
+            category: 'words',
+            language: 'spanish',
+            durationSeconds: 12.5,
+            wordCount: 10,
+            words: ['hola'],
+            log: [],
+         })
+      );
+      userConfigStore.setState({ language: 'french', type: 'punctuation' });
+
+      render(<ResultsPage />);
+
+      const card = screen
+         .getByRole('heading', { name: 'mode:' })
+         .closest('article');
+      expect(card?.querySelector('p')?.textContent).toBe(
+         'words 10 spanish default'
+      );
    });
 
    it('should retake on tab without changing the saved mode or duration', async () => {

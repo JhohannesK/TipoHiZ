@@ -44,16 +44,16 @@ pnpm 10 skips dependency lifecycle scripts unless they are in `pnpm-workspace.ya
 
 Typing tests run with **no env vars**. Auth needs:
 
-| Variable                       | Required for                                                                           |
-| ------------------------------ | -------------------------------------------------------------------------------------- |
-| `MONGODB_URI`                  | Better Auth MongoDB adapter                                                            |
-| `BETTER_AUTH_SECRET`           | Session signing                                                                        |
+| Variable                       | Required for                                                                                                                                                                                     |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `MONGODB_URI`                  | Better Auth MongoDB adapter                                                                                                                                                                      |
+| `BETTER_AUTH_SECRET`           | Session signing                                                                                                                                                                                  |
 | `BETTER_AUTH_URL`              | Public origin for OAuth callbacks (trailing slash stripped). If unset on Vercel: `VERCEL_PROJECT_PRODUCTION_URL` when `VERCEL_ENV=production`, else `VERCEL_BRANCH_URL` (`lib/auth/base-url.ts`) |
-| `BETTER_AUTH_TRUSTED_ORIGINS`  | Extra comma-separated origins. Also includes `BETTER_AUTH_URL` and `https://$VERCEL_URL`. Does **not** auto-add `VERCEL_BRANCH_URL` or the production fallback host |
-| `BETTER_AUTH_API_KEY`          | Optional Better Auth dashboard key. Auth still runs when it is unset                   |
-| `GOOGLE_CLIENT_ID` / `SECRET`  | Google OAuth                                                                           |
-| `GITHUB_CLIENT_ID` / `SECRET`  | GitHub OAuth                                                                           |
-| `TWITTER_CLIENT_ID` / `SECRET` | Twitter/X OAuth                                                                        |
+| `BETTER_AUTH_TRUSTED_ORIGINS`  | Extra comma-separated origins. Also includes `BETTER_AUTH_URL` and `https://$VERCEL_URL`. Does **not** auto-add `VERCEL_BRANCH_URL` or the production fallback host                              |
+| `BETTER_AUTH_API_KEY`          | Optional Better Auth dashboard key. Auth still runs when it is unset                                                                                                                             |
+| `GOOGLE_CLIENT_ID` / `SECRET`  | Google OAuth                                                                                                                                                                                     |
+| `GITHUB_CLIENT_ID` / `SECRET`  | GitHub OAuth                                                                                                                                                                                     |
+| `TWITTER_CLIENT_ID` / `SECRET` | Twitter/X OAuth                                                                                                                                                                                  |
 
 Set `BETTER_AUTH_URL` locally. Preview OAuth 403/CORS usually means the branch host is missing from `BETTER_AUTH_TRUSTED_ORIGINS` even though `resolveAuthBaseUrl()` already fell back to `VERCEL_BRANCH_URL`.
 
