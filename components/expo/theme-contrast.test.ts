@@ -17,14 +17,9 @@ const ADDED_THEMES = [
 ] as const;
 
 // Shipped palettes whose main text (--input on --background) is under AA.
-// New themes must not be added here.
-const LEGACY_MAIN_TEXT_BELOW_AA = [
-   'chrismas',
-   'cyberpunk',
-   'light-green',
-   'light-orange',
-   'retro',
-] as const;
+// New themes must not be added here. The five that used to live here
+// (chrismas, cyberpunk, light-green, light-orange, retro) now clear AA.
+const LEGACY_MAIN_TEXT_BELOW_AA = [] as const;
 
 const TYPING_ROLES = ['input', 'correct_char', 'wrong_char', 'cursor'] as const;
 
