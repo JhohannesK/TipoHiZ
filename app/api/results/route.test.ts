@@ -81,6 +81,29 @@ describe('GET /api/results', () => {
          error: 'Failed to list results',
       });
    });
+
+   it.each(['', '   '])(
+      'should reject a blank session user id %j',
+      async (id) => {
+         getSession.mockResolvedValue({ user: { id } } as never);
+
+         const response = await GET();
+
+         expect(response.status).toBe(401);
+         expect(await response.json()).toEqual({ error: 'Unauthorized' });
+         expect(listResults).not.toHaveBeenCalled();
+      }
+   );
+
+   it('should trim the session user id before listing', async () => {
+      getSession.mockResolvedValue({ user: { id: '  user-1  ' } } as never);
+      listResults.mockResolvedValue([]);
+
+      const response = await GET();
+
+      expect(response.status).toBe(200);
+      expect(listResults).toHaveBeenCalledWith('user-1');
+   });
 });
 
 describe('POST /api/results', () => {
@@ -152,5 +175,40 @@ describe('POST /api/results', () => {
       expect(response.status).toBe(500);
       expect(await response.json()).toEqual({ error: 'Failed to save result' });
       expect(saveResult).not.toHaveBeenCalled();
+   });
+
+   it('should return 500 when persistence throws', async () => {
+      getSession.mockResolvedValue({ user: { id: 'user-1' } } as never);
+      saveResult.mockRejectedValue(new Error('mongo down'));
+
+      const response = await POST(jsonRequest(submission));
+
+      expect(response.status).toBe(500);
+      expect(await response.json()).toEqual({
+         error: 'Failed to save result',
+      });
+   });
+
+   it.each(['', '   '])(
+      'should reject a blank session user id %j',
+      async (id) => {
+         getSession.mockResolvedValue({ user: { id } } as never);
+
+         const response = await POST(jsonRequest({ result: submission }));
+
+         expect(response.status).toBe(401);
+         expect(await response.json()).toEqual({ error: 'Unauthorized' });
+         expect(saveResult).not.toHaveBeenCalled();
+      }
+   );
+
+   it('should trim the session user id before persist', async () => {
+      getSession.mockResolvedValue({ user: { id: '  user-1  ' } } as never);
+      saveResult.mockResolvedValue({ id: 'result-1234' } as never);
+
+      const response = await POST(jsonRequest(submission));
+
+      expect(response.status).toBe(200);
+      expect(saveResult.mock.calls[0]?.[0]).toBe('user-1');
    });
 });
