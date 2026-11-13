@@ -2,7 +2,8 @@ import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import useTimer from './useTimer';
 
-const { push } = vi.hoisted(() => ({
+const { persistFinishedTest, push } = vi.hoisted(() => ({
+   persistFinishedTest: vi.fn(),
    push: vi.fn(),
 }));
 
@@ -15,6 +16,10 @@ vi.mock('next/navigation', () => ({
       forward: vi.fn(),
       refresh: vi.fn(),
    }),
+}));
+
+vi.mock('../lib/stats/persist-client', () => ({
+   persistFinishedTest,
 }));
 
 type Frame = (timestamp: number) => void;
@@ -52,6 +57,7 @@ function advance(ms: number): void {
 describe('useTimer', () => {
    beforeEach(() => {
       installAnimationFrames();
+      persistFinishedTest.mockClear();
       push.mockClear();
    });
 
@@ -187,6 +193,7 @@ describe('useTimer', () => {
 
       expect(result.current.timer).toBe(1);
       expect(result.current.isExited).toBe(true);
+      expect(persistFinishedTest).toHaveBeenCalledTimes(1);
       expect(push).toHaveBeenCalledWith('/results');
    });
 
@@ -201,7 +208,14 @@ describe('useTimer', () => {
       advance(1000);
 
       expect(onExit).toHaveBeenCalledTimes(1);
+      expect(persistFinishedTest).toHaveBeenCalledTimes(1);
       expect(push).toHaveBeenCalledWith('/results');
+      expect(onExit.mock.invocationCallOrder[0]).toBeLessThan(
+         persistFinishedTest.mock.invocationCallOrder[0]!
+      );
+      expect(persistFinishedTest.mock.invocationCallOrder[0]).toBeLessThan(
+         push.mock.invocationCallOrder[0]!
+      );
    });
 
    it('should not call the exit callback when the timer is reset first', () => {
@@ -219,6 +233,7 @@ describe('useTimer', () => {
       advance(5000);
 
       expect(onExit).not.toHaveBeenCalled();
+      expect(persistFinishedTest).not.toHaveBeenCalled();
       expect(push).not.toHaveBeenCalled();
    });
 
@@ -233,6 +248,7 @@ describe('useTimer', () => {
 
       expect(result.current.timer).toBe(0);
       expect(result.current.isExited).toBe(true);
+      expect(persistFinishedTest).toHaveBeenCalledTimes(1);
       expect(push).toHaveBeenCalledTimes(1);
    });
 
@@ -247,6 +263,7 @@ describe('useTimer', () => {
 
       expect(result.current.timer).toBe(1);
       expect(result.current.isExited).toBe(false);
+      expect(persistFinishedTest).not.toHaveBeenCalled();
       expect(push).not.toHaveBeenCalled();
    });
 
@@ -264,6 +281,7 @@ describe('useTimer', () => {
       advance(1000);
 
       expect(result.current.timer).toBe(2);
+      expect(persistFinishedTest).toHaveBeenCalledTimes(1);
       expect(push).toHaveBeenCalledWith('/results');
    });
 
