@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { HandleText } from './handle-text';
+import { HandleText, keysFromBeforeInput } from './handle-text';
 import { userConfigStore, wordStore } from '../store';
 import { initialWordState, resetStores } from '../test/utils';
 
@@ -8,6 +8,43 @@ function wordRef(): React.RefObject<HTMLDivElement | null> {
    document.body.appendChild(element);
    return { current: element };
 }
+
+describe('keysFromBeforeInput', () => {
+   it('should map deleteContentBackward to Backspace and ignore payload data', () => {
+      expect(
+         keysFromBeforeInput({
+            inputType: 'deleteContentBackward',
+            data: 'x',
+         })
+      ).toEqual(['Backspace']);
+   });
+
+   it('should expand inserted text into one key per character', () => {
+      expect(
+         keysFromBeforeInput({ inputType: 'insertText', data: 'abc' })
+      ).toEqual(['a', 'b', 'c']);
+      expect(keysFromBeforeInput({ data: ' ' })).toEqual([' ']);
+   });
+
+   it('should ignore empty or missing data', () => {
+      expect(
+         keysFromBeforeInput({ inputType: 'insertText', data: '' })
+      ).toEqual([]);
+      expect(
+         keysFromBeforeInput({ inputType: 'insertText', data: null })
+      ).toEqual([]);
+      expect(keysFromBeforeInput({})).toEqual([]);
+   });
+
+   it('should ignore deleteContentForward so a mobile forward-delete does not type', () => {
+      expect(
+         keysFromBeforeInput({
+            inputType: 'deleteContentForward',
+            data: null,
+         })
+      ).toEqual([]);
+   });
+});
 
 describe('HandleText', () => {
    const run = vi.fn();
