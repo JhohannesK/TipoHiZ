@@ -23,7 +23,7 @@ Preconditions:
 Run `.cursor/skills/verify-tipohiz/scripts/tipohiz-verify.mjs drive results`.
 
 -  **Finish 10 words.** Same path as words mode: visible `words`, visible `10`, type the passage with Space between words and no Space after the last correct word. Land on `/results`.
--  **Chart.** Heading `Speed by second` is visible. A button whose name matches `/per-second speed/i` is present. `table tbody tr` has at least one row.
+-  **Chart.** Heading `Speed by second` is visible. A button whose name matches `/per-second speed/i` is present. `table tbody tr` has at least one row. The `mode:` stat on a default English 10-word run is `words 10 english default`.
 -  **WPM matches storage.** The `wpm:` stat parses to a number within `0.1` of `sessionStorage['tipohiz.lastResult'].stats.wpm`. `evidence/results/results.png`, `evidence/results/results.aria.txt`, and `evidence/results/storage.json` capture the screen and the store.
 -  **Retake.** Click the link named `Retake`. The path is `/`, the passage has 10 words, and `[data-testid="words-progress"]` is absent. `evidence/results/retake.png` shows that home screen.
 
