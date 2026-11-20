@@ -3,7 +3,7 @@ import { userConfigStore, wordStore } from '../../store';
 import { initialWordState, resetStores } from '../../test/utils';
 import { calculateStats } from './calculate';
 import { setKeystrokeClock } from './clock';
-import { MAX_EXTRA_LETTERS } from './types';
+import { MAX_EXTRA_LETTERS, type Keystroke } from './types';
 import {
    appendKeystroke,
    buildFinishedResult,
@@ -11,6 +11,16 @@ import {
    describeKeystrokeLog,
    testDuration,
 } from './record';
+
+function wordStroke(timestampMs: number, key = 'a'): Keystroke {
+   return {
+      key,
+      expected: key,
+      kind: 'correct',
+      timestampMs,
+      wordIndex: 0,
+   };
+}
 
 describe('testDuration', () => {
    it('should use the configured limit for a timed test', () => {
@@ -123,6 +133,53 @@ describe('testDuration', () => {
          )
       ).toEqual({ durationMs: 1, durationSeconds: 0.001 });
    });
+
+   it.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+      'should skip non-finite timestamp %s when measuring a words test',
+      (stamp) => {
+         expect(
+            testDuration(
+               [
+                  wordStroke(stamp, 'a'),
+                  wordStroke(stamp, 'b'),
+                  wordStroke(stamp, 'c'),
+               ],
+               'words',
+               30
+            )
+         ).toEqual({ durationMs: 1, durationSeconds: 0.001 });
+      }
+   );
+
+   it('should floor a words test that has fewer than two finite timestamps', () => {
+      expect(
+         testDuration(
+            [
+               wordStroke(Number.NaN, 'a'),
+               wordStroke(400, 'b'),
+               wordStroke(Number.POSITIVE_INFINITY, 'c'),
+            ],
+            'words',
+            30
+         )
+      ).toEqual({ durationMs: 1, durationSeconds: 0.001 });
+   });
+
+   it('should measure a words test from finite timestamps only', () => {
+      expect(
+         testDuration(
+            [
+               wordStroke(Number.NaN, 'a'),
+               wordStroke(100, 'b'),
+               wordStroke(Number.POSITIVE_INFINITY, 'c'),
+               wordStroke(900, 'd'),
+               wordStroke(Number.NEGATIVE_INFINITY, 'e'),
+            ],
+            'words',
+            30
+         )
+      ).toEqual({ durationMs: 1_600, durationSeconds: 1.6 });
+   });
 });
 
 describe('classifyTypedKey', () => {
@@ -232,6 +289,37 @@ describe('buildFinishedResult', () => {
       userConfigStore.setState({ language: 'spanish' });
 
       expect(buildFinishedResult()?.language).toBe('spanish');
+   });
+
+   it('should score a words test with a 1ms floor when the log has no finite timestamps', () => {
+      userConfigStore.setState({
+         category: 'words',
+         wordCount: 10,
+         time: 30,
+      });
+      const log = [
+         wordStroke(Number.NaN, 'a'),
+         wordStroke(Number.POSITIVE_INFINITY, 'b'),
+         wordStroke(Number.NEGATIVE_INFINITY, ' '),
+         wordStroke(Number.NaN, 'c'),
+         wordStroke(Number.POSITIVE_INFINITY, 'd'),
+      ];
+      wordStore.setState({
+         wordList: ['ab', 'cd'],
+         keystrokeLog: log,
+      });
+
+      const result = buildFinishedResult();
+      const stats = calculateStats({
+         log,
+         words: ['ab', 'cd'],
+         durationMs: 1,
+      });
+
+      expect(result?.durationSeconds).toBe(0.001);
+      expect(result?.durationSeconds).not.toBe(30);
+      expect(result?.stats).toEqual(stats);
+      expect(result?.stats.rawWpm).toBeGreaterThan(1_000);
    });
 });
 
