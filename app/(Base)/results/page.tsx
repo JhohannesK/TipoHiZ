@@ -12,6 +12,7 @@ import {
    formatElapsedStat,
    formatTestMode,
 } from '@/lib/results/display';
+import { typingShortcutsBlocked } from '@/lib/feedback/shortcuts';
 import { isRestartBlockedTarget, tabRestarts } from '@/lib/results/restart-key';
 import { formatTime } from '@/lib/utils';
 import { trackTestRestarted } from '@/lib/usage-events';
@@ -55,6 +56,8 @@ export default function ResultsPage() {
 
    useEffect(() => {
       function onKeyDown(event: KeyboardEvent) {
+         if (typingShortcutsBlocked(event.target)) return;
+
          if (
             !tabRestarts({
                key: event.key,

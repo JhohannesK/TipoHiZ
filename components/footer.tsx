@@ -6,6 +6,7 @@ import { FaXTwitter } from 'react-icons/fa6';
 import { FaDiscord } from 'react-icons/fa';
 import { FaGithub } from 'react-icons/fa';
 import Chip from './ui/chip';
+import FeedbackForm from './feedback-form';
 
 function Footer() {
    return (
@@ -31,6 +32,7 @@ function Footer() {
                         href="https://github.com/JhohannesK/TipoHiZ"
                      >{`\<TipoHiZ/\>`}</Link>
                   </span>
+                  <FeedbackForm />
                </p>
                <p>Follow us on</p>
                <div className="flex items-center gap-2">

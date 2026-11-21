@@ -186,11 +186,11 @@ Authoritative stats: `lib/stats/calculate.ts` → `calculateStats({ log, words, 
 
 `persistFinishedTest()` (`lib/stats/persist-client.ts`) builds `SavedTestResult` and:
 
-| Mode           | Where                                                                                                                                                                                                 |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Guest          | `localStorage` `tipohiz.results` (cap `GUEST_RESULT_LIMIT = 50`) + `sessionStorage` `tipohiz.lastResult`                                                                                               |
-| Account        | `POST /api/results` `{ result: submissionOf(result) }`. `postResults` treats HTTP `!ok` **and** a thrown `fetch` as failure → `saveGuestResult`. A network error does not drop the run                 |
-| Sign-in        | `components/result-sync.tsx` sets account mode and `POST /api/results/migrate` (max 50). `clearGuestResults` only after `response.ok`. Throw / 4xx / 5xx leaves guest rows in place                    |
+| Mode           | Where                                                                                                                                                                                                                                                                                     |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Guest          | `localStorage` `tipohiz.results` (cap `GUEST_RESULT_LIMIT = 50`) + `sessionStorage` `tipohiz.lastResult`                                                                                                                                                                                  |
+| Account        | `POST /api/results` `{ result: submissionOf(result) }`. `postResults` treats HTTP `!ok` **and** a thrown `fetch` as failure → `saveGuestResult`. A network error does not drop the run                                                                                                    |
+| Sign-in        | `components/result-sync.tsx` sets account mode and `POST /api/results/migrate` (max 50). `clearGuestResults` only after `response.ok`. Throw / 4xx / 5xx leaves guest rows in place                                                                                                       |
 | Signed-in list | `GET /api/results` newest **500**. On 401/500/`fetch` throw, `accountResultsFromResponse(false)` → `[]`, but `visibleSavedResults` still **merges** local `tipohiz.results` + `tipohiz.lastResult` (dedupe by `id`, account primary, first-wins). Distinct from POST failure → guest copy |
 
 Results page (`app/(Base)/results/page.tsx`) shows net + raw WPM lines, error dots, hover/focus tooltip, keyboard arrows. The per-second table stays in the DOM inside `sr-only` for a11y / e2e.

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { typingShortcutsBlocked } from '@/lib/feedback/shortcuts';
 import { isShiftEnter, isTypingInOtherField } from '@/lib/restart-shortcut';
 
 export function useShiftEnterRestart(onRestart: () => void): void {
@@ -8,7 +9,12 @@ export function useShiftEnterRestart(onRestart: () => void): void {
    useEffect(() => {
       function handleKeydown(event: KeyboardEvent) {
          if (event.isComposing || !isShiftEnter(event)) return;
-         if (isTypingInOtherField(event.target)) return;
+         if (
+            typingShortcutsBlocked(event.target) ||
+            isTypingInOtherField(event.target)
+         ) {
+            return;
+         }
 
          event.preventDefault();
          onRestartRef.current();

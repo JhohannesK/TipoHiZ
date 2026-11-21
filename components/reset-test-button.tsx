@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { BsArrowRepeat } from 'react-icons/bs';
 import { resetTest } from '@/lib/reset';
+import { typingShortcutsBlocked } from '@/lib/feedback/shortcuts';
 import { isShiftEnter, isTypingInOtherField } from '@/lib/restart-shortcut';
 import { trackTestRestarted, type RestartHow } from '@/lib/usage-events';
 import { userConfigStore } from '@/store';
@@ -26,7 +27,11 @@ export default function ResetTestButton({ reset }: { reset: () => void }) {
 
    useEffect(() => {
       function handleKeydown(event: KeyboardEvent) {
-         if (event.isComposing || isTypingInOtherField(event.target)) {
+         if (
+            event.isComposing ||
+            typingShortcutsBlocked(event.target) ||
+            isTypingInOtherField(event.target)
+         ) {
             previousKeyRef.current = '';
             return;
          }
