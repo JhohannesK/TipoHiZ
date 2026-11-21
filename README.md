@@ -13,13 +13,14 @@ Tipohiz is a sleek and customizable typing test platform designed to enhance you
 -  punctuation and numbers modes (`default` \| `punctuation` \| `numbers`)
 -  timed tests: 15 / 30 / 60 / 120 seconds. Fresh `userConfig` defaults to **30s** (`Constants.TimeSec`)
 -  words tests: 10 / 25 / 50 / 100 (default **10**). Palette `category: words` is a real mode — the run ends on the last matching word, or Space past it. Countdown is hidden; a `3/10` counter (`data-testid="words-progress"`) appears after the first keystroke
--  typing languages: English, Spanish, French (home-page Globe; word lists in `modules/TextFiles/`)
+-  typing languages: English, Spanish, French (home-page Globe; word lists in `modules/TextFiles/`). The results `mode:` line records the language the run used (`words 10 spanish default`), not the Globe after you change it
 -  `/results` from the keystroke log (`lib/stats/calculate.ts`): net WPM, raw WPM, accuracy, consistency, character breakdown, per-second chart. Time mode still exits when `useTimer` hits the 1s bound. There is **no live WPM/accuracy HUD** on the home test — only per-character coloring
 -  Shift+Enter (or Tab then Enter on the home test) restarts without dropping `userConfig`
--  21 themes (`components/expo/theme.constant.ts`). Hover/focus paints the class on `<html>` before click. Persisted as next-themes `localStorage` key `theme`, **not** `userConfig.theme`
+-  21 themes (`components/expo/theme.constant.ts`). Hover/focus paints the class on `<html>` before click. Persisted as next-themes `localStorage` key `theme`, **not** `userConfig.theme`. Main text (`--input` on `--background`) is ≥ 4.5:1 on every theme; cyberpunk caret is neon yellow, not the magenta used for errors
 -  optional key sounds
 -  optional accounts (`/login`, `/register`, Google / GitHub / Twitter) via Better Auth + MongoDB — typing works without signing in
--  config in `localStorage` (Zustand persist key `userConfig`). Guest results in `tipohiz.results` (cap 50); signed-in users `POST /api/results` (first-write-wins by `id`; `GET` newest 500; list-fetch failure still shows local history)
+-  config in `localStorage` (Zustand persist key `userConfig`). Guest results in `tipohiz.results` (cap 50); signed-in users `POST /api/results` (first-write-wins by `id`; `GET` newest 500; list-fetch **or** POST `!ok` / thrown `fetch` still keeps a local copy)
+
 
 # Future Features
 
@@ -31,7 +32,7 @@ Tipohiz is a sleek and customizable typing test platform designed to enhance you
 
 Package manager is **pnpm@10.34.6** (`package.json` `packageManager` field). Enable Corepack or install that version. There is no `install-all` / `install-win` script. **`bin/install.sh` is legacy and broken** (`pnpm ci` is unimplemented); **`bin/install.cmd` is unused**. Use `pnpm install`. Node.js **24+** locally; CI uses **Node 24**.
 
-This is **Next.js 16.4**. `next dev` / `next build` use Turbopack by default. Request interception lives in `proxy.ts` (not `middleware.ts`). Lint is `eslint .` (`pnpm lint`) — there is no `next lint`. Read `AGENTS.md` and `node_modules/next/dist/docs/` before App Router changes.
+This is **Next.js 16.4.5** (`next` + `eslint-config-next`). That is the patched floor for the November 2026 advisories; do not drop below 16.4.5 without re-checking GHSA ranges. `next dev` / `next build` use Turbopack by default. Request interception lives in `proxy.ts` (not `middleware.ts`). Lint is `eslint .` (`pnpm lint`) — there is no `next lint`. Read `AGENTS.md` and `node_modules/next/dist/docs/` before App Router changes.
 
 ```bash
 pnpm install          # postinstall runs prisma generate
@@ -59,7 +60,7 @@ Set `BETTER_AUTH_URL` locally. Preview OAuth 403/CORS usually means the branch h
 
 `mongodb+srv://` or a URI with `replicaSet=` enables Better Auth adapter transactions. Standalone `mongodb://localhost:27017/…` (including `directConnection=true`) does not (`mongoTransactionsEnabled`). Linking/OAuth persistence can differ from Atlas.
 
-`proxy.ts` redirects a signed-in visitor away from `/login` and `/register`. It does not gate the typing test. Anonymous use is expected.
+`proxy.ts` matcher is **only** `/login` and `/register`. Cookie **presence** (not a validated session) 307s those paths to `/`. `/` and `/results` never consult the cookie. Login/register still confirm the session on the server — a stale cookie bounces the forms until it expires. Anonymous typing is expected.
 
 Auth routes: `GET|POST /api/auth/[...all]`. Credentials login min password length 8. Register (`lib/validation/auth.schema.ts`): name ≥3, email, password ≥8 with upper / lower / digit. The “special character” regex is `/^A-Za-z0-9/` — it matches a literal prefix, not a special char; if register fails unexpectedly, look there first. Credential failures always return **`Invalid email or password`**. Duplicate sign-up uses a generic “unable to create an account” copy, and some duplicate codes return `{ success: true }` so the response shape does not confirm the email is registered (`lib/auth/error-messages.ts`). Auth rate limits are stored in MongoDB, not in process memory. The first auth use ensures a unique index on `rateLimit.key`. If MongoDB is unreachable, that check logs the error and the app keeps running. `dash()` from `@better-auth/infra` powers the dashboard and reads `BETTER_AUTH_API_KEY`. A missing key does not stop the app.
 
@@ -88,6 +89,8 @@ CI=true pnpm test:e2e
 ```
 
 `CI=true` makes Playwright run `pnpm start` against the production build. Without a prior `pnpm build`, that path fails. Dev-mode e2e (`pnpm test:e2e` with no `CI`) hits `pnpm dev` on `127.0.0.1:3000` and can stall on Next 16 cross-origin HMR.
+
+Optional local browser proof (not CI): `.cursor/skills/verify-tipohiz/` — `launch` / `doctor` / `drive <time|words|restart|results|themes>`. Guest-only; strips auth env. Recipes live in `features/`.
 
 -  `e2e/smoke.spec.ts` — happy-path **selected 15s** test → `/results`. That is not the default duration (30s).
 -  `e2e/words-mode.spec.ts` — words 10, last-word finish, hidden countdown, `3/10` counter.

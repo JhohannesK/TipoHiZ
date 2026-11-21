@@ -35,3 +35,4 @@ Run `.cursor/skills/verify-tipohiz/scripts/tipohiz-verify.mjs drive themes`.
 -  Hover must not count as a save. Read `localStorage.theme` while the preview class is `nord`.
 -  The trigger is not labelled `Choose a Theme`. That string is the dialog title.
 -  Theme buttons mount with the dialog. Before the click, only the trigger is named `dark-gray`.
+-  Main text on every shipped theme is ≥ 4.5:1 (`--input` vs `--background`). Cyberpunk caret is yellow, not magenta.

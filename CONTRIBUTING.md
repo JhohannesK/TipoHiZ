@@ -7,7 +7,7 @@
 
 ### Contribute in framework
 
--  [Next.js 16](https://nextjs.org/docs) — also read [`AGENTS.md`](AGENTS.md) and `node_modules/next/dist/docs/` before App Router changes (`proxy.ts`, no `next lint`)
+-  [Next.js 16.4.5](https://nextjs.org/docs) — patched floor after the November 2026 advisories. Also read [`AGENTS.md`](AGENTS.md) and `node_modules/next/dist/docs/` before App Router changes (`proxy.ts`, no `next lint`)
 
 ### Contribute in state-management
 
@@ -130,6 +130,8 @@ pnpm build && CI=true pnpm test:e2e     # production server; auth stubbed
 
 `e2e/known-failures.spec.ts` uses `test.fail` — those cases passing as expected-fail does **not** mean the product bugs are fixed. See README **Testing**.
 
+Optional guest-path browser proof (not in CI): `.cursor/skills/verify-tipohiz/scripts/tipohiz-verify.mjs` (`launch` / `doctor` / `drive`). One `next dev` per checkout. Recipes in `features/`.
+
 ### Language word lists
 
 Home-page Globe selector writes `userConfig.language` (`english` | `spanish` | `french`) and calls `resetTest`. `TextArea.tsx` loads from `modules/TextFiles/` as:
@@ -155,6 +157,8 @@ Three language UIs:
 | Settings `<select>`         | No (`onChange` missing; includes German) |
 | Results language `<select>` | Decorative                               |
 
+The results `mode:` line is `formatTestMode` (`lib/results/display.ts`): `words N <language> <type>` or `time Ns <language> <type>`. `displayedResult` uses the **saved** language when the live log is empty or matches `saved.log`. Changing the Globe (or `userConfig.language`) after the run does not rewrite a stored card. A new live log that does not match the saved one uses current `userConfig`.
+
 `lib/i18n/translations.ts` chrome strings are unused. UI chrome stays English.
 
 ### Time vs words
@@ -168,7 +172,7 @@ Defaults live in `modules/_constants.ts`: `TimeSec: 30`, `WordCount: 10`, times 
 | During             | countdown digits                                                | countdown slot is an empty `min-h-7`; `data-testid="words-progress"` (`wordPositionLabel`, e.g. `3/10`) only while `elapsed.running && !disabled`. Position is clamped to `1…count`; invalid totals render `1/1` (never `0/N` or `26/25`) |
 | Finish             | remaining time hits **1s** (`hooks/useTimer.ts`)                | `wordsTestFinished()` in `lib/words.ts`: `nextIndex >= total`, **or** last word typed exactly. A wrong last word does not finish until it is fixed or Space advances `nextIndex`                                                          |
 | Duration for stats | configured `time` seconds, not wall clock                       | `span * N / (N - 1)` from the first keystroke to the last, floored at 1ms (`testDuration()`). The first keystroke is `t = 0`, so `span` is only the later gaps and `N / (N - 1)` counts that opening character                            |
-| Results time card  | `formatTime` → `HH:MM:SS` (`Math.floor`; negative → `00:00:00`) | `formatElapsedStat` → `21.95s` (`toFixed(2)`; non-finite / ≤0 → `0.00s`)                                                                                                                                                                  |
+| Results time card  | `formatTime` → `HH:MM:SS` (`Math.floor`; negative → `00:00:00`; non-finite is **not** clamped — `NaN` renders `NaN:NaN:NaN`) | `formatElapsedStat` → `21.95s` (`toFixed(2)`; non-finite / ≤0 → `0.00s`)                                                                                                                                                                  |
 
 `TextArea.tsx` reloads the word bank on `[type, language]` only. Category / wordCount / time changes must go through `resetTest` (`lib/reset.ts`). That path bumps a monotonic `resetGeneration` so a stale async load cannot overwrite a newer passage. Do not add those fields to the TextArea effect.
 
@@ -178,7 +182,7 @@ Mobile: hidden textarea + `onKeyDown` → `HandleText` (composing / modifier / E
 
 Every handled key is appended in `lib/stats/record.ts` (`appendKeystroke`). Timestamps are ms from the first key after `resetKeystrokeClock()` (`lib/stats/clock.ts`). Extra letters cap at `MAX_EXTRA_LETTERS = 10`.
 
-Authoritative stats: `lib/stats/calculate.ts` → `calculateStats({ log, words, durationMs })`. Consistency is MonkeyType-style kogasa on **per-second raw WPM**, window trimmed to first→last **non-zero** sample so a trailing zero tail from configured duration does not force 0%. Chart last x-label uses `durationSeconds` when finite (`formatLastSecond`: tenths, near-integers round to a whole second). Keystrokes past the last bucket fold into that second.
+Authoritative stats: `lib/stats/calculate.ts` → `calculateStats({ log, words, durationMs })`. Consistency is MonkeyType-style kogasa on **per-second raw WPM**, window trimmed to first→last **non-zero** sample so a trailing zero tail from configured duration does not force 0%. Chart last x-label uses `durationSeconds` when finite (`formatLastSecond`: tenths, near-integers round to a whole second). Keystrokes past the last bucket fold into that second. X ticks (`xAxisLabels`) always keep `1` and the last sample; step is 1 / 5 / 10 / 15 / 30 by count, then `spaceAxisLabels` drops collisions on a 248px plot (`ticksClear`, 8px/char, last label +2 chars). A 121-sample words run labels `1, 30, 60, 90, 120.4`.
 
 `syncKeystrokeStats()` updates store `errorCount` / `typedEntries` with a **1s placeholder** duration. Do not wire a live WPM HUD off that helper without passing real `durationMs`.
 
@@ -189,9 +193,9 @@ Authoritative stats: `lib/stats/calculate.ts` → `calculateStats({ log, words, 
 | Mode           | Where                                                                                                                                                                                                                                                           |
 | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Guest          | `localStorage` `tipohiz.results` (cap `GUEST_RESULT_LIMIT = 50`) + `sessionStorage` `tipohiz.lastResult`                                                                                                                                                        |
-| Account        | `POST /api/results` `{ result: submissionOf(result) }`. On failure, falls back to guest storage                                                                                                                                                                 |
-| Sign-in        | `components/result-sync.tsx` sets account mode and `POST /api/results/migrate` (max 50)                                                                                                                                                                         |
-| Signed-in list | `GET /api/results` newest **500**. On 401/500, `accountResultsFromResponse(false)` → `[]`, but `visibleSavedResults` still **merges** local `tipohiz.results` + `tipohiz.lastResult` (dedupe by `id`, account primary). Distinct from POST failure → guest copy |
+| Account        | `POST /api/results` `{ result: submissionOf(result) }`. `postResults` treats HTTP `!ok` **and** a thrown `fetch` as failure → `saveGuestResult`. A network error does not drop the run                                                                         |
+| Sign-in        | `components/result-sync.tsx` sets account mode and `POST /api/results/migrate` (max 50). `clearGuestResults` only after `response.ok`. Throw / 4xx / 5xx leaves guest rows in place                                                                            |
+| Signed-in list | `GET /api/results` newest **500**. On 401/500/`fetch` throw, `accountResultsFromResponse(false)` → `[]`, but `visibleSavedResults` still **merges** local `tipohiz.results` + `tipohiz.lastResult` (dedupe by `id`, account primary). Distinct from POST failure → guest copy |
 
 Results page (`app/(Base)/results/page.tsx`) shows net + raw WPM lines, error dots, hover/focus tooltip, keyboard arrows. The per-second table stays in the DOM inside `sr-only` for a11y / e2e.
 
@@ -213,6 +217,8 @@ Footer copy matches the home chord. Results Tab is a different handler (`lib/res
 
 21 ids in `components/expo/theme.constant.ts` (includes `serika-dark`, `nord`, `dracula`, `carbon`, `botanical`, `olivia`). Default `dark-gray` (`app/layout.tsx`). Hover/focus preview: `hooks/useThemePreview.ts` paints the class on `<html>`; click commits via next-themes. Persistence is **`localStorage` key `theme`**. `userConfig.theme` / `ConfigActions.setTheme` exist and are unused by the theme UI — do not mix the two.
 
+Main text is `--input` on `--background`. `theme-contrast.test.ts` requires ≥ 4.5:1 on every theme (`LEGACY_MAIN_TEXT_BELOW_AA` is empty after #251). Do not add a new id to that allowlist. The five palettes that used to fail AA are `chrismas`, `cyberpunk`, `light-green`, `light-orange`, `retro`. Cyberpunk `--cursor` is yellow (`60 100% 50%`) so it does not share magenta with `--wrong_char`. Added themes (`serika-dark` … `olivia`) also keep untyped / correct / error / caret ≥ 3:1 vs background and ΔE ≥ 25 from each other.
+
 ### Auth (optional)
 
 | Path                        | Role                                                                                          |
@@ -220,10 +226,10 @@ Footer copy matches the home chord. Results Tab is a different handler (`lib/res
 | `/login`                    | Credentials + OAuth entry. Provider errors land here (`?error=` → `formatAuthErrorCode`)      |
 | `/register`                 | Server action; schema in `lib/validation/auth.schema.ts`                                      |
 | `/api/auth/[...all]`        | Better Auth `GET`/`POST` handlers                                                             |
-| `GET\|POST /api/results`    | Session required. Server **recomputes** stats from `log` + `words` + client `durationSeconds` |
+| `GET\|POST /api/results`    | Session required (`userIdFromSession`: missing / blank / whitespace `user.id` → 401). Server **recomputes** stats from `log` + `words` + client `durationSeconds` |
 | `POST /api/results/migrate` | Session required. Max 50 guest results                                                        |
 
-Typing does not require a session. `proxy.ts` only redirects signed-in visitors away from `/login` and `/register`. Register password rule of thumb: ≥8, upper, lower, digit. The special-character regex currently requires the literal prefix `A-Za-z0-9` — treat that as a known trap, not a real complexity rule.
+Typing does not require a session. `proxy.ts` matcher is only `/login` and `/register`. Cookie **presence** 307s those paths to `/` (`getSessionCookie`); it does not call `getServerSession`. Other routes skip the cookie check. Login/register still confirm the session on the server. Register password rule of thumb: ≥8, upper, lower, digit. The special-character regex currently requires the literal prefix `A-Za-z0-9` — treat that as a known trap, not a real complexity rule.
 
 `resolveAuthBaseUrl()`: explicit `BETTER_AUTH_URL` wins (trailing slash stripped). Else Vercel production → `https://$VERCEL_PROJECT_PRODUCTION_URL`; else `https://$VERCEL_BRANCH_URL`. Trusted origins = `BETTER_AUTH_TRUSTED_ORIGINS` + `BETTER_AUTH_URL` + `https://$VERCEL_URL` only — **not** the fallback hosts. Preview CORS/403: list the branch URL in `BETTER_AUTH_TRUSTED_ORIGINS`. Rate limits use the database. The first auth use ensures a unique index on `rateLimit.key`, and a MongoDB outage is logged without stopping startup. The dashboard plugin is `dash()` and uses optional `BETTER_AUTH_API_KEY`. Adapter transactions follow `mongoTransactionsEnabled(MONGODB_URI)`: on for `mongodb+srv://` or `replicaSet=`, off for standalone localhost.
 
