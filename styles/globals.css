@@ -71,8 +71,8 @@
       --destructive: 0 84.2% 60.2%;
       --cursor: 24 9.8% 10%;
       --radius: 0.5rem;
-      --correct_char: 120, 61%, 34%;
-      --wrong_char: 348, 83%, 47%;
+      --correct_char: 120, 61%, 18%;
+      --wrong_char: 348, 83%, 22%;
    }
 
    .dark-gray {
@@ -168,20 +168,20 @@
       --border: 200, 100%, 50%;
       --radius: 0.5rem;
       --correct_char: 180, 100%, 50%;
-      --wrong_char: 300, 100%, 50%;
+      --wrong_char: 0, 100%, 60%;
    }
 
    .chrismas {
       --background: 132, 8%, 13%;
       --foreground: 128, 56%, 17%;
-      --input: 0, 93%, 65%;
+      --input: 35, 40%, 75%;
       --destructive: 0 100% 50%;
       --accent: 45, 93%, 47%;
       --cursor: 45, 93%, 47%;
       --border: 200, 100%, 50%;
       --radius: 0.5rem;
-      --correct_char: 91, 38%, 21%;
-      --wrong_char: 47, 44%, 89%;
+      --correct_char: 91, 38%, 45%;
+      --wrong_char: 0, 93%, 65%;
    }
 
    .serika-dark {
