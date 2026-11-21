@@ -94,4 +94,45 @@ describe('result submission schema', () => {
          }).success
       ).toBe(false);
    });
+
+   it('should reject an unknown keystroke kind and an expected string over 8', () => {
+      expect(
+         resultSubmissionSchema.safeParse({
+            ...submission,
+            log: [['a', 'a', 'typo', 0, 0]],
+         }).success
+      ).toBe(false);
+      expect(
+         resultSubmissionSchema.safeParse({
+            ...submission,
+            log: [['a', 'abcdefghij', 'correct', 0, 0]],
+         }).success
+      ).toBe(false);
+   });
+
+   it('should reject 2001 words and accept the 2000-word / 8-char expected bounds', () => {
+      expect(
+         resultSubmissionSchema.safeParse({
+            ...submission,
+            words: Array.from({ length: 2001 }, () => 'ab'),
+         }).success
+      ).toBe(false);
+      expect(
+         resultSubmissionSchema.safeParse({
+            ...submission,
+            words: Array.from({ length: 2000 }, () => 'ab'),
+            log: [['a', 'abcdefgh', 'correct', 0, 0]],
+         }).success
+      ).toBe(true);
+   });
+
+   it('should reject a migrate payload that is not an array of results', () => {
+      expect(migrateResultsSchema.safeParse({}).success).toBe(false);
+      expect(migrateResultsSchema.safeParse({ results: {} }).success).toBe(
+         false
+      );
+      expect(
+         migrateResultsSchema.safeParse({ results: [submission] }).success
+      ).toBe(true);
+   });
 });

@@ -1,11 +1,11 @@
 import { getServerSession } from '@/lib/auth/session';
+import { userIdFromSession } from '@/lib/auth/session-user';
 import { saveResultsForUser } from '@/lib/stats/repository';
 import { migrateResultsSchema } from '@/lib/validation/result.schema';
 
 export async function POST(request: Request) {
    try {
-      const session = await getServerSession();
-      const userId = session?.user?.id;
+      const userId = userIdFromSession(await getServerSession());
       if (!userId) {
          return Response.json({ error: 'Unauthorized' }, { status: 401 });
       }

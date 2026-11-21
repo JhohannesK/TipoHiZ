@@ -10,7 +10,7 @@ import type {
 
 const COLLECTION = 'testResult';
 
-interface TestResultDocument extends Document {
+export interface TestResultDocument extends Document {
    _id: string;
    userId: string;
    createdAt: Date;
@@ -59,7 +59,7 @@ async function ensureResultIndex(
    }
 }
 
-function duplicateKey(error: unknown): boolean {
+export function duplicateKey(error: unknown): boolean {
    return (
       typeof error === 'object' &&
       error !== null &&
@@ -68,7 +68,7 @@ function duplicateKey(error: unknown): boolean {
    );
 }
 
-function createdAtFrom(value: string): Date {
+export function createdAtFrom(value: string): Date {
    const parsed = new Date(value);
    if (Number.isNaN(parsed.getTime())) return new Date();
    return parsed;
@@ -115,6 +115,20 @@ function documentFor(
    };
 }
 
+export function resultUpsertWrite(
+   userId: string,
+   input: ResultSubmission,
+   saved: SavedTestResult
+): {
+   filter: { _id: string; userId: string };
+   update: { $setOnInsert: TestResultDocument };
+} {
+   return {
+      filter: { _id: input.id, userId },
+      update: { $setOnInsert: documentFor(userId, input, saved) },
+   };
+}
+
 export async function saveResultForUser(
    userId: string,
    input: ResultSubmission
@@ -123,11 +137,8 @@ export async function saveResultForUser(
    const collection = results();
    await ensureResultIndex(collection);
    try {
-      await collection.updateOne(
-         { _id: input.id, userId },
-         { $setOnInsert: documentFor(userId, input, saved) },
-         { upsert: true }
-      );
+      const write = resultUpsertWrite(userId, input, saved);
+      await collection.updateOne(write.filter, write.update, { upsert: true });
    } catch (error: unknown) {
       if (!duplicateKey(error)) throw error;
    }

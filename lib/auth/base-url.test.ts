@@ -64,6 +64,10 @@ describe('resolveAuthBaseUrl', () => {
       ).toEqual(['http://localhost:3000']);
    });
 
+   it('should return undefined when no host env is set', () => {
+      expect(resolveAuthBaseUrl({})).toBeUndefined();
+   });
+
    it('should use the production project host when BETTER_AUTH_URL is unset', () => {
       expect(
          resolveAuthBaseUrl({
@@ -73,6 +77,16 @@ describe('resolveAuthBaseUrl', () => {
             VERCEL_URL: 'deployment-abc.vercel.app',
          })
       ).toBe('https://tipohiz.com');
+   });
+
+   it('should use the branch host when production has no production URL set', () => {
+      expect(
+         resolveAuthBaseUrl({
+            VERCEL_ENV: 'production',
+            VERCEL_BRANCH_URL: 'branch-xyz.vercel.app',
+            VERCEL_URL: 'deployment-abc.vercel.app',
+         })
+      ).toBe('https://branch-xyz.vercel.app');
    });
 
    it('should use the branch host outside production instead of the deployment host', () => {
@@ -103,5 +117,26 @@ describe('resolveAuthBaseUrl', () => {
             VERCEL_BRANCH_URL: 'preview.vercel.app',
          })
       ).toBe('https://preview.vercel.app');
+   });
+
+   it('should not fall through a whitespace production URL to the branch host', () => {
+      expect(
+         resolveAuthBaseUrl({
+            VERCEL_ENV: 'production',
+            VERCEL_PROJECT_PRODUCTION_URL: '   ',
+            VERCEL_BRANCH_URL: 'branch-xyz.vercel.app',
+         })
+      ).toBeUndefined();
+   });
+
+   it('should not treat Vercel branch or production hosts as trusted origins', () => {
+      expect(
+         authTrustedOrigins({
+            VERCEL_ENV: 'preview',
+            VERCEL_BRANCH_URL: 'branch-xyz.vercel.app',
+            VERCEL_PROJECT_PRODUCTION_URL: 'tipohiz.com',
+            VERCEL_URL: 'deployment-abc.vercel.app',
+         })
+      ).toEqual(['https://deployment-abc.vercel.app']);
    });
 });
