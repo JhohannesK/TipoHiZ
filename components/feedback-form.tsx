@@ -60,7 +60,7 @@ export default function FeedbackForm() {
    const triggerRef = useRef<HTMLButtonElement>(null);
    const requestId = useRef(0);
    const [open, setOpen] = useState(false);
-   const [openedAt, setOpenedAt] = useState(0);
+   const openedMark = useRef(0);
    const [message, setMessage] = useState('');
    const [email, setEmail] = useState('');
    const [emailDirty, setEmailDirty] = useState(false);
@@ -83,7 +83,7 @@ export default function FeedbackForm() {
       feedbackStore.setState({ open: next });
       setOpen(next);
       if (next) {
-         setOpenedAt(Date.now());
+         openedMark.current = performance.now();
          setStatus('idle');
          setError('');
          setErrorGithub(false);
@@ -104,12 +104,13 @@ export default function FeedbackForm() {
       setError('');
       setErrorGithub(false);
 
-      const wait = MIN_FILL_MS - (Date.now() - openedAt);
+      const wait = MIN_FILL_MS - (performance.now() - openedMark.current);
       if (wait > 0) {
          await new Promise((resolve) => {
             window.setTimeout(resolve, wait);
          });
       }
+      const elapsedMs = Math.max(0, performance.now() - openedMark.current);
 
       if (requestId.current !== id) return;
 
@@ -121,7 +122,7 @@ export default function FeedbackForm() {
                message,
                email: email.trim(),
                website,
-               openedAt,
+               elapsedMs,
                context: {
                   page: clip(pathname || '/'),
                   theme: clip(theme || ''),

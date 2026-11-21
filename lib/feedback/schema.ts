@@ -22,7 +22,7 @@ export const feedbackBodySchema = z.object({
          error: 'Invalid email',
       })
       .optional(),
-   openedAt: z.number().finite(),
+   elapsedMs: z.number().finite().min(0),
    context: feedbackContextSchema,
 });
 

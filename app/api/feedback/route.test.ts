@@ -19,7 +19,7 @@ function validBody(overrides: Record<string, unknown> = {}) {
    return {
       message: 'The caret jumps after a restart on words mode.',
       email: 'person@example.com',
-      openedAt: Date.now() - 5_000,
+      elapsedMs: 5_000,
       context: {
          page: '/',
          theme: 'light-orange',
@@ -69,12 +69,34 @@ describe('POST /api/feedback', () => {
       expect(enforce).not.toHaveBeenCalled();
    });
 
-   it('should pretend success and send nothing when the form was opened too recently', async () => {
-      const response = await POST(post(validBody({ openedAt: Date.now() })));
+   it('should pretend success and send nothing when elapsedMs is under 3 seconds', async () => {
+      const response = await POST(post(validBody({ elapsedMs: 2_999 })));
 
       expect(response.status).toBe(200);
       expect(await response.json()).toEqual({ ok: true });
       expect(fetch).not.toHaveBeenCalled();
+   });
+
+   it('should send when elapsedMs is at least 3 seconds', async () => {
+      const response = await POST(post(validBody({ elapsedMs: 3_000 })));
+
+      expect(response.status).toBe(200);
+      expect(fetch).toHaveBeenCalledTimes(1);
+   });
+
+   it('should send when elapsedMs is 3500 even if the server clock is skewed', async () => {
+      vi.spyOn(Date, 'now').mockReturnValue(0);
+
+      const past = await POST(post(validBody({ elapsedMs: 3_500 })));
+
+      expect(past.status).toBe(200);
+      expect(fetch).toHaveBeenCalledTimes(1);
+
+      vi.spyOn(Date, 'now').mockReturnValue(8.64e15);
+      const future = await POST(post(validBody({ elapsedMs: 3_500 })));
+
+      expect(future.status).toBe(200);
+      expect(fetch).toHaveBeenCalledTimes(2);
    });
 
    it.each([

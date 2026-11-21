@@ -63,8 +63,8 @@ export async function POST(request: Request): Promise<Response> {
       return json({ error: 'Invalid feedback' }, 400);
    }
 
-   const { message, email, openedAt, context } = parsed.data;
-   if (Date.now() - openedAt < MIN_FILL_MS) {
+   const { message, email, elapsedMs, context } = parsed.data;
+   if (elapsedMs < MIN_FILL_MS) {
       return json({ ok: true }, 200);
    }
 
