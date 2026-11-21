@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { HandleText } from '../lib/handle-text';
+import { HandleText, keysFromBeforeInput } from '../lib/handle-text';
 import { loadWords } from '../lib/reset';
 import { userConfigStore, wordStore } from '../store';
 import { setCaretRef, setRef, setWordList } from '../store/actions/WordActions';
@@ -183,20 +183,14 @@ const TextArea: React.FC<soundProps> = ({ sound, run, onFinish }) => {
                if (suppressInputRef.current) return;
 
                const native = e.nativeEvent as unknown as InputEvent;
-               const inputType = (native as unknown as { inputType?: string })
-                  .inputType;
-               const data = (native as unknown as { data?: string | null })
-                  .data;
+               const keys = keysFromBeforeInput({
+                  inputType: (native as unknown as { inputType?: string })
+                     .inputType,
+                  data: (native as unknown as { data?: string | null }).data,
+               });
 
-               if (inputType === 'deleteContentBackward') {
-                  HandleText('Backspace', activeWordRef, run, onFinish);
-                  return;
-               }
-
-               if (typeof data === 'string' && data.length > 0) {
-                  for (const ch of data) {
-                     HandleText(ch, activeWordRef, run, onFinish);
-                  }
+               for (const key of keys) {
+                  HandleText(key, activeWordRef, run, onFinish);
                }
             }}
             onInput={(e) => {

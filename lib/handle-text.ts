@@ -14,6 +14,21 @@ import {
 } from './stats/record';
 import { wordsTestFinished } from './words';
 
+export function keysFromBeforeInput(input: {
+   inputType?: string;
+   data?: string | null;
+}): string[] {
+   if (input.inputType === 'deleteContentBackward') {
+      return ['Backspace'];
+   }
+
+   if (typeof input.data === 'string' && input.data.length > 0) {
+      return [...input.data];
+   }
+
+   return [];
+}
+
 function finishWordsTest(onFinish?: () => void): void {
    const state = wordStore.getState();
    const { category, wordCount } = userConfigStore.getState();
