@@ -231,7 +231,7 @@ export default function FeedbackForm() {
                   We&apos;ll include: page, theme, browser
                </DialogDescription>
                {status === 'success' ? (
-                  <p className="text-sm text-input" role="status">
+                  <p className="text-sm text-correct_char" role="status">
                      Thanks, sent.
                   </p>
                ) : null}
@@ -253,7 +253,7 @@ export default function FeedbackForm() {
                <Button
                   type="button"
                   disabled={!canSend}
-                  className="bg-input text-background transition-none hover:bg-input disabled:border disabled:border-input disabled:bg-background disabled:text-input disabled:opacity-100"
+                  className="bg-input text-background transition-none hover:bg-input disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-50"
                   onClick={() => void send()}
                >
                   {status === 'sending' ? 'Sending…' : 'Send'}

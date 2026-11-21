@@ -32,6 +32,9 @@ function Footer() {
                         href="https://github.com/JhohannesK/TipoHiZ"
                      >{`\<TipoHiZ/\>`}</Link>
                   </span>
+                  <span className="text-input/50" aria-hidden="true">
+                     ·
+                  </span>
                   <FeedbackForm />
                </p>
                <p>Follow us on</p>
