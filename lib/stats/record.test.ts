@@ -3,13 +3,47 @@ import { userConfigStore, wordStore } from '../../store';
 import { initialWordState, resetStores } from '../../test/utils';
 import { calculateStats } from './calculate';
 import { setKeystrokeClock } from './clock';
-import { MAX_EXTRA_LETTERS } from './types';
+import { MAX_EXTRA_LETTERS, type Keystroke } from './types';
 import {
    appendKeystroke,
    buildFinishedResult,
    classifyTypedKey,
+   describeKeystrokeLog,
+   syncKeystrokeStats,
    testDuration,
 } from './record';
+
+function wordStroke(timestampMs: number, key = 'a'): Keystroke {
+   return {
+      key,
+      expected: key,
+      kind: 'correct',
+      timestampMs,
+      wordIndex: 0,
+   };
+}
+
+function stroke(
+   key: string,
+   expected: string | null,
+   timestampMs: number,
+   wordIndex = 0,
+   kind?: Keystroke['kind']
+): Keystroke {
+   return {
+      key,
+      expected,
+      kind:
+         kind ??
+         (expected === null
+            ? 'extra'
+            : key === expected
+            ? 'correct'
+            : 'incorrect'),
+      timestampMs,
+      wordIndex,
+   };
+}
 
 describe('testDuration', () => {
    it('should use the configured limit for a timed test', () => {
@@ -44,7 +78,7 @@ describe('testDuration', () => {
       ).toEqual({ durationMs: 15_000, durationSeconds: 15 });
    });
 
-   it('should use the last keystroke for a words test', () => {
+   it('should include the opening character gap on a words test', () => {
       expect(
          testDuration(
             [
@@ -66,10 +100,10 @@ describe('testDuration', () => {
             'words',
             30
          )
-      ).toEqual({ durationMs: 800, durationSeconds: 0.8 });
+      ).toEqual({ durationMs: 1_600, durationSeconds: 1.6 });
    });
 
-   it('should use the max timestamp on a words test even if the last event is earlier', () => {
+   it('should measure a words test from the earliest keystroke to the latest', () => {
       expect(
          testDuration(
             [
@@ -91,7 +125,7 @@ describe('testDuration', () => {
             'words',
             30
          )
-      ).toEqual({ durationMs: 1200, durationSeconds: 1.2 });
+      ).toEqual({ durationMs: 1_600, durationSeconds: 1.6 });
    });
 
    it('should floor a words test with no elapsed time at 1ms', () => {
@@ -121,6 +155,53 @@ describe('testDuration', () => {
             30
          )
       ).toEqual({ durationMs: 1, durationSeconds: 0.001 });
+   });
+
+   it.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+      'should skip non-finite timestamp %s when measuring a words test',
+      (stamp) => {
+         expect(
+            testDuration(
+               [
+                  wordStroke(stamp, 'a'),
+                  wordStroke(stamp, 'b'),
+                  wordStroke(stamp, 'c'),
+               ],
+               'words',
+               30
+            )
+         ).toEqual({ durationMs: 1, durationSeconds: 0.001 });
+      }
+   );
+
+   it('should floor a words test that has fewer than two finite timestamps', () => {
+      expect(
+         testDuration(
+            [
+               wordStroke(Number.NaN, 'a'),
+               wordStroke(400, 'b'),
+               wordStroke(Number.POSITIVE_INFINITY, 'c'),
+            ],
+            'words',
+            30
+         )
+      ).toEqual({ durationMs: 1, durationSeconds: 0.001 });
+   });
+
+   it('should measure a words test from finite timestamps only', () => {
+      expect(
+         testDuration(
+            [
+               wordStroke(Number.NaN, 'a'),
+               wordStroke(100, 'b'),
+               wordStroke(Number.POSITIVE_INFINITY, 'c'),
+               wordStroke(900, 'd'),
+               wordStroke(Number.NEGATIVE_INFINITY, 'e'),
+            ],
+            'words',
+            30
+         )
+      ).toEqual({ durationMs: 1_600, durationSeconds: 1.6 });
    });
 });
 
@@ -155,6 +236,79 @@ describe('classifyTypedKey', () => {
          kind: 'extra',
          blocked: false,
       });
+   });
+});
+
+describe('describeKeystrokeLog', () => {
+   it('should count zero words on an empty log', () => {
+      const described = describeKeystrokeLog([], ['ab', 'cd'], 15);
+
+      expect(described.wordCount).toBe(0);
+      expect(described.words).toEqual(['ab']);
+      expect(described.stats).toEqual(
+         calculateStats({ log: [], words: ['ab'], durationMs: 15_000 })
+      );
+   });
+
+   it('should count the in-progress word without advancing past it', () => {
+      const log = [stroke('a', 'a', 0)];
+      const described = describeKeystrokeLog(log, ['ab', 'cd'], 15);
+
+      expect(described.wordCount).toBe(1);
+      expect(described.words).toEqual(['ab']);
+      expect(described.stats.correct).toBe(1);
+   });
+
+   it('should not count the next word until a letter is typed after space', () => {
+      const log = [
+         stroke('a', 'a', 0),
+         stroke('b', 'b', 20),
+         stroke(' ', ' ', 40),
+      ];
+      const described = describeKeystrokeLog(log, ['ab', 'cd'], 15);
+
+      expect(described.wordCount).toBe(1);
+      expect(described.words).toEqual(['ab', 'cd']);
+   });
+
+   it('should score against the provided duration, not the keystroke span', () => {
+      const log = [stroke('a', 'a', 0), stroke('b', 'b', 200)];
+      const described = describeKeystrokeLog(log, ['ab'], 30);
+
+      expect(described.stats).toEqual(
+         calculateStats({ log, words: ['ab'], durationMs: 30_000 })
+      );
+      expect(described.stats.rawWpm).toBeCloseTo(0.8);
+   });
+});
+
+describe('syncKeystrokeStats', () => {
+   beforeEach(() => {
+      resetStores();
+   });
+
+   it('should write live errorCount and typedEntries from a 1s placeholder duration', () => {
+      const log = [
+         stroke('a', 'a', 0),
+         stroke('x', 'b', 100),
+         stroke('z', null, 200),
+      ];
+      wordStore.setState({
+         ...initialWordState,
+         wordList: ['ab', 'cd'],
+         keystrokeLog: log,
+      });
+
+      syncKeystrokeStats();
+
+      const stats = calculateStats({
+         log,
+         words: ['ab', 'cd'],
+         durationMs: 1000,
+      });
+      expect(wordStore.getState().errorCount).toBe(stats.errors);
+      expect(wordStore.getState().typedEntries).toBe(stats.typedEntries);
+      expect(wordStore.getState().errorCount).toBeGreaterThan(0);
    });
 });
 
@@ -210,16 +364,156 @@ describe('buildFinishedResult', () => {
       const stats = calculateStats({
          log,
          words: ['ab', 'cd'],
-         durationMs: 800,
+         durationMs: 1_000,
       });
 
       expect(result?.category).toBe('words');
-      expect(result?.durationSeconds).toBeCloseTo(0.8);
+      expect(result?.durationSeconds).toBe(1);
       expect(result?.durationSeconds).not.toBe(30);
       expect(result?.wordCount).toBe(2);
       expect(result?.words).toEqual(['ab', 'cd']);
       expect(result?.stats).toEqual(stats);
-      expect(result?.stats.rawWpm).toBeCloseTo(75);
+      expect(result?.stats.rawWpm).toBe(60);
       expect(result?.stats.samples).toHaveLength(1);
+   });
+
+   it('should record the language selected before a words test finishes', () => {
+      userConfigStore.setState({
+         category: 'words',
+         language: 'english',
+      });
+      userConfigStore.setState({ language: 'spanish' });
+
+      expect(buildFinishedResult()?.language).toBe('spanish');
+   });
+
+   it('should score a words test with a 1ms floor when the log has no finite timestamps', () => {
+      userConfigStore.setState({
+         category: 'words',
+         wordCount: 10,
+         time: 30,
+      });
+      const log = [
+         wordStroke(Number.NaN, 'a'),
+         wordStroke(Number.POSITIVE_INFINITY, 'b'),
+         wordStroke(Number.NEGATIVE_INFINITY, ' '),
+         wordStroke(Number.NaN, 'c'),
+         wordStroke(Number.POSITIVE_INFINITY, 'd'),
+      ];
+      wordStore.setState({
+         wordList: ['ab', 'cd'],
+         keystrokeLog: log,
+      });
+
+      const result = buildFinishedResult();
+      const stats = calculateStats({
+         log,
+         words: ['ab', 'cd'],
+         durationMs: 1,
+      });
+
+      expect(result?.durationSeconds).toBe(0.001);
+      expect(result?.durationSeconds).not.toBe(30);
+      expect(result?.stats).toEqual(stats);
+      expect(result?.stats.rawWpm).toBeGreaterThan(1_000);
+   });
+});
+
+describe('buildFinishedResult empty log', () => {
+   beforeEach(() => {
+      resetStores();
+   });
+
+   it('should return null when nothing was typed so a blank result is not saved', () => {
+      wordStore.setState({
+         ...initialWordState,
+         wordList: ['ab'],
+         activeWord: 'ab',
+         keystrokeLog: [],
+      });
+      userConfigStore.setState({ category: 'words', time: 30 });
+
+      expect(buildFinishedResult()).toBeNull();
+   });
+});
+
+describe('describeKeystrokeLog', () => {
+   it('should count an in-progress last word and keep later bank words out of stats', () => {
+      const log = [
+         {
+            key: 'c',
+            expected: 'c',
+            kind: 'correct' as const,
+            timestampMs: 0,
+            wordIndex: 0,
+         },
+         {
+            key: 'a',
+            expected: 'a',
+            kind: 'correct' as const,
+            timestampMs: 80,
+            wordIndex: 0,
+         },
+         {
+            key: 't',
+            expected: 't',
+            kind: 'correct' as const,
+            timestampMs: 160,
+            wordIndex: 0,
+         },
+         {
+            key: ' ',
+            expected: ' ',
+            kind: 'correct' as const,
+            timestampMs: 200,
+            wordIndex: 0,
+         },
+         {
+            key: 'd',
+            expected: 'd',
+            kind: 'correct' as const,
+            timestampMs: 280,
+            wordIndex: 1,
+         },
+      ];
+
+      const described = describeKeystrokeLog(log, ['cat', 'dog', 'bird'], 15);
+
+      expect(described.words).toEqual(['cat', 'dog']);
+      expect(described.wordCount).toBe(2);
+      expect(described.stats.typedEntries).toBe(5);
+      expect(described.stats.missed).toBe(0);
+   });
+
+   it('should count a submitted short word as finished even when the next word is empty', () => {
+      const log = [
+         {
+            key: 'h',
+            expected: 'h',
+            kind: 'correct' as const,
+            timestampMs: 0,
+            wordIndex: 0,
+         },
+         {
+            key: 'i',
+            expected: 'i',
+            kind: 'correct' as const,
+            timestampMs: 50,
+            wordIndex: 0,
+         },
+         {
+            key: ' ',
+            expected: ' ',
+            kind: 'correct' as const,
+            timestampMs: 80,
+            wordIndex: 0,
+         },
+      ];
+
+      const described = describeKeystrokeLog(log, ['hi', 'there'], 15);
+
+      expect(described.words).toEqual(['hi', 'there']);
+      expect(described.wordCount).toBe(1);
+      expect(described.stats.missed).toBe(0);
    });
 });

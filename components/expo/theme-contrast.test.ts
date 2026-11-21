@@ -6,6 +6,21 @@ import { THEMES, THEME_COLORS } from './theme.constant';
 const AA_NORMAL_TEXT = 4.5;
 const MIN_ROLE_CONTRAST = 3;
 const MIN_ROLE_DELTA_E = 25;
+const MIN_INPUT_SEPARATION = 2;
+
+const FEEDBACK_FIXES = [
+   { theme: 'cyberpunk', roles: ['wrong_char'], separateFromInput: false },
+   {
+      theme: 'light-orange',
+      roles: ['correct_char', 'wrong_char'],
+      separateFromInput: true,
+   },
+   {
+      theme: 'chrismas',
+      roles: ['input', 'correct_char', 'wrong_char'],
+      separateFromInput: false,
+   },
+] as const;
 
 const ADDED_THEMES = [
    'serika-dark',
@@ -17,14 +32,9 @@ const ADDED_THEMES = [
 ] as const;
 
 // Shipped palettes whose main text (--input on --background) is under AA.
-// New themes must not be added here.
-const LEGACY_MAIN_TEXT_BELOW_AA = [
-   'chrismas',
-   'cyberpunk',
-   'light-green',
-   'light-orange',
-   'retro',
-] as const;
+// New themes must not be added here. The five that used to live here
+// (chrismas, cyberpunk, light-green, light-orange, retro) now clear AA.
+const LEGACY_MAIN_TEXT_BELOW_AA = [] as const;
 
 const TYPING_ROLES = ['input', 'correct_char', 'wrong_char', 'cursor'] as const;
 
@@ -214,6 +224,30 @@ describe('theme contrast', () => {
          expect(Number.isFinite(ratio)).toBe(true);
          expect(ratio).toBeGreaterThan(1);
          expect(ratio).toBeLessThan(AA_NORMAL_TEXT);
+      }
+   );
+
+   it.each(FEEDBACK_FIXES)(
+      'should keep typing feedback readable when the theme is $theme',
+      ({ theme, roles, separateFromInput }) => {
+         const tokens = themeTokens(theme);
+         const background = hslToRgb(parseHsl(tokens.background ?? ''));
+         const input = displayed(tokens, 'input', background);
+
+         for (const role of roles) {
+            const colour = displayed(tokens, role, background);
+            expect(
+               contrast(colour, background),
+               `${theme} ${role} against background`
+            ).toBeGreaterThanOrEqual(AA_NORMAL_TEXT);
+
+            if (separateFromInput && role !== 'input') {
+               expect(
+                  contrast(colour, input),
+                  `${theme} ${role} against input`
+               ).toBeGreaterThanOrEqual(MIN_INPUT_SEPARATION);
+            }
+         }
       }
    );
 
