@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { MongoServerError } from 'mongodb';
 import {
    createdAtFrom,
-   isDuplicateKeyError,
+   duplicateKey,
    savedResultFromDocument,
 } from './repository';
 
@@ -42,34 +42,35 @@ describe('savedResultFromDocument', () => {
    });
 });
 
-describe('isDuplicateKeyError', () => {
+describe('duplicateKey', () => {
    it('should treat Mongo E11000 as a first-write-wins collision', () => {
       const duplicate = new MongoServerError({
          message: 'E11000 duplicate key error',
          errmsg: 'E11000 duplicate key error',
          code: 11000,
       });
-      expect(isDuplicateKeyError(duplicate)).toBe(true);
-      expect(isDuplicateKeyError({ code: 11000 })).toBe(true);
+      expect(duplicateKey(duplicate)).toBe(true);
+      expect(duplicateKey({ code: 11000 })).toBe(true);
    });
 
    it('should not swallow other driver failures or non-objects', () => {
-      expect(isDuplicateKeyError({ code: 50 })).toBe(false);
-      expect(isDuplicateKeyError({ code: '11000' })).toBe(false);
-      expect(isDuplicateKeyError(new Error('network'))).toBe(false);
-      expect(isDuplicateKeyError(null)).toBe(false);
-      expect(isDuplicateKeyError('E11000')).toBe(false);
+      expect(duplicateKey({ code: 50 })).toBe(false);
+      expect(duplicateKey({ code: 1 })).toBe(false);
+      expect(duplicateKey({ code: '11000' })).toBe(false);
+      expect(duplicateKey(new Error('network'))).toBe(false);
+      expect(duplicateKey(null)).toBe(false);
+      expect(duplicateKey('E11000')).toBe(false);
+      expect(duplicateKey('E11000 duplicate key')).toBe(false);
    });
 });
 
 describe('createdAtFrom', () => {
-   it('should parse a valid ISO timestamp', () => {
-      expect(createdAtFrom('2026-10-31T00:00:00.000Z').toISOString()).toBe(
-         '2026-10-31T00:00:00.000Z'
-      );
+   it('should keep a valid ISO timestamp', () => {
+      const parsed = createdAtFrom('2026-10-13T00:00:00.000Z');
+      expect(parsed.toISOString()).toBe('2026-10-13T00:00:00.000Z');
    });
 
-   it('should fall back to now when createdAt is not a real date', () => {
+   it('should fall back to now when createdAt is not a date', () => {
       const before = Date.now();
       const parsed = createdAtFrom('not-a-date');
       const after = Date.now();

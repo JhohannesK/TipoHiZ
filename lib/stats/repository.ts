@@ -59,7 +59,7 @@ async function ensureResultIndex(
    }
 }
 
-export function isDuplicateKeyError(error: unknown): boolean {
+export function duplicateKey(error: unknown): boolean {
    return (
       typeof error === 'object' &&
       error !== null &&
@@ -140,7 +140,7 @@ export async function saveResultForUser(
       const write = resultUpsertWrite(userId, input, saved);
       await collection.updateOne(write.filter, write.update, { upsert: true });
    } catch (error: unknown) {
-      if (!isDuplicateKeyError(error)) throw error;
+      if (!duplicateKey(error)) throw error;
    }
    return saved;
 }

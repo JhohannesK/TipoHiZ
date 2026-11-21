@@ -140,6 +140,22 @@ describe('buildWpmChart', () => {
       expect(chart.points.map((point) => point.wpm)).toEqual([40, 20]);
    });
 
+   it('should separate the final words-mode label from the previous tick', () => {
+      const samples = Array.from({ length: 121 }, (_, second) =>
+         sample(second, 40, 40, 0)
+      );
+      const chart = buildWpmChart(samples, 120.4);
+
+      expect(chart.xLabels.map((label) => label.label)).toEqual([
+         '1',
+         '30',
+         '60',
+         '90',
+         '120.4',
+      ]);
+      expect(chart.xLabels.at(-1)?.second).toBe(121);
+   });
+
    it('should fall back to the sample second when elapsed time is not finite', () => {
       const chart = buildWpmChart(
          [sample(0, 40, 40, 0), sample(1, 20, 20, 0)],
@@ -285,7 +301,34 @@ describe('xAxisLabels', () => {
       [15, [1, 5, 10, 15]],
       [30, [1, 10, 20, 30]],
       [60, [1, 15, 30, 45, 60]],
+      [120, [1, 30, 60, 90, 120]],
+      [16, [1, 5, 10, 16]],
+      [21, [1, 10, 21]],
+      [31, [1, 10, 20, 31]],
+      [46, [1, 15, 30, 46]],
+      [61, [1, 15, 30, 45, 61]],
+      [91, [1, 30, 60, 91]],
+      [121, [1, 30, 60, 90, 121]],
+      [600, [1, 120, 210, 300, 390, 480, 600]],
    ])('should label %i seconds as %j', (count, expected) => {
       expect(xAxisLabels(count)).toEqual(expected);
+   });
+
+   it('should keep the final second clear of its neighbor on a narrow chart', () => {
+      for (let count = 1; count <= 600; count += 1) {
+         const labels = xAxisLabels(count);
+         expect(labels.at(-1)).toBe(count);
+         for (let index = 1; index < labels.length; index += 1) {
+            const earlier = labels[index - 1] ?? 0;
+            const later = labels[index] ?? 0;
+            const gapPx = ((later - earlier) / (count - 1)) * 0.96 * 240;
+            const earlierPx = String(earlier).length * 8;
+            const laterPx =
+               (String(later).length + (later === count ? 2 : 0)) * 8;
+            expect(gapPx).toBeGreaterThanOrEqual(
+               earlierPx / 2 + laterPx / 2 + 2
+            );
+         }
+      }
    });
 });
