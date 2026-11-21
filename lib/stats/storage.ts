@@ -1,5 +1,5 @@
-import { GUEST_RESULT_LIMIT } from './types';
-import type { CompactKeystroke, KeystrokeKind, SavedTestResult } from './types';
+import { isStoredGuestResult } from './guest-result';
+import { GUEST_RESULT_LIMIT, type SavedTestResult } from './types';
 
 export const GUEST_RESULTS_KEY = 'tipohiz.results';
 export const LAST_RESULT_KEY = 'tipohiz.lastResult';
@@ -15,51 +15,12 @@ const EMPTY_SNAPSHOT: ClientResultsSnapshot = { history: [], last: null };
 let cachedSnapshotKey: string | undefined;
 let cachedSnapshot: ClientResultsSnapshot = EMPTY_SNAPSHOT;
 
-const KINDS = new Set<KeystrokeKind>([
-   'correct',
-   'incorrect',
-   'extra',
-   'backspace',
-]);
-
-function isCompact(value: unknown): value is CompactKeystroke {
-   if (!Array.isArray(value) || value.length !== 5) return false;
-   const [key, expected, kind, timestampMs, wordIndex] = value;
-   return (
-      typeof key === 'string' &&
-      (expected === null || typeof expected === 'string') &&
-      typeof kind === 'string' &&
-      KINDS.has(kind as KeystrokeKind) &&
-      typeof timestampMs === 'number' &&
-      typeof wordIndex === 'number'
-   );
-}
-
-function isResult(value: unknown): value is SavedTestResult {
-   if (!value || typeof value !== 'object') return false;
-   const record = value as Partial<SavedTestResult>;
-   return (
-      typeof record.id === 'string' &&
-      typeof record.createdAt === 'string' &&
-      typeof record.mode === 'string' &&
-      typeof record.category === 'string' &&
-      typeof record.language === 'string' &&
-      typeof record.durationSeconds === 'number' &&
-      typeof record.wordCount === 'number' &&
-      Array.isArray(record.words) &&
-      record.words.every((word) => typeof word === 'string') &&
-      Array.isArray(record.log) &&
-      record.log.every(isCompact) &&
-      record.stats !== undefined
-   );
-}
-
 function parseHistory(raw: string | null): SavedTestResult[] {
    if (!raw) return [];
    try {
       const parsed: unknown = JSON.parse(raw);
       if (!Array.isArray(parsed)) return [];
-      return parsed.filter(isResult);
+      return parsed.filter(isStoredGuestResult);
    } catch {
       return [];
    }
@@ -69,7 +30,7 @@ function parseLast(raw: string | null): SavedTestResult | null {
    if (!raw) return null;
    try {
       const parsed: unknown = JSON.parse(raw);
-      return isResult(parsed) ? parsed : null;
+      return isStoredGuestResult(parsed) ? parsed : null;
    } catch {
       return null;
    }
