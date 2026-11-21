@@ -97,6 +97,7 @@ export function formatTestMode(
       'category' | 'mode' | 'language' | 'durationSeconds' | 'wordCount'
    >
 ): string {
-   if (result.category === 'words') return `words ${result.wordCount}`;
+   if (result.category === 'words')
+      return `words ${result.wordCount} ${result.language} ${result.mode}`;
    return `${result.category} ${result.durationSeconds}s ${result.language} ${result.mode}`;
 }

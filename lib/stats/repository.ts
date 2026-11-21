@@ -59,7 +59,7 @@ async function ensureResultIndex(
    }
 }
 
-function duplicateKey(error: unknown): boolean {
+export function duplicateKey(error: unknown): boolean {
    return (
       typeof error === 'object' &&
       error !== null &&
@@ -68,7 +68,7 @@ function duplicateKey(error: unknown): boolean {
    );
 }
 
-function createdAtFrom(value: string): Date {
+export function createdAtFrom(value: string): Date {
    const parsed = new Date(value);
    if (Number.isNaN(parsed.getTime())) return new Date();
    return parsed;

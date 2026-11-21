@@ -139,7 +139,7 @@ Home-page Globe selector writes `userConfig.language` (`english` | `spanish` | `
 | `english`            | `default.json` | `punctuation.json`                                      | `numbers.json` |
 | `spanish` / `french` | `{lang}.json`  | `{lang}_punctuation.json` (fallback `punctuation.json`) | `numbers.json` |
 
-`category` (`time` \| `words`) is a real mode switch, not a label. It changes the palette row (`time` vs `wordCount`), `generatePassage` length, which clock starts (`useTimer` vs `useElapsed`), the finish condition, and the results card (`formatTestMode` → `words N` vs `time Ns …`). `modules/TextFiles/code.json` is unused (`Constants.options.type` has no `code`; palette removed it).
+`category` (`time` \| `words`) is a real mode switch, not a label. It changes the palette row (`time` vs `wordCount`), `generatePassage` length, which clock starts (`useTimer` vs `useElapsed`), the finish condition, and the results card (`formatTestMode` → `words N <language> <mode>` vs `time Ns <language> <mode>`). `modules/TextFiles/code.json` is unused (`Constants.options.type` has no `code`; palette removed it).
 
 To add a typing language:
 
@@ -161,14 +161,14 @@ Three language UIs:
 
 Defaults live in `modules/_constants.ts`: `TimeSec: 30`, `WordCount: 10`, times `[15, 30, 60, 120]`, words `[10, 25, 50, 100]`. Invalid word counts fall back through `resolveWordCount()`.
 
-|                    | Time                                                 | Words                                                                                                                                                                            |
-| ------------------ | ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Passage            | `generatePassage(bank)` — full shuffled bank         | `generatePassage(bank, resolveWordCount(wordCount))`                                                                                                                             |
-| Start              | first printable key → `countdown.run()` (`useTimer`) | first printable key → `elapsed.run()` (`useElapsed`)                                                                                                                             |
-| During             | countdown digits                                     | countdown slot is an empty `min-h-7`; `data-testid="words-progress"` (`wordPositionLabel`, e.g. `3/10`) only while `elapsed.running && !disabled`. Position is clamped to `1…count`; invalid totals render `1/1` (never `0/N` or `26/25`) |
-| Finish             | remaining time hits **1s** (`hooks/useTimer.ts`)     | `wordsTestFinished()` in `lib/words.ts`: `nextIndex >= total`, **or** last word typed exactly. A wrong last word does not finish until it is fixed or Space advances `nextIndex` |
-| Duration for stats | configured `time` seconds, not wall clock            | max keystroke `timestampMs`, `durationMs = max(elapsed, 1)` (`testDuration()`). First keystroke is `t = 0`, so that character adds no time and WPM runs ~2% high on 10-word runs (source TODO in `lib/stats/record.ts`; leave it) |
-| Results time card  | `formatTime` → `HH:MM:SS` (`Math.floor`; negatives clamp to `00:00:00`) | `formatElapsedStat` → `21.95s` (`toFixed(2)`; non-finite / ≤0 → `0.00s`) |
+|                    | Time                                                            | Words                                                                                                                                                                                                                                     |
+| ------------------ | --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Passage            | `generatePassage(bank)` — full shuffled bank                    | `generatePassage(bank, resolveWordCount(wordCount))`                                                                                                                                                                                      |
+| Start              | first printable key → `countdown.run()` (`useTimer`)            | first printable key → `elapsed.run()` (`useElapsed`)                                                                                                                                                                                      |
+| During             | countdown digits                                                | countdown slot is an empty `min-h-7`; `data-testid="words-progress"` (`wordPositionLabel`, e.g. `3/10`) only while `elapsed.running && !disabled`. Position is clamped to `1…count`; invalid totals render `1/1` (never `0/N` or `26/25`) |
+| Finish             | remaining time hits **1s** (`hooks/useTimer.ts`)                | `wordsTestFinished()` in `lib/words.ts`: `nextIndex >= total`, **or** last word typed exactly. A wrong last word does not finish until it is fixed or Space advances `nextIndex`                                                          |
+| Duration for stats | configured `time` seconds, not wall clock                       | `span * N / (N - 1)` from the first keystroke to the last, floored at 1ms (`testDuration()`). The first keystroke is `t = 0`, so `span` is only the later gaps and `N / (N - 1)` counts that opening character                            |
+| Results time card  | `formatTime` → `HH:MM:SS` (`Math.floor`; negative → `00:00:00`) | `formatElapsedStat` → `21.95s` (`toFixed(2)`; non-finite / ≤0 → `0.00s`)                                                                                                                                                                  |
 
 `TextArea.tsx` reloads the word bank on `[type, language]` only. Category / wordCount / time changes must go through `resetTest` (`lib/reset.ts`). That path bumps a monotonic `resetGeneration` so a stale async load cannot overwrite a newer passage. Do not add those fields to the TextArea effect.
 
@@ -191,7 +191,7 @@ Authoritative stats: `lib/stats/calculate.ts` → `calculateStats({ log, words, 
 | Guest          | `localStorage` `tipohiz.results` (cap `GUEST_RESULT_LIMIT = 50`) + `sessionStorage` `tipohiz.lastResult`                                                                                               |
 | Account        | `POST /api/results` `{ result: submissionOf(result) }`. `postResults` treats HTTP `!ok` **and** a thrown `fetch` as failure → `saveGuestResult`. A network error does not drop the run                 |
 | Sign-in        | `components/result-sync.tsx` sets account mode and `POST /api/results/migrate` (max 50). `clearGuestResults` only after `response.ok`. Throw / 4xx / 5xx leaves guest rows in place                    |
-| Signed-in list | `GET /api/results` newest **500**. On 401/500/`fetch` throw, `accountResultsFromResponse(false)` → `[]`, but `visibleSavedResults` still **merges** local `tipohiz.results` + `tipohiz.lastResult` (dedupe by `id`, account primary, first-wins) |
+| Signed-in list | `GET /api/results` newest **500**. On 401/500/`fetch` throw, `accountResultsFromResponse(false)` → `[]`, but `visibleSavedResults` still **merges** local `tipohiz.results` + `tipohiz.lastResult` (dedupe by `id`, account primary, first-wins). Distinct from POST failure → guest copy |
 
 Results page (`app/(Base)/results/page.tsx`) shows net + raw WPM lines, error dots, hover/focus tooltip, keyboard arrows. The per-second table stays in the DOM inside `sr-only` for a11y / e2e.
 
