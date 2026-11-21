@@ -1,3 +1,4 @@
+import { mongoErrorLabel } from '@/lib/feedback/mongo-error';
 import { enforceFeedbackRate } from '@/lib/feedback/rate-limit';
 import {
    MIN_FILL_MS,
@@ -80,9 +81,11 @@ export async function POST(request: Request): Promise<Response> {
             429
          );
       }
-   } catch {
-      console.error('Feedback rate limit check failed');
-      return json({ error: "Couldn't send. Try again." }, 500);
+   } catch (error: unknown) {
+      console.error(
+         'Feedback rate limit check failed',
+         mongoErrorLabel(error)
+      );
    }
 
    const replyEmail = email?.trim() ?? '';

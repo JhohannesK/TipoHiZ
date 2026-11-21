@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { mongoErrorLabel } from '@/lib/feedback/mongo-error';
 import { sharedMongoDatabase } from '@/lib/stats/repository';
 
 const COLLECTION = 'feedback_rate';
@@ -9,10 +10,10 @@ const MAX_PER_DAY = 20;
 
 export type FeedbackRateDecision = 'ok' | 'limited';
 
-let indexReady = false;
+let indexAttempted = false;
 
 export function resetFeedbackRateIndexForTests(): void {
-   indexReady = false;
+   indexAttempted = false;
 }
 
 export function clientIp(request: Request): string {
@@ -61,17 +62,16 @@ interface RateStamp {
 async function rateCollection() {
    const collection = sharedMongoDatabase().collection<RateStamp>(COLLECTION);
 
-   if (!indexReady) {
-      indexReady = true;
-      try {
-         await collection.createIndex(
-            { createdAt: 1 },
-            { expireAfterSeconds: 86400 }
-         );
-      } catch {
-         indexReady = false;
-         console.error('Failed to ensure feedback_rate TTL index');
-      }
+   if (!indexAttempted) {
+      indexAttempted = true;
+      void collection
+         .createIndex({ createdAt: 1 }, { expireAfterSeconds: 86400 })
+         .catch((error: unknown) => {
+            console.error(
+               'Failed to ensure feedback_rate TTL index',
+               mongoErrorLabel(error)
+            );
+         });
    }
 
    return collection;

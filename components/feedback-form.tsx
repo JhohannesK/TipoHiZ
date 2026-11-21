@@ -37,12 +37,19 @@ function clip(value: string): string {
    return value.slice(0, 300);
 }
 
-function statusCopy(statusCode: number): string {
+const GITHUB_ISSUES = 'https://github.com/JhohannesK/TipoHiZ/issues';
+
+function statusCopy(statusCode: number): { text: string; github: boolean } {
    if (statusCode === 429) {
-      return "You've sent a few already. Try again in a minute.";
+      return {
+         text: "You've sent a few already. Try again in a minute.",
+         github: false,
+      };
    }
-   if (statusCode === 503) return 'Feedback is unavailable right now.';
-   return "Couldn't send. Try again.";
+   if (statusCode === 502 || statusCode === 503) {
+      return { text: "Couldn't send right now.", github: true };
+   }
+   return { text: "Couldn't send. Try again.", github: false };
 }
 
 export default function FeedbackForm() {
@@ -60,6 +67,7 @@ export default function FeedbackForm() {
    const [website, setWebsite] = useState('');
    const [status, setStatus] = useState<SendStatus>('idle');
    const [error, setError] = useState('');
+   const [errorGithub, setErrorGithub] = useState(false);
 
    const sessionEmail = session.data?.user?.email ?? '';
    const trimmed = message.trim();
@@ -78,6 +86,7 @@ export default function FeedbackForm() {
          setOpenedAt(Date.now());
          setStatus('idle');
          setError('');
+         setErrorGithub(false);
          if (!emailDirty) {
             setEmail((current) => current.trim() || sessionEmail);
          }
@@ -93,6 +102,7 @@ export default function FeedbackForm() {
       requestId.current = id;
       setStatus('sending');
       setError('');
+      setErrorGithub(false);
 
       const wait = MIN_FILL_MS - (Date.now() - openedAt);
       if (wait > 0) {
@@ -126,8 +136,10 @@ export default function FeedbackForm() {
          if (requestId.current !== id) return;
 
          if (!response.ok) {
+            const copy = statusCopy(response.status);
             setStatus('error');
-            setError(statusCopy(response.status));
+            setError(copy.text);
+            setErrorGithub(copy.github);
             return;
          }
 
@@ -141,6 +153,7 @@ export default function FeedbackForm() {
          if (requestId.current !== id) return;
          setStatus('error');
          setError("Couldn't send. Try again.");
+         setErrorGithub(false);
       }
    }
 
@@ -238,6 +251,19 @@ export default function FeedbackForm() {
                {status === 'error' ? (
                   <p className="text-sm text-wrong_char" role="alert">
                      {error}
+                     {errorGithub ? (
+                        <>
+                           {' '}
+                           <a
+                              href={GITHUB_ISSUES}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-input underline underline-offset-2"
+                           >
+                              report it on GitHub
+                           </a>
+                        </>
+                     ) : null}
                   </p>
                ) : null}
             </div>

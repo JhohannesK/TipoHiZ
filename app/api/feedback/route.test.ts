@@ -108,6 +108,29 @@ describe('POST /api/feedback', () => {
       expect(fetch).not.toHaveBeenCalled();
    });
 
+   it('should still send when the rate limit store throws', async () => {
+      enforce.mockRejectedValue(
+         Object.assign(new Error('DatabaseDifferCase'), {
+            name: 'MongoServerError',
+            code: 13297,
+         })
+      );
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      const response = await POST(post(validBody()));
+
+      expect(response.status).toBe(200);
+      expect(await response.json()).toEqual({ ok: true });
+      expect(fetch).toHaveBeenCalledTimes(1);
+      expect(errorSpy).toHaveBeenCalledWith(
+         'Feedback rate limit check failed',
+         { name: 'MongoServerError', code: 13297 }
+      );
+      const logged = JSON.stringify(errorSpy.mock.calls);
+      expect(logged).not.toContain('test-resend-key');
+      expect(logged).not.toContain('The caret jumps');
+   });
+
    it('should return 429 when the rate limit is exceeded', async () => {
       enforce.mockResolvedValue('limited');
 
