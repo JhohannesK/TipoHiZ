@@ -116,6 +116,57 @@ describe('displayedResult', () => {
       expect(display.stats.wpm).toBe(statsFromResult(saved).wpm);
    });
 
+   it("should keep a timed run's saved language, mode, and duration after the store config changes", () => {
+      const log = [stroke('a', 'a', 100), stroke('b', 'b', 200)];
+      const saved = {
+         ...savedFrom(log, ['ab']),
+         language: 'spanish',
+         mode: 'punctuation',
+         category: 'time',
+      };
+
+      const display = displayedResult({
+         liveLog: [],
+         liveWords: [],
+         config: {
+            time: 60,
+            category: 'words',
+            type: 'default',
+            language: 'french',
+         },
+         saved,
+      });
+
+      expect(display.language).toBe('spanish');
+      expect(display.mode).toBe('punctuation');
+      expect(display.category).toBe('time');
+      expect(display.durationSeconds).toBe(15);
+      expect(display.stats.wpm).toBe(statsFromResult(saved).wpm);
+      expect(formatTestMode(display)).toBe('time 15s spanish punctuation');
+   });
+
+   it('should score a matching saved timed run from the saved duration, not the current config', () => {
+      const log = [stroke('a', 'a', 100), stroke('b', 'b', 200)];
+      const saved = savedFrom(log, ['ab']);
+      const display = displayedResult({
+         liveLog: log,
+         liveWords: ['ab'],
+         config: { ...config, time: 60 },
+         saved,
+      });
+
+      expect(sameKeystrokeLog(log, saved.log)).toBe(true);
+      expect(display.durationSeconds).toBe(15);
+      expect(display.stats).toEqual(statsFromResult(saved));
+      expect(display.stats.wpm).not.toBe(
+         calculateStats({
+            log,
+            words: ['ab'],
+            durationMs: 60_000,
+         }).wpm
+      );
+   });
+
    it('should keep a timed run on the configured duration even when the log is 800ms', () => {
       const liveLog = [stroke('a', 'a', 100), stroke('b', 'b', 800)];
       const display = displayedResult({
