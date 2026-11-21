@@ -161,7 +161,7 @@ export default function FeedbackForm() {
          </DialogTrigger>
          <DialogContent
             data-feedback-dialog="true"
-            className="max-w-md text-foreground"
+            className="max-w-md border-input bg-background text-input"
             onCloseAutoFocus={(event) => {
                event.preventDefault();
                triggerRef.current?.focus();
@@ -181,15 +181,15 @@ export default function FeedbackForm() {
                      maxLength={MESSAGE_MAX_LENGTH}
                      value={message}
                      onChange={(event) => setMessage(event.target.value)}
-                     className="flex min-h-28 w-full rounded-md border border-input bg-transparent px-3 py-2 text-base text-foreground shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                     className="flex min-h-28 w-full rounded-md border border-input bg-background px-3 py-2 text-base text-input shadow-sm placeholder:text-input/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                   />
                   {showCount ? (
-                     <p className="text-xs text-muted-foreground">
+                     <p className="text-xs text-input/80">
                         {message.length}/{MESSAGE_MAX_LENGTH}
                      </p>
                   ) : null}
                   {trimmed.length < MESSAGE_MIN_LENGTH ? (
-                     <p className="text-xs text-muted-foreground">
+                     <p className="text-xs text-input/80">
                         At least 10 characters
                      </p>
                   ) : null}
@@ -202,6 +202,7 @@ export default function FeedbackForm() {
                      id="feedback-email"
                      type="email"
                      autoComplete="email"
+                     className="border-input bg-background text-input placeholder:text-input/50"
                      value={email}
                      onChange={(event) => {
                         setEmailDirty(true);
@@ -209,7 +210,7 @@ export default function FeedbackForm() {
                      }}
                   />
                   {!emailOk ? (
-                     <p className="text-xs text-muted-foreground">
+                     <p className="text-xs text-input/80">
                         Enter a valid email
                      </p>
                   ) : null}
@@ -226,16 +227,16 @@ export default function FeedbackForm() {
                      onChange={(event) => setWebsite(event.target.value)}
                   />
                </div>
-               <DialogDescription>
+               <DialogDescription className="text-input/80">
                   We&apos;ll include: page, theme, browser
                </DialogDescription>
                {status === 'success' ? (
-                  <p className="text-sm text-foreground" role="status">
+                  <p className="text-sm text-input" role="status">
                      Thanks, sent.
                   </p>
                ) : null}
                {status === 'error' ? (
-                  <p className="text-sm text-destructive" role="alert">
+                  <p className="text-sm text-wrong_char" role="alert">
                      {error}
                   </p>
                ) : null}
@@ -244,6 +245,7 @@ export default function FeedbackForm() {
                <Button
                   type="button"
                   variant="outline"
+                  className="border-input bg-background text-input hover:bg-accent/20 hover:text-input"
                   onClick={() => onOpenChange(false)}
                >
                   Cancel
@@ -251,6 +253,7 @@ export default function FeedbackForm() {
                <Button
                   type="button"
                   disabled={!canSend}
+                  className="bg-input text-background transition-none hover:bg-input disabled:border disabled:border-input disabled:bg-background disabled:text-input disabled:opacity-100"
                   onClick={() => void send()}
                >
                   {status === 'sending' ? 'Sending…' : 'Send'}
