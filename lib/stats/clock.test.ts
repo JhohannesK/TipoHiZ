@@ -29,6 +29,14 @@ describe('keystrokeTimestamp', () => {
       expect(keystrokeTimestamp()).toBe(0);
    });
 
+   it.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+      'should return 0 when the clock sample is %s',
+      (sample) => {
+         setKeystrokeClock(() => sample);
+         expect(keystrokeTimestamp()).toBe(0);
+      }
+   );
+
    it('should restart the origin after resetKeystrokeClock', () => {
       let now = 10;
       setKeystrokeClock(() => now);
