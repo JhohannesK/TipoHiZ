@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { HandleText, keysFromBeforeInput } from '../lib/handle-text';
 import { loadWords } from '../lib/reset';
+import { typingShortcutsBlocked } from '@/lib/feedback/shortcuts';
+import { feedbackStore } from '@/store/feedback';
 import { userConfigStore, wordStore } from '../store';
 import { setCaretRef, setRef, setWordList } from '../store/actions/WordActions';
 
@@ -45,6 +47,7 @@ const TextArea: React.FC<soundProps> = ({ sound, run, onFinish }) => {
    //effect to handle keydown events and play sound
    useEffect(() => {
       const handleKeyDown = (e: keyObj) => {
+         if (feedbackStore.getState().open) return;
          if (
             e &&
             e.key !== 'Meta' &&
@@ -161,6 +164,7 @@ const TextArea: React.FC<soundProps> = ({ sound, run, onFinish }) => {
             className="fixed bottom-0 left-0 w-1 h-1 opacity-0"
             onKeyDown={(e) => {
                if (e.nativeEvent.isComposing) return;
+               if (typingShortcutsBlocked(e.target)) return;
 
                if (
                   (e.key.length === 1 || e.key === 'Backspace') &&
@@ -180,6 +184,7 @@ const TextArea: React.FC<soundProps> = ({ sound, run, onFinish }) => {
                }
             }}
             onBeforeInput={(e) => {
+               if (typingShortcutsBlocked(e.target)) return;
                if (suppressInputRef.current) return;
 
                const native = e.nativeEvent as unknown as InputEvent;
@@ -194,6 +199,10 @@ const TextArea: React.FC<soundProps> = ({ sound, run, onFinish }) => {
                }
             }}
             onInput={(e) => {
+               if (typingShortcutsBlocked(e.currentTarget)) {
+                  e.currentTarget.value = '';
+                  return;
+               }
                if (suppressInputRef.current) {
                   e.currentTarget.value = '';
                   return;

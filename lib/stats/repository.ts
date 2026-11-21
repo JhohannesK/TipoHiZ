@@ -47,6 +47,10 @@ function database() {
    return globalForMongo.tipohizResultMongo.db();
 }
 
+export function sharedMongoDatabase() {
+   return database();
+}
+
 function results(): Collection<TestResultDocument> {
    return database().collection<TestResultDocument>(COLLECTION);
 }

@@ -5,6 +5,7 @@ import TextArea from '@/components/TextArea';
 import UserSelectPallete from '@/components/user-select-pallete';
 import ResetTestButton from '@/components/reset-test-button';
 import { userConfigStore, wordStore } from '@/store';
+import { feedbackStore } from '@/store/feedback';
 import { setLanguage } from '@/store/actions/ConfigActions';
 import { IoIosColorPalette } from 'react-icons/io';
 import useTimer from '@/hooks/useTimer';
@@ -52,6 +53,9 @@ export default function HomePage() {
    const finishedRef = useRef(false);
    const totalWords = resolveWordCount(wordCount);
    const typing = wordsMode ? elapsed.running : countdown.isRunning;
+   if (feedbackStore.getState().testActive !== typing) {
+      feedbackStore.setState({ testActive: typing });
+   }
    const showWordsProgress = showWordCounter({
       category,
       running: elapsed.running,
