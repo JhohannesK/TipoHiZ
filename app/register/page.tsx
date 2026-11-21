@@ -1,17 +1,13 @@
 import React from 'react';
 import { register } from '@/actions/user';
 import AuthForm from '@/components/auth-form';
-import { redirect } from 'next/navigation';
 import { getServerSession } from '@/lib/auth/session';
+import { redirectHomeIfAuthenticated } from '@/lib/auth/guest-page';
 
 export const dynamic = 'force-dynamic';
 
 async function RegisterPage() {
-   const session = await getServerSession();
-
-   if (session) {
-      redirect('/');
-   }
+   redirectHomeIfAuthenticated(await getServerSession());
 
    return (
       <main className="flex flex-col items-center justify-center w-screen h-screen text-input">
