@@ -52,6 +52,14 @@ export function generatePassage(
    return passage.slice(0, total);
 }
 
+export function shouldPersistFinishedWords(input: {
+   alreadyFinished: boolean;
+   category: string;
+}): boolean {
+   if (input.alreadyFinished) return false;
+   return input.category === 'words';
+}
+
 export function wordsTestFinished(input: {
    category: string;
    wordCount: number;

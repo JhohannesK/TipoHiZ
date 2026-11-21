@@ -5,6 +5,7 @@ import {
    formatElapsed,
    generatePassage,
    resolveWordCount,
+   shouldPersistFinishedWords,
    showWordCounter,
    wordPositionLabel,
    wordsTestFinished,
@@ -192,6 +193,35 @@ describe('words mode passage', () => {
       expect(generatePassage(['alpha'], 0)).toEqual([]);
       expect(generatePassage(['alpha'], -4)).toEqual([]);
       expect(generatePassage(['alpha'], Number.NaN)).toEqual([]);
+   });
+});
+
+describe('shouldPersistFinishedWords', () => {
+   it('should persist once in words mode and skip a second finish', () => {
+      expect(
+         shouldPersistFinishedWords({
+            alreadyFinished: false,
+            category: 'words',
+         })
+      ).toBe(true);
+      expect(
+         shouldPersistFinishedWords({
+            alreadyFinished: true,
+            category: 'words',
+         })
+      ).toBe(false);
+   });
+
+   it('should skip persist when the category is not words', () => {
+      expect(
+         shouldPersistFinishedWords({
+            alreadyFinished: false,
+            category: 'time',
+         })
+      ).toBe(false);
+      expect(
+         shouldPersistFinishedWords({ alreadyFinished: true, category: 'time' })
+      ).toBe(false);
    });
 });
 

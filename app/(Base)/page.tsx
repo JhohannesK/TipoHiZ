@@ -23,6 +23,7 @@ import { resetTest } from '@/lib/reset';
 import { persistFinishedTest } from '@/lib/stats/persist-client';
 import {
    resolveWordCount,
+   shouldPersistFinishedWords,
    showWordCounter,
    wordPositionLabel,
 } from '@/lib/words';
@@ -71,8 +72,14 @@ export default function HomePage() {
    };
 
    const finishWords = () => {
-      if (finishedRef.current) return;
-      if (userConfigStore.getState().category !== 'words') return;
+      if (
+         !shouldPersistFinishedWords({
+            alreadyFinished: finishedRef.current,
+            category: userConfigStore.getState().category,
+         })
+      ) {
+         return;
+      }
       finishedRef.current = true;
       trackTestFinished();
       persistFinishedTest();
