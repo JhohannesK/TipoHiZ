@@ -19,7 +19,7 @@ Tipohiz is a sleek and customizable typing test platform designed to enhance you
 -  21 themes (`components/expo/theme.constant.ts`). Hover/focus paints the class on `<html>` before click. Persisted as next-themes `localStorage` key `theme`, **not** `userConfig.theme`
 -  optional key sounds
 -  optional accounts (`/login`, `/register`, Google / GitHub / Twitter) via Better Auth + MongoDB — typing works without signing in
--  config in `localStorage` (Zustand persist key `userConfig`). Guest results in `tipohiz.results` (cap 50); signed-in users `POST /api/results` (first-write-wins by `id`; `GET` newest 500; list-fetch failure still shows local history)
+-  config in `localStorage` (Zustand persist key `userConfig`). Guest results in `tipohiz.results` (cap 50); signed-in users `POST /api/results` (first-write-wins by `id`; `GET` newest 500; list-fetch failure still shows local history; POST network/`!ok` still keeps a local copy)
 
 # Future Features
 
@@ -31,7 +31,7 @@ Tipohiz is a sleek and customizable typing test platform designed to enhance you
 
 Package manager is **pnpm@10.34.6** (`package.json` `packageManager` field). Enable Corepack or install that version. There is no `install-all` / `install-win` script. **`bin/install.sh` is legacy and broken** (`pnpm ci` is unimplemented); **`bin/install.cmd` is unused**. Use `pnpm install`. Node.js **24+** locally; CI uses **Node 24**.
 
-This is **Next.js 16.4**. `next dev` / `next build` use Turbopack by default. Request interception lives in `proxy.ts` (not `middleware.ts`). Lint is `eslint .` (`pnpm lint`) — there is no `next lint`. Read `AGENTS.md` and `node_modules/next/dist/docs/` before App Router changes.
+This is **Next.js 16.4.5** (`next` + `eslint-config-next`). That is the patched floor for the November 2026 advisories; do not drop below 16.4.5 without re-checking GHSA ranges. `next dev` / `next build` use Turbopack by default. Request interception lives in `proxy.ts` (not `middleware.ts`). Lint is `eslint .` (`pnpm lint`) — there is no `next lint`. Read `AGENTS.md` and `node_modules/next/dist/docs/` before App Router changes.
 
 ```bash
 pnpm install          # postinstall runs prisma generate
@@ -59,7 +59,7 @@ Set `BETTER_AUTH_URL` locally. Preview OAuth 403/CORS usually means the branch h
 
 `mongodb+srv://` or a URI with `replicaSet=` enables Better Auth adapter transactions. Standalone `mongodb://localhost:27017/…` (including `directConnection=true`) does not (`mongoTransactionsEnabled`). Linking/OAuth persistence can differ from Atlas.
 
-`proxy.ts` redirects a signed-in visitor away from `/login` and `/register`. It does not gate the typing test. Anonymous use is expected.
+`proxy.ts` matcher is **only** `/login` and `/register`. Cookie **presence** (not a validated session) 307s those paths to `/`. `/` and `/results` never consult the cookie. Login/register still confirm the session on the server — a stale cookie bounces the forms until it expires. Anonymous typing is expected.
 
 Auth routes: `GET|POST /api/auth/[...all]`. Credentials login min password length 8. Register (`lib/validation/auth.schema.ts`): name ≥3, email, password ≥8 with upper / lower / digit. The “special character” regex is `/^A-Za-z0-9/` — it matches a literal prefix, not a special char; if register fails unexpectedly, look there first. Credential failures always return **`Invalid email or password`**. Duplicate sign-up uses a generic “unable to create an account” copy, and some duplicate codes return `{ success: true }` so the response shape does not confirm the email is registered (`lib/auth/error-messages.ts`). Auth rate limits are stored in MongoDB, not in process memory. The first auth use ensures a unique index on `rateLimit.key`. If MongoDB is unreachable, that check logs the error and the app keeps running. `dash()` from `@better-auth/infra` powers the dashboard and reads `BETTER_AUTH_API_KEY`. A missing key does not stop the app.
 

@@ -7,7 +7,7 @@
 
 ### Contribute in framework
 
--  [Next.js 16](https://nextjs.org/docs) — also read [`AGENTS.md`](AGENTS.md) and `node_modules/next/dist/docs/` before App Router changes (`proxy.ts`, no `next lint`)
+-  [Next.js 16.4.5](https://nextjs.org/docs) — patched floor after the November 2026 advisories. Also read [`AGENTS.md`](AGENTS.md) and `node_modules/next/dist/docs/` before App Router changes (`proxy.ts`, no `next lint`)
 
 ### Contribute in state-management
 
@@ -178,7 +178,7 @@ Mobile: hidden textarea + `onKeyDown` → `HandleText` (composing / modifier / E
 
 Every handled key is appended in `lib/stats/record.ts` (`appendKeystroke`). Timestamps are ms from the first key after `resetKeystrokeClock()` (`lib/stats/clock.ts`). Extra letters cap at `MAX_EXTRA_LETTERS = 10`.
 
-Authoritative stats: `lib/stats/calculate.ts` → `calculateStats({ log, words, durationMs })`. Consistency is MonkeyType-style kogasa on **per-second raw WPM**, window trimmed to first→last **non-zero** sample so a trailing zero tail from configured duration does not force 0%. Chart last x-label uses `durationSeconds` when finite (`formatLastSecond`: tenths, near-integers round to a whole second). Keystrokes past the last bucket fold into that second.
+Authoritative stats: `lib/stats/calculate.ts` → `calculateStats({ log, words, durationMs })`. Consistency is MonkeyType-style kogasa on **per-second raw WPM**, window trimmed to first→last **non-zero** sample so a trailing zero tail from configured duration does not force 0%. Chart last x-label uses `durationSeconds` when finite (`formatLastSecond`: tenths, near-integers round to a whole second). Keystrokes past the last bucket fold into that second (`secondIndex` clamps to `seconds - 1`).
 
 `syncKeystrokeStats()` updates store `errorCount` / `typedEntries` with a **1s placeholder** duration. Do not wire a live WPM HUD off that helper without passing real `durationMs`.
 
@@ -186,12 +186,12 @@ Authoritative stats: `lib/stats/calculate.ts` → `calculateStats({ log, words, 
 
 `persistFinishedTest()` (`lib/stats/persist-client.ts`) builds `SavedTestResult` and:
 
-| Mode           | Where                                                                                                                                                                                                                                                           |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Guest          | `localStorage` `tipohiz.results` (cap `GUEST_RESULT_LIMIT = 50`) + `sessionStorage` `tipohiz.lastResult`                                                                                                                                                        |
-| Account        | `POST /api/results` `{ result: submissionOf(result) }`. On failure, falls back to guest storage                                                                                                                                                                 |
-| Sign-in        | `components/result-sync.tsx` sets account mode and `POST /api/results/migrate` (max 50)                                                                                                                                                                         |
-| Signed-in list | `GET /api/results` newest **500**. On 401/500, `accountResultsFromResponse(false)` → `[]`, but `visibleSavedResults` still **merges** local `tipohiz.results` + `tipohiz.lastResult` (dedupe by `id`, account primary). Distinct from POST failure → guest copy |
+| Mode           | Where                                                                                                                                                                                                 |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Guest          | `localStorage` `tipohiz.results` (cap `GUEST_RESULT_LIMIT = 50`) + `sessionStorage` `tipohiz.lastResult`                                                                                               |
+| Account        | `POST /api/results` `{ result: submissionOf(result) }`. `postResults` treats HTTP `!ok` **and** a thrown `fetch` as failure → `saveGuestResult`. A network error does not drop the run                 |
+| Sign-in        | `components/result-sync.tsx` sets account mode and `POST /api/results/migrate` (max 50). `clearGuestResults` only after `response.ok`. Throw / 4xx / 5xx leaves guest rows in place                    |
+| Signed-in list | `GET /api/results` newest **500**. On 401/500/`fetch` throw, `accountResultsFromResponse(false)` → `[]`, but `visibleSavedResults` still **merges** local `tipohiz.results` + `tipohiz.lastResult` (dedupe by `id`, account primary, first-wins). Distinct from POST failure → guest copy |
 
 Results page (`app/(Base)/results/page.tsx`) shows net + raw WPM lines, error dots, hover/focus tooltip, keyboard arrows. The per-second table stays in the DOM inside `sr-only` for a11y / e2e.
 
@@ -223,7 +223,7 @@ Footer copy matches the home chord. Results Tab is a different handler (`lib/res
 | `GET\|POST /api/results`    | Session required. Server **recomputes** stats from `log` + `words` + client `durationSeconds` |
 | `POST /api/results/migrate` | Session required. Max 50 guest results                                                        |
 
-Typing does not require a session. `proxy.ts` only redirects signed-in visitors away from `/login` and `/register`. Register password rule of thumb: ≥8, upper, lower, digit. The special-character regex currently requires the literal prefix `A-Za-z0-9` — treat that as a known trap, not a real complexity rule.
+Typing does not require a session. `proxy.ts` matcher is only `/login` and `/register`. Cookie **presence** 307s those paths to `/` (`getSessionCookie`); it does not call `getServerSession`. Other routes skip the cookie check. Login/register still confirm the session on the server. Register password rule of thumb: ≥8, upper, lower, digit. The special-character regex currently requires the literal prefix `A-Za-z0-9` — treat that as a known trap, not a real complexity rule.
 
 `resolveAuthBaseUrl()`: explicit `BETTER_AUTH_URL` wins (trailing slash stripped). Else Vercel production → `https://$VERCEL_PROJECT_PRODUCTION_URL`; else `https://$VERCEL_BRANCH_URL`. Trusted origins = `BETTER_AUTH_TRUSTED_ORIGINS` + `BETTER_AUTH_URL` + `https://$VERCEL_URL` only — **not** the fallback hosts. Preview CORS/403: list the branch URL in `BETTER_AUTH_TRUSTED_ORIGINS`. Rate limits use the database. The first auth use ensures a unique index on `rateLimit.key`, and a MongoDB outage is logged without stopping startup. The dashboard plugin is `dash()` and uses optional `BETTER_AUTH_API_KEY`. Adapter transactions follow `mongoTransactionsEnabled(MONGODB_URI)`: on for `mongodb+srv://` or `replicaSet=`, off for standalone localhost.
 
