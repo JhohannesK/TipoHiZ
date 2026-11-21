@@ -88,4 +88,27 @@ describe('POST /api/results/migrate', () => {
          error: 'Failed to migrate results',
       });
    });
+
+   it.each(['', '   '])(
+      'should reject a blank session user id %j',
+      async (id) => {
+         getSession.mockResolvedValue({ user: { id } } as never);
+
+         const response = await POST(jsonRequest({ results: [submission] }));
+
+         expect(response.status).toBe(401);
+         expect(await response.json()).toEqual({ error: 'Unauthorized' });
+         expect(saveResults).not.toHaveBeenCalled();
+      }
+   );
+
+   it('should trim the session user id before migrate', async () => {
+      getSession.mockResolvedValue({ user: { id: '  user-1  ' } } as never);
+      saveResults.mockResolvedValue(1);
+
+      const response = await POST(jsonRequest({ results: [submission] }));
+
+      expect(response.status).toBe(200);
+      expect(saveResults.mock.calls[0]?.[0]).toBe('user-1');
+   });
 });

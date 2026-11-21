@@ -33,6 +33,11 @@ const globalForMongo = globalThis as { tipohizResultMongo?: MongoClient };
 
 let indexReady = false;
 
+export function resetResultMongoForTests(): void {
+   indexReady = false;
+   delete globalForMongo.tipohizResultMongo;
+}
+
 function database() {
    const uri = process.env.MONGODB_URI;
    if (!uri) throw new Error('MONGODB_URI is not set');
