@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { userConfigStore, wordStore } from '../store';
 import { HandleText } from '../lib/handle-text';
+import { loadWords } from '../lib/reset';
+import { userConfigStore, wordStore } from '../store';
 import { setCaretRef, setRef, setWordList } from '../store/actions/WordActions';
 
 interface keyObj {
@@ -132,53 +133,10 @@ const TextArea: React.FC<soundProps> = ({ sound, run, onFinish }) => {
    useEffect(() => {
       let cancelled = false;
 
-      const loadWords = async () => {
-         try {
-            if (language !== 'english') {
-               if (type === 'default') {
-                  const wordModule = await import(
-                     `../modules/TextFiles/${language}.json`
-                  );
-                  if (!cancelled) setWordList(wordModule.default);
-               } else if (type === 'punctuation') {
-                  try {
-                     const wordModule = await import(
-                        `../modules/TextFiles/${language}_punctuation.json`
-                     );
-                     if (!cancelled) setWordList(wordModule.default);
-                  } catch (error) {
-                     console.log(error);
-                     const wordModule = await import(
-                        `../modules/TextFiles/punctuation.json`
-                     );
-                     if (!cancelled) setWordList(wordModule.default);
-                  }
-               } else {
-                  const wordModule = await import(
-                     `../modules/TextFiles/${type}.json`
-                  );
-                  if (!cancelled) setWordList(wordModule.default);
-               }
-            } else {
-               const wordModule = await import(
-                  `../modules/TextFiles/${type}.json`
-               );
-               if (!cancelled) setWordList(wordModule.default);
-            }
-         } catch (error) {
-            // Fallback to default if any file doesn't exist
-            console.error(
-               `Failed to load word list for ${language}/${type}, falling back to default`,
-               error
-            );
-            const wordModule = await import(
-               `../modules/TextFiles/default.json`
-            );
-            if (!cancelled) setWordList(wordModule.default);
-         }
-      };
+      void loadWords(language, type).then((words) => {
+         if (!cancelled) setWordList(words);
+      });
 
-      loadWords();
       return () => {
          cancelled = true;
       };

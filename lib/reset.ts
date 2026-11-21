@@ -2,7 +2,10 @@ import { resetStates } from '../store/actions/TimeActions';
 import { setWordList } from '../store/actions/WordActions';
 import { userConfigStore } from '../store';
 
-async function loadWords(language: string, type: string): Promise<string[]> {
+export async function loadWords(
+   language: string,
+   type: string
+): Promise<string[]> {
    try {
       if (language !== 'english') {
          if (type === 'default') {
