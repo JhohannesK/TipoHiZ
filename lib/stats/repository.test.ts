@@ -1,5 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
+import { MongoServerError } from 'mongodb';
 import {
    createdAtFrom,
    duplicateKey,
@@ -42,14 +43,23 @@ describe('savedResultFromDocument', () => {
 });
 
 describe('duplicateKey', () => {
-   it('should treat Mongo 11000 as a duplicate upsert', () => {
+   it('should treat Mongo E11000 as a first-write-wins collision', () => {
+      const duplicate = new MongoServerError({
+         message: 'E11000 duplicate key error',
+         errmsg: 'E11000 duplicate key error',
+         code: 11000,
+      });
+      expect(duplicateKey(duplicate)).toBe(true);
       expect(duplicateKey({ code: 11000 })).toBe(true);
    });
 
-   it('should not swallow other Mongo errors or non-objects', () => {
+   it('should not swallow other driver failures or non-objects', () => {
+      expect(duplicateKey({ code: 50 })).toBe(false);
       expect(duplicateKey({ code: 1 })).toBe(false);
       expect(duplicateKey({ code: '11000' })).toBe(false);
+      expect(duplicateKey(new Error('network'))).toBe(false);
       expect(duplicateKey(null)).toBe(false);
+      expect(duplicateKey('E11000')).toBe(false);
       expect(duplicateKey('E11000 duplicate key')).toBe(false);
    });
 });
