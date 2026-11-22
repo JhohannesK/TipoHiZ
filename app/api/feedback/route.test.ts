@@ -174,6 +174,7 @@ describe('POST /api/feedback', () => {
          from: string;
          reply_to?: string;
          subject: string;
+         html: string;
       };
       expect(payload.to).toBe(process.env.FEEDBACK_TO_EMAIL);
       expect(payload.from).toBe(process.env.FEEDBACK_FROM_EMAIL);
@@ -182,5 +183,109 @@ describe('POST /api/feedback', () => {
       expect(payload.subject).not.toMatch(/[\r\n]/);
       const headers = new Headers(init?.headers);
       expect(headers.get('Authorization')).toBe('Bearer test-resend-key');
+   });
+
+   it('should omit reply_to when the email is blank', async () => {
+      const response = await POST(post(validBody({ email: '   ' })));
+
+      expect(response.status).toBe(200);
+      const payload = JSON.parse(
+         String(vi.mocked(fetch).mock.calls[0]?.[1]?.body)
+      ) as { reply_to?: string };
+      expect(payload.reply_to).toBeUndefined();
+   });
+
+   it('should reject invalid JSON with 400', async () => {
+      const response = await POST(
+         new Request('http://localhost/api/feedback', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: '{',
+         })
+      );
+
+      expect(response.status).toBe(400);
+      expect(await response.json()).toEqual({ error: 'Invalid feedback' });
+      expect(fetch).not.toHaveBeenCalled();
+   });
+
+   it('should reject JSON 1e309 elapsedMs which parses as Infinity', async () => {
+      const raw = JSON.stringify(validBody()).replace(
+         '"elapsedMs":5000',
+         '"elapsedMs":1e309'
+      );
+      const response = await POST(
+         new Request('http://localhost/api/feedback', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: raw,
+         })
+      );
+
+      expect(JSON.parse(raw).elapsedMs).toBe(Number.POSITIVE_INFINITY);
+      expect(response.status).toBe(400);
+      expect(fetch).not.toHaveBeenCalled();
+   });
+
+   it('should reject a negative elapsedMs with 400 instead of pretending success', async () => {
+      const response = await POST(post(validBody({ elapsedMs: -1 })));
+
+      expect(response.status).toBe(400);
+      expect(fetch).not.toHaveBeenCalled();
+   });
+
+   it('should return 502 when Resend rejects the mail', async () => {
+      vi.stubGlobal(
+         'fetch',
+         vi.fn().mockResolvedValue(new Response('denied', { status: 401 }))
+      );
+
+      const response = await POST(post(validBody()));
+
+      expect(response.status).toBe(502);
+      expect(await response.json()).toEqual({
+         error: "Couldn't send. Try again.",
+      });
+   });
+
+   it('should return 502 when the Resend request throws', async () => {
+      vi.stubGlobal(
+         'fetch',
+         vi.fn().mockRejectedValue(new Error('network down'))
+      );
+
+      const response = await POST(post(validBody()));
+
+      expect(response.status).toBe(502);
+      expect(await response.json()).toEqual({
+         error: "Couldn't send. Try again.",
+      });
+   });
+
+   it('should escape HTML in the Resend payload', async () => {
+      const response = await POST(
+         post(
+            validBody({
+               message: '<script>alert(1)</script> please fix the caret',
+            })
+         )
+      );
+
+      expect(response.status).toBe(200);
+      const payload = JSON.parse(
+         String(vi.mocked(fetch).mock.calls[0]?.[1]?.body)
+      ) as { html: string; text: string };
+      expect(payload.html).toContain(
+         '&lt;script&gt;alert(1)&lt;/script&gt; please fix the caret'
+      );
+      expect(payload.html).not.toContain('<script>');
+      expect(payload.text).toContain('<script>alert(1)</script>');
+   });
+
+   it('should treat a whitespace honeypot as empty and still send', async () => {
+      const response = await POST(post(validBody({ website: '   ' })));
+
+      expect(response.status).toBe(200);
+      expect(fetch).toHaveBeenCalledTimes(1);
    });
 });

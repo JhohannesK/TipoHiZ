@@ -1,25 +1,30 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
+   clientIp,
    enforceFeedbackRate,
    feedbackRateDecision,
    hashIp,
    resetFeedbackRateIndexForTests,
 } from './rate-limit';
 
-const { createIndex, insertOne, toArray } = vi.hoisted(() => ({
-   createIndex: vi.fn(),
-   insertOne: vi.fn(),
-   toArray: vi.fn(),
-}));
+const { createIndex, find, insertOne, toArray } = vi.hoisted(() => {
+   const toArray = vi.fn();
+   return {
+      createIndex: vi.fn(),
+      insertOne: vi.fn(),
+      toArray,
+      find: vi.fn(() => ({
+         project: () => ({ toArray }),
+      })),
+   };
+});
 
 vi.mock('@/lib/stats/repository', () => ({
    sharedMongoDatabase: () => ({
       collection: () => ({
          createIndex,
          insertOne,
-         find: () => ({
-            project: () => ({ toArray }),
-         }),
+         find,
       }),
    }),
 }));
@@ -85,5 +90,51 @@ describe('feedback rate decision', () => {
       expect(hash).toHaveLength(64);
       expect(hash).not.toContain('203.0.113.8');
       expect(hashIp('203.0.113.8')).toBe(hash);
+   });
+
+   it('should use the first x-forwarded-for hop', () => {
+      const request = new Request('http://localhost/api/feedback', {
+         headers: {
+            'x-forwarded-for': '203.0.113.8, 10.0.0.1',
+            'x-real-ip': '198.51.100.9',
+         },
+      });
+
+      expect(clientIp(request)).toBe('203.0.113.8');
+   });
+
+   it('should skip a blank first hop and fall back to x-real-ip, then unknown', () => {
+      const blankForwarded = new Request('http://localhost/api/feedback', {
+         headers: {
+            'x-forwarded-for': '  , 10.0.0.1',
+            'x-real-ip': '198.51.100.9',
+         },
+      });
+      const noIp = new Request('http://localhost/api/feedback');
+
+      expect(clientIp(blankForwarded)).toBe('198.51.100.9');
+      expect(clientIp(noIp)).toBe('unknown');
+   });
+
+   it('should query and insert the hashed ip, not the raw address', async () => {
+      resetFeedbackRateIndexForTests();
+      createIndex.mockResolvedValue('createdAt_1');
+      toArray.mockResolvedValue([]);
+      insertOne.mockResolvedValue({ acknowledged: true });
+      const now = new Date('2026-11-21T12:00:00.000Z');
+      const request = new Request('http://localhost/api/feedback', {
+         headers: { 'x-forwarded-for': '203.0.113.8, 10.0.0.1' },
+      });
+
+      await expect(enforceFeedbackRate(request, now)).resolves.toBe('ok');
+
+      const ipHash = hashIp('203.0.113.8');
+      expect(find).toHaveBeenCalledWith({
+         ipHash,
+         createdAt: { $gte: new Date(now.getTime() - 24 * 60 * 60 * 1000) },
+      });
+      expect(insertOne).toHaveBeenCalledWith({ ipHash, createdAt: now });
+      expect(JSON.stringify(find.mock.calls)).not.toContain('203.0.113.8');
+      expect(JSON.stringify(insertOne.mock.calls)).not.toContain('203.0.113.8');
    });
 });
