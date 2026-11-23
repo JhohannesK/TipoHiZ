@@ -5,9 +5,17 @@ import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { authClient } from '@/lib/auth-client';
 import {
+   canSendFeedback,
+   elapsedSinceOpen,
+   feedbackModeLabel,
+   feedbackPostBody,
+   remainingFillWait,
+   statusCopy,
+   type FeedbackSendStatus,
+} from '@/lib/feedback/client';
+import {
    MESSAGE_MAX_LENGTH,
    MESSAGE_MIN_LENGTH,
-   MIN_FILL_MS,
    optionalEmailOk,
 } from '@/lib/feedback/schema';
 import { feedbackStore } from '@/store/feedback';
@@ -25,32 +33,7 @@ import {
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 
-type SendStatus = 'idle' | 'sending' | 'success' | 'error';
-
-function modeLabel(): string {
-   const { category, time, wordCount } = userConfigStore.getState();
-   if (category === 'words') return `words ${wordCount}`;
-   return `time ${time}`;
-}
-
-function clip(value: string): string {
-   return value.slice(0, 300);
-}
-
 const GITHUB_ISSUES = 'https://github.com/JhohannesK/TipoHiZ/issues';
-
-function statusCopy(statusCode: number): { text: string; github: boolean } {
-   if (statusCode === 429) {
-      return {
-         text: "You've sent a few already. Try again in a minute.",
-         github: false,
-      };
-   }
-   if (statusCode === 502 || statusCode === 503) {
-      return { text: "Couldn't send right now.", github: true };
-   }
-   return { text: "Couldn't send. Try again.", github: false };
-}
 
 export default function FeedbackForm() {
    const pathname = usePathname();
@@ -65,18 +48,18 @@ export default function FeedbackForm() {
    const [email, setEmail] = useState('');
    const [emailDirty, setEmailDirty] = useState(false);
    const [website, setWebsite] = useState('');
-   const [status, setStatus] = useState<SendStatus>('idle');
+   const [status, setStatus] = useState<FeedbackSendStatus>('idle');
    const [error, setError] = useState('');
    const [errorGithub, setErrorGithub] = useState(false);
 
    const sessionEmail = session.data?.user?.email ?? '';
    const trimmed = message.trim();
    const emailOk = optionalEmailOk(email);
-   const canSend =
-      trimmed.length >= MESSAGE_MIN_LENGTH &&
-      emailOk &&
-      status !== 'sending' &&
-      status !== 'success';
+   const canSend = canSendFeedback({
+      trimmedMessageLength: trimmed.length,
+      emailOk,
+      status,
+   });
    const showCount = message.length >= MESSAGE_MAX_LENGTH - 100;
 
    function onOpenChange(next: boolean) {
@@ -104,34 +87,36 @@ export default function FeedbackForm() {
       setError('');
       setErrorGithub(false);
 
-      const wait = MIN_FILL_MS - (performance.now() - openedMark.current);
+      const wait = remainingFillWait(openedMark.current, performance.now());
       if (wait > 0) {
          await new Promise((resolve) => {
             window.setTimeout(resolve, wait);
          });
       }
-      const elapsedMs = Math.max(0, performance.now() - openedMark.current);
+      const elapsedMs = elapsedSinceOpen(openedMark.current, performance.now());
 
       if (requestId.current !== id) return;
 
       try {
+         const { category, time, wordCount } = userConfigStore.getState();
          const response = await fetch('/api/feedback', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-               message,
-               email: email.trim(),
-               website,
-               elapsedMs,
-               context: {
-                  page: clip(pathname || '/'),
-                  theme: clip(theme || ''),
-                  mode: clip(modeLabel()),
-                  userAgent: clip(
-                     typeof navigator === 'undefined' ? '' : navigator.userAgent
-                  ),
-               },
-            }),
+            body: JSON.stringify(
+               feedbackPostBody({
+                  message,
+                  email,
+                  website,
+                  elapsedMs,
+                  page: pathname || '/',
+                  theme: theme || '',
+                  mode: feedbackModeLabel({ category, time, wordCount }),
+                  userAgent:
+                     typeof navigator === 'undefined'
+                        ? ''
+                        : navigator.userAgent,
+               })
+            ),
          });
 
          if (requestId.current !== id) return;
