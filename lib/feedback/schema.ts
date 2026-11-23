@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const CONTEXT_MAX = 300;
+export const CONTEXT_MAX = 300;
 const MESSAGE_MIN = 10;
 const MESSAGE_MAX = 2000;
 const EMAIL_MAX = 254;
