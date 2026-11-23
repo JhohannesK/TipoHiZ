@@ -164,6 +164,18 @@ describe('buildWpmChart', () => {
 
       expect(chart.xLabels.map((label) => label.label)).toEqual(['1', '2']);
    });
+
+   it.each([0, -1.4])(
+      'should fall back to the sample second when elapsed time is %s',
+      (durationSeconds) => {
+         const chart = buildWpmChart(
+            [sample(0, 40, 40, 0), sample(1, 20, 20, 0)],
+            durationSeconds
+         );
+
+         expect(chart.xLabels.map((label) => label.label)).toEqual(['1', '2']);
+      }
+   );
 });
 
 describe('chartTooltip', () => {
