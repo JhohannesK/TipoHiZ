@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/select';
 import { languageOptions } from '@/lib/i18n';
 import { resetTest } from '@/lib/reset';
+import { homeFeedbackTestActive } from '@/lib/feedback/dialog';
 import { persistFinishedTest } from '@/lib/stats/persist-client';
 import {
    resolveWordCount,
@@ -52,7 +53,11 @@ export default function HomePage() {
    const router = useRouter();
    const finishedRef = useRef(false);
    const totalWords = resolveWordCount(wordCount);
-   const typing = wordsMode ? elapsed.running : countdown.isRunning;
+   const typing = homeFeedbackTestActive({
+      wordsMode,
+      wordsRunning: elapsed.running,
+      timedRunning: countdown.isRunning,
+   });
    if (feedbackStore.getState().testActive !== typing) {
       feedbackStore.setState({ testActive: typing });
    }
