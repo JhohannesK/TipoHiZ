@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { authClient } from '@/lib/auth-client';
+import { feedbackTriggerProps, seedFeedbackEmail } from '@/lib/feedback/dialog';
 import {
    MESSAGE_MAX_LENGTH,
    MESSAGE_MIN_LENGTH,
@@ -78,6 +79,7 @@ export default function FeedbackForm() {
       status !== 'sending' &&
       status !== 'success';
    const showCount = message.length >= MESSAGE_MAX_LENGTH - 100;
+   const trigger = feedbackTriggerProps(testActive);
 
    function onOpenChange(next: boolean) {
       feedbackStore.setState({ open: next });
@@ -87,9 +89,13 @@ export default function FeedbackForm() {
          setStatus('idle');
          setError('');
          setErrorGithub(false);
-         if (!emailDirty) {
-            setEmail((current) => current.trim() || sessionEmail);
-         }
+         setEmail((current) =>
+            seedFeedbackEmail({
+               current,
+               sessionEmail,
+               dirty: emailDirty,
+            })
+         );
          return;
       }
       requestId.current += 1;
@@ -164,10 +170,12 @@ export default function FeedbackForm() {
             <button
                ref={triggerRef}
                type="button"
-               aria-hidden={testActive}
-               tabIndex={testActive ? -1 : 0}
+               aria-hidden={trigger.ariaHidden}
+               tabIndex={trigger.tabIndex}
                className={`text-input transition-opacity duration-[250ms] ${
-                  testActive ? 'pointer-events-none opacity-0' : 'opacity-100'
+                  trigger.inert
+                     ? 'pointer-events-none opacity-0'
+                     : 'opacity-100'
                }`}
             >
                Feedback

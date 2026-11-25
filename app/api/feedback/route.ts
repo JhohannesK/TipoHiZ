@@ -82,10 +82,7 @@ export async function POST(request: Request): Promise<Response> {
          );
       }
    } catch (error: unknown) {
-      console.error(
-         'Feedback rate limit check failed',
-         mongoErrorLabel(error)
-      );
+      console.error('Feedback rate limit check failed', mongoErrorLabel(error));
    }
 
    const replyEmail = email?.trim() ?? '';
