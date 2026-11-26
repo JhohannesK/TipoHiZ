@@ -1,10 +1,11 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { track } from '@vercel/analytics';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { resultFromSubmission } from '@/lib/stats/aggregate';
 import { rememberLastResult } from '@/lib/stats/storage';
 import { userConfigStore, wordStore } from '@/store';
+import { feedbackStore } from '@/store/feedback';
 import { resetStores } from '@/test/utils';
 import ResultsPage from './page';
 
@@ -53,6 +54,7 @@ describe('results restart shortcut', () => {
    beforeEach(() => {
       resetStores();
       push.mockClear();
+      feedbackStore.setState({ open: false, testActive: false });
       userConfigStore.setState({
          time: 15,
          category: 'words',
@@ -62,6 +64,10 @@ describe('results restart shortcut', () => {
          typedEntries: 40,
          errorCount: 4,
       });
+   });
+
+   afterEach(() => {
+      feedbackStore.setState({ open: false, testActive: false });
    });
 
    it('should retake on shift+enter without changing the saved mode or duration', async () => {
@@ -138,5 +144,32 @@ describe('results restart shortcut', () => {
          category: 'words',
          type: 'punctuation',
       });
+   });
+
+   it('should ignore Tab on results chrome while the feedback dialog is open', () => {
+      feedbackStore.setState({ open: true });
+      render(<ResultsPage />);
+      const heading = screen.getByRole('heading', { name: 'Current Results' });
+
+      fireEvent.keyDown(heading, { key: 'Tab' });
+
+      expect(push).not.toHaveBeenCalled();
+      expect(wordStore.getState().typedEntries).toBe(40);
+   });
+
+   it('should ignore shift+enter on a dialog button while the feedback dialog is open', () => {
+      feedbackStore.setState({ open: true });
+      render(<ResultsPage />);
+      const send = document.createElement('button');
+      send.type = 'button';
+      send.textContent = 'Send';
+      document.body.append(send);
+
+      fireEvent.keyDown(send, { key: 'Enter', shiftKey: true });
+
+      expect(push).not.toHaveBeenCalled();
+      expect(track).not.toHaveBeenCalled();
+      expect(wordStore.getState().typedEntries).toBe(40);
+      send.remove();
    });
 });

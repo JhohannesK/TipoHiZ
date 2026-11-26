@@ -1,11 +1,12 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { track } from '@vercel/analytics';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import useTimer from '@/hooks/useTimer';
 import { resetTest } from '@/lib/reset';
 import { abandonTest } from '@/lib/usage-events';
 import { userConfigStore } from '@/store';
+import { feedbackStore } from '@/store/feedback';
 import { setCategory, setType } from '@/store/actions/ConfigActions';
 import { setDefaultTime } from '@/store/actions/TimeActions';
 import { resetStores } from '@/test/utils';
@@ -256,5 +257,87 @@ describe('ResetTestButton usage events', () => {
 
       expect(track).not.toHaveBeenCalled();
       expect(reset).not.toHaveBeenCalled();
+   });
+});
+
+function dispatchKey(
+   target: EventTarget,
+   key: string,
+   extra: KeyboardEventInit = {}
+): KeyboardEvent {
+   const event = new KeyboardEvent('keydown', {
+      key,
+      bubbles: true,
+      cancelable: true,
+      ...extra,
+   });
+   target.dispatchEvent(event);
+   return event;
+}
+
+describe('ResetTestButton feedback dialog', () => {
+   const reset = vi.fn();
+   let send: HTMLButtonElement;
+
+   beforeEach(() => {
+      resetStores();
+      abandonTest();
+      reset.mockClear();
+      feedbackStore.setState({ open: false, testActive: false });
+      send = document.createElement('button');
+      send.type = 'button';
+      send.textContent = 'Send';
+      document.body.append(send);
+   });
+
+   afterEach(() => {
+      send.remove();
+      feedbackStore.setState({ open: false, testActive: false });
+   });
+
+   it('should not steal Tab from a dialog button while feedback is open', () => {
+      feedbackStore.setState({ open: true });
+      render(<ResetTestButton reset={reset} />);
+
+      const tab = dispatchKey(send, 'Tab');
+
+      expect(tab.defaultPrevented).toBe(false);
+      expect(resetTest).not.toHaveBeenCalled();
+      expect(reset).not.toHaveBeenCalled();
+   });
+
+   it('should not restart with Tab then Enter on a dialog button while feedback is open', () => {
+      feedbackStore.setState({ open: true });
+      render(<ResetTestButton reset={reset} />);
+
+      fireEvent.keyDown(send, { key: 'Tab' });
+      fireEvent.keyDown(send, { key: 'Enter' });
+
+      expect(resetTest).not.toHaveBeenCalled();
+      expect(track).not.toHaveBeenCalled();
+      expect(reset).not.toHaveBeenCalled();
+   });
+
+   it('should not restart with shift+enter on a dialog button while feedback is open', () => {
+      feedbackStore.setState({ open: true });
+      render(<ResetTestButton reset={reset} />);
+
+      fireEvent.keyDown(send, { key: 'Enter', shiftKey: true });
+
+      expect(resetTest).not.toHaveBeenCalled();
+      expect(track).not.toHaveBeenCalled();
+      expect(reset).not.toHaveBeenCalled();
+   });
+
+   it('should capture Tab and restart from a button once feedback is closed', () => {
+      render(<ResetTestButton reset={reset} />);
+
+      const tab = dispatchKey(send, 'Tab');
+      fireEvent.keyDown(send, { key: 'Enter' });
+
+      expect(tab.defaultPrevented).toBe(true);
+      expect(resetTest).toHaveBeenCalledTimes(1);
+      expect(track).toHaveBeenCalledWith('test_restarted', { how: 'shortcut' });
+      expect(reset).toHaveBeenCalledTimes(1);
    });
 });
