@@ -5,6 +5,10 @@ import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { authClient } from '@/lib/auth-client';
 import {
+   abortFeedbackRequest,
+   beginFeedbackRequest,
+} from '@/lib/feedback/request';
+import {
    MESSAGE_MAX_LENGTH,
    MESSAGE_MIN_LENGTH,
    MIN_FILL_MS,
@@ -92,14 +96,13 @@ export default function FeedbackForm() {
          }
          return;
       }
-      requestId.current += 1;
+      abortFeedbackRequest(requestId);
    }
 
    async function send() {
       if (!canSend) return;
 
-      const id = requestId.current + 1;
-      requestId.current = id;
+      const request = beginFeedbackRequest(requestId);
       setStatus('sending');
       setError('');
       setErrorGithub(false);
@@ -112,7 +115,7 @@ export default function FeedbackForm() {
       }
       const elapsedMs = Math.max(0, performance.now() - openedMark.current);
 
-      if (requestId.current !== id) return;
+      if (!request.isLive()) return;
 
       try {
          const response = await fetch('/api/feedback', {
@@ -134,7 +137,7 @@ export default function FeedbackForm() {
             }),
          });
 
-         if (requestId.current !== id) return;
+         if (!request.isLive()) return;
 
          if (!response.ok) {
             const copy = statusCopy(response.status);
@@ -146,12 +149,12 @@ export default function FeedbackForm() {
 
          setStatus('success');
          window.setTimeout(() => {
-            if (requestId.current !== id) return;
+            if (!request.isLive()) return;
             onOpenChange(false);
             setStatus('idle');
          }, 2000);
       } catch {
-         if (requestId.current !== id) return;
+         if (!request.isLive()) return;
          setStatus('error');
          setError("Couldn't send. Try again.");
          setErrorGithub(false);
