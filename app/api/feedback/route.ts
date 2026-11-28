@@ -1,49 +1,18 @@
+import {
+   feedbackMailContent,
+   feedbackMailEnv,
+   honeypotFilled,
+} from '@/lib/feedback/mail';
 import { mongoErrorLabel } from '@/lib/feedback/mongo-error';
 import { enforceFeedbackRate } from '@/lib/feedback/rate-limit';
 import {
    MIN_FILL_MS,
-   escapeHtml,
    feedbackBodySchema,
    feedbackSubject,
 } from '@/lib/feedback/schema';
 
 function json(body: unknown, status: number): Response {
    return Response.json(body, { status });
-}
-
-function honeypotFilled(body: unknown): boolean {
-   if (typeof body !== 'object' || body === null || !('website' in body)) {
-      return false;
-   }
-
-   const website = body.website;
-   return typeof website === 'string' && website.trim().length > 0;
-}
-
-function feedbackEnv():
-   | { apiKey: string; to: string; from: string }
-   | undefined {
-   const apiKey = process.env.RESEND_API_KEY;
-   const to = process.env.FEEDBACK_TO_EMAIL;
-   const from = process.env.FEEDBACK_FROM_EMAIL;
-   if (!apiKey || !to || !from) return undefined;
-   return { apiKey, to, from };
-}
-
-function plainBody(
-   message: string,
-   email: string,
-   context: { page: string; theme: string; mode: string; userAgent: string }
-): string {
-   return [
-      message,
-      '',
-      `Email: ${email || '(none)'}`,
-      `Page: ${context.page}`,
-      `Theme: ${context.theme}`,
-      `Mode: ${context.mode}`,
-      `Browser: ${context.userAgent}`,
-   ].join('\n');
 }
 
 export async function POST(request: Request): Promise<Response> {
@@ -68,7 +37,7 @@ export async function POST(request: Request): Promise<Response> {
       return json({ ok: true }, 200);
    }
 
-   const env = feedbackEnv();
+   const env = feedbackMailEnv();
    if (!env) {
       return json({ error: 'Feedback is unavailable right now.' }, 503);
    }
@@ -82,33 +51,19 @@ export async function POST(request: Request): Promise<Response> {
          );
       }
    } catch (error: unknown) {
-      console.error(
-         'Feedback rate limit check failed',
-         mongoErrorLabel(error)
-      );
+      console.error('Feedback rate limit check failed', mongoErrorLabel(error));
    }
 
-   const replyEmail = email?.trim() ?? '';
-   const text = plainBody(message, replyEmail, context);
-   const html = `<p>${escapeHtml(message).replace(
-      /\n/g,
-      '<br>'
-   )}</p><p>Email: ${escapeHtml(
-      replyEmail || '(none)'
-   )}</p><ul><li>Page: ${escapeHtml(context.page)}</li><li>Theme: ${escapeHtml(
-      context.theme
-   )}</li><li>Mode: ${escapeHtml(context.mode)}</li><li>Browser: ${escapeHtml(
-      context.userAgent
-   )}</li></ul>`;
+   const mail = feedbackMailContent({ message, email, context });
    const payload: Record<string, unknown> = {
       from: env.from,
       to: env.to,
       subject: feedbackSubject(message),
-      text,
-      html,
+      text: mail.text,
+      html: mail.html,
    };
 
-   if (replyEmail) payload.reply_to = replyEmail;
+   if (mail.replyTo) payload.reply_to = mail.replyTo;
 
    try {
       const response = await fetch('https://api.resend.com/emails', {
